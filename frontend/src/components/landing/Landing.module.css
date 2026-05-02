@@ -557,6 +557,14 @@
   .navLinks {
     display: none;
   }
+  .navRight .btnGhost {
+    display: none;
+  }
+  .navRight .btn {
+    padding: 7px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
 }
 
 /* === Keyframes (module-scoped by Vite/CSS Modules) ================== */
