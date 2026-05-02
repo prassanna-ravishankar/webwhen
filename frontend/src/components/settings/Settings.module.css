@@ -133,6 +133,8 @@
 .field select:focus,
 .field textarea:focus {
   border-color: var(--ww-ink-3);
+  box-shadow: var(--ww-shadow-focus);
+  outline: 0;
 }
 
 /* === Layout helpers ===================================================== */
@@ -223,6 +225,14 @@
 
 .btnDanger:hover {
   background: #9d3325;
+}
+
+.btnPrimary:focus-visible,
+.btnSecondary:focus-visible,
+.btnGhost:focus-visible,
+.btnDanger:focus-visible {
+  box-shadow: var(--ww-shadow-focus);
+  outline: 0;
 }
 
 .btnPrimary:disabled,
