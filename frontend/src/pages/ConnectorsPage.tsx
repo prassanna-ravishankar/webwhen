@@ -120,7 +120,7 @@ export const ConnectorsPage: React.FC = () => {
         popup.location.href = redirect_url;
         popup.opener = null;
       } else {
-        toast.error('Popup blocked. Allow popups for Torale and try again.');
+        toast.error('Popup blocked. Allow popups for webwhen and try again.');
       }
       await refresh();
     } catch (err) {

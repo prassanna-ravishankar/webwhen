@@ -17,54 +17,76 @@ export interface PublicRoute {
 const STATIC_ROUTES: PublicRoute[] = [
   {
     path: '/',
-    title: 'Torale - Monitor the Web, Get Notified When It Matters',
+    title: 'webwhen — the agent that waits for the web',
     description:
-      'Automate web monitoring with AI-powered conditional alerts. Track product launches, stock availability, event announcements, and more. Set it and forget it.',
+      'Tell webwhen what to watch for in plain English. It will sit with the question, search the web on a schedule, and tell you the moment your condition is met.',
     priority: 1.0,
   },
   {
     path: '/changelog',
-    title: 'Changelog - Torale Product Updates & Features',
-    description:
-      "Track every update to Torale's AI-powered web monitoring platform. New features, improvements, and fixes shipped weekly.",
+    title: 'Changelog — webwhen',
+    description: 'What webwhen has been up to. Built in the open.',
     priority: 0.7,
   },
   {
     path: '/explore',
-    title: 'Explore - Torale Public Monitoring Feed',
+    title: 'Explore — webwhen',
     description:
-      'See what the Torale community is monitoring — public tasks and recent detections across the web.',
+      'See what people are watching with webwhen — public watches and recent triggers across the open web.',
     priority: 0.9,
   },
   {
     path: '/terms',
-    title: 'Terms of Service - Torale',
-    description: "Terms of service for using Torale's AI-powered web monitoring platform.",
+    title: 'Terms — webwhen',
+    description: 'Terms of service for webwhen, the agent that waits for the web.',
     priority: 0.4,
   },
   {
     path: '/privacy',
-    title: 'Privacy Policy - Torale',
-    description: 'Privacy policy for Torale. Learn how we protect your data and monitoring queries.',
+    title: 'Privacy — webwhen',
+    description:
+      'How webwhen handles your data, why we collect what we do, and what we don\'t do with it.',
     priority: 0.4,
   },
 ];
 
-interface SEOPageMeta {
-  metaTitle: string;
-  metaDescription: string;
+interface ArticleMetaSource {
+  /** Per-page <title>. Falls back to a derived headline. */
+  seoTitle?: string;
+  /** Per-page meta description. Falls back to a derived lede. */
+  seoDescription?: string;
+  /** Legacy / Concept shape. */
+  metaTitle?: string;
+  metaDescription?: string;
+  /** Fallback sources. */
+  heroHeadline?: string;
+  heroLede?: string;
+  title?: string;
+  lede?: string;
+  name?: string;
 }
 
 function articleRoutes(
   pathPrefix: string,
-  record: Record<string, SEOPageMeta>,
+  record: Record<string, ArticleMetaSource>,
 ): PublicRoute[] {
-  return Object.entries(record).map(([slug, data]) => ({
-    path: `${pathPrefix}/${slug}`,
-    title: data.metaTitle,
-    description: data.metaDescription,
-    ogType: 'article',
-  }));
+  return Object.entries(record).map(([slug, data]) => {
+    const title =
+      data.seoTitle ??
+      data.metaTitle ??
+      data.heroHeadline ??
+      data.title ??
+      data.name ??
+      slug;
+    const description =
+      data.seoDescription ?? data.metaDescription ?? data.heroLede ?? data.lede ?? '';
+    return {
+      path: `${pathPrefix}/${slug}`,
+      title,
+      description,
+      ogType: 'article' as const,
+    };
+  });
 }
 
 export const PUBLIC_ROUTES: PublicRoute[] = [

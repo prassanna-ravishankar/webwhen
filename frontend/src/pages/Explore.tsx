@@ -81,8 +81,8 @@ export function Explore() {
     <>
       <DynamicMeta
         path="/explore"
-        title="Explore Intelligence - Torale"
-        description="Discover community monitoring results and public tasks. Browse live findings and copy monitors to your dashboard."
+        title="Explore — webwhen"
+        description="See what people are watching with webwhen — public watches and recent triggers across the open web."
       />
       <div className="min-h-screen bg-zinc-50">
       <div className="max-w-6xl mx-auto px-4 py-8">

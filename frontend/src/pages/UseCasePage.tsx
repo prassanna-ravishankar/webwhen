@@ -1,214 +1,135 @@
-import { useParams, Navigate, useNavigate } from 'react-router-dom';
-import { motion } from '@/lib/motion-compat';
-import { CheckCircle2, ArrowRight, Zap, Shield, Clock } from 'lucide-react';
-import { USE_CASES } from '@/data/useCases';
+import { useParams, Navigate, Link } from 'react-router-dom';
+import { MarketingLayout } from '@/components/marketing/MarketingLayout';
 import { DynamicMeta } from '@/components/DynamicMeta';
+import { cn } from '@/lib/utils';
+import landingStyles from '@/components/landing/Landing.module.css';
+import marketingStyles from '@/components/marketing/marketing.module.css';
+import { USE_CASES } from '@/data/useCases';
 
 /**
- * Use case landing page for Torale
- * Routes: /use-cases/steam-game-price-alerts, /use-cases/competitor-price-change-monitor, etc.
+ * Editorial use-case landing page.
+ * Routes: /use-cases/:usecase
  */
-
-const iconMap = {
-  zap: Zap,
-  shield: Shield,
-  clock: Clock,
-};
-
 export function UseCasePage() {
   const { usecase } = useParams<{ usecase: string }>();
-  const navigate = useNavigate();
 
   if (!usecase || !USE_CASES[usecase]) {
     return <Navigate to="/" replace />;
   }
 
-  const data = USE_CASES[usecase];
+  const useCase = USE_CASES[usecase];
+  const others = Object.values(USE_CASES).filter((u) => u.slug !== useCase.slug);
 
   return (
-    <>
+    <MarketingLayout activePath="/use-cases">
       <DynamicMeta
-        path={`/use-cases/${usecase}`}
-        title={data.metaTitle}
-        description={data.metaDescription}
-        type="article"
+        path={`/use-cases/${useCase.slug}`}
+        title={useCase.seoTitle ?? `${useCase.heroHeadline} — webwhen`}
+        description={useCase.seoDescription ?? useCase.heroLede}
       />
 
-      <div className="min-h-screen bg-[#fafafa]">
-        {/* Hero Section */}
-        <section className="pt-32 pb-24 px-6 border-b border-zinc-200">
-          <div className="container mx-auto max-w-6xl text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="mb-8"
-            >
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-white border border-zinc-900 text-zinc-900 text-xs font-mono font-bold uppercase tracking-wider shadow-ww-sm">
-                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                {data.tagline}
-              </span>
-            </motion.div>
+      {/* Hero */}
+      <section className={cn(landingStyles.section, marketingStyles.articleHero)}>
+        <div className={landingStyles.container}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1.1fr 0.9fr',
+              gap: '80px',
+              alignItems: 'center',
+            }}
+          >
+            <div>
+              <div className={marketingStyles.articleHeroEyebrow}>Use case</div>
+              <h1 className={marketingStyles.articleHeading}>{useCase.heroHeadline}</h1>
+              <p className={marketingStyles.articleLede}>{useCase.heroLede}</p>
+            </div>
+            <div className={landingStyles.composer}>
+              <div className={landingStyles.composerHead}>
+                <span>new watch</span>
+                <span>plain english · no rules</span>
+              </div>
+              <div className={landingStyles.composerBody}>
+                <p className={landingStyles.composerPrompt}>
+                  {useCase.composerPrompt}
+                  <span className={landingStyles.composerCursor}></span>
+                </p>
+                <p className={landingStyles.composerSub}>
+                  webwhen will sit with this and decide when to check.
+                </p>
+              </div>
+              <div className={landingStyles.composerFoot}>
+                <div>
+                  <span className={landingStyles.chip}>nothing to tune</span>
+                </div>
+                <Link
+                  to="/sign-up"
+                  className={cn(landingStyles.btn, landingStyles.btnPrimary)}
+                  style={{ padding: '8px 14px' }}
+                >
+                  Watch <span style={{ fontFamily: 'var(--ww-font-mono)' }}>→</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-              className="text-5xl md:text-6xl font-bold tracking-tight mb-6 text-zinc-900"
-            >
-              {data.heroTitle}
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-              className="text-xl text-zinc-500 mb-10 max-w-2xl mx-auto font-medium"
-            >
-              {data.heroSubtitle}
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-            >
-              <button
-                onClick={() => navigate('/dashboard')}
-                className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-ember text-white text-lg font-bold hover:bg-ember-hover transition-all shadow-ww-md hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-ww-sm border border-zinc-900"
+      {/* Manifesto-style body */}
+      <section className={landingStyles.section}>
+        <div className={landingStyles.container}>
+          <div className={marketingStyles.reading}>
+            <p className={landingStyles.manifestoQuote}>{useCase.openingQuote}</p>
+            {useCase.body.map((para, i) => (
+              <p
+                key={i}
+                className={landingStyles.manifestoBody}
+                style={i === 0 ? { marginTop: '32px' } : undefined}
               >
-                Start Monitoring Free
-                <ArrowRight className="h-5 w-5" />
-              </button>
-            </motion.div>
+                {para}
+              </p>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Problem/Solution Section */}
-        <section className="py-16 px-4 bg-white">
-          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
-            <div className="p-8 border border-zinc-900 shadow-ww-sm">
-              <h3 className="text-2xl font-bold mb-4 text-red-600">The Problem</h3>
-              <p className="text-zinc-700 leading-relaxed">{data.problemStatement}</p>
-            </div>
-            <div className="p-8 border border-zinc-900 shadow-ww-sm">
-              <h3 className="text-2xl font-bold mb-4 text-green-600">The Solution</h3>
-              <p className="text-zinc-700 leading-relaxed">{data.solutionStatement}</p>
-            </div>
+      {/* Related */}
+      <section className={cn(landingStyles.section, landingStyles.sectionAlt)}>
+        <div className={landingStyles.container}>
+          <div className={landingStyles.eyebrow}>Other watches</div>
+          <h2 className={landingStyles.sectionHeading}>
+            Things webwhen also{' '}
+            <span className={landingStyles.sectionHeadingAccent}>waits for.</span>
+          </h2>
+          <div className={landingStyles.cases}>
+            {others.map((u) => (
+              <Link key={u.slug} to={`/use-cases/${u.slug}`} className={landingStyles.caseCard}>
+                <div className={landingStyles.caseTag}>{u.shortTag}</div>
+                <p className={landingStyles.caseQuestion}>{u.composerPrompt}</p>
+                <div className={landingStyles.caseResult}>watching</div>
+              </Link>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Benefits Section */}
-        <section className="py-16 px-4 bg-zinc-50">
-          <div className="max-w-5xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-12">Why Use Torale?</h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              {data.benefits.map((benefit, idx) => {
-                const Icon = iconMap[benefit.icon];
-                return (
-                  <div
-                    key={idx}
-                    className="p-6 bg-white border border-zinc-900 shadow-ww-sm"
-                  >
-                    <Icon className="w-10 h-10 mb-4 text-yellow-400" strokeWidth={2} />
-                    <h3 className="text-xl font-bold mb-2">{benefit.title}</h3>
-                    <p className="text-zinc-600">{benefit.description}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* How It Works Section */}
-        <section className="py-16 px-4 bg-white">
-          <div className="max-w-5xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-12">How It Works</h2>
-            <div className="space-y-6">
-              {data.howItWorks.map((step, idx) => (
-                <div
-                  key={idx}
-                  className="flex gap-6 p-6 border border-zinc-900 bg-white shadow-ww-sm"
-                >
-                  <div className="flex-shrink-0 w-12 h-12 bg-yellow-400 border border-zinc-900 flex items-center justify-center text-2xl font-bold">
-                    {step.step}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold mb-2">{step.title}</h3>
-                    <p className="text-zinc-600 mb-2">{step.description}</p>
-                    <code className="inline-block px-3 py-1 bg-zinc-100 border border-zinc-300 text-sm font-mono">
-                      {step.example}
-                    </code>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Example Conditions Section */}
-        <section className="py-16 px-4 bg-zinc-50">
-          <div className="max-w-5xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-12">Real-World Examples</h2>
-            <div className="space-y-4">
-              {data.exampleConditions.map((example, idx) => (
-                <div
-                  key={idx}
-                  className="p-6 border border-zinc-900 bg-white shadow-ww-sm"
-                >
-                  <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
-                    {example.title}
-                  </h3>
-                  <div className="pl-7 space-y-2">
-                    <p className="text-zinc-700">
-                      <span className="font-semibold">Condition:</span> {example.condition}
-                    </p>
-                    <p className="text-green-700">
-                      <span className="font-semibold">Result:</span> {example.result}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* FAQ Section */}
-        <section className="py-16 px-4 bg-white">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-12">Frequently Asked Questions</h2>
-            <div className="space-y-6">
-              {data.faq.map((item, idx) => (
-                <div key={idx} className="border-b-2 border-zinc-200 pb-6 last:border-b-0">
-                  <h3 className="text-xl font-bold mb-3">{item.question}</h3>
-                  <p className="text-zinc-600 leading-relaxed">{item.answer}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-16 px-4 bg-yellow-400 border-t-4 border-zinc-900">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-6">
-              Ready to Start Monitoring?
-            </h2>
-            <p className="text-xl mb-8 text-zinc-800">
-              Join thousands using AI-powered monitoring to never miss important changes
-            </p>
-            <button
-              onClick={() => navigate('/sign-up')}
-              className="px-12 py-5 bg-zinc-900 text-white font-bold text-lg border border-zinc-900 shadow-ww-md hover:shadow-ww-lg hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-150"
-            >
-              Start Free Trial →
-            </button>
-            <p className="mt-4 text-sm text-zinc-700">No credit card required • Free while in beta</p>
-          </div>
-        </section>
-      </div>
-    </>
+      {/* CTA */}
+      <section className={cn(landingStyles.section, landingStyles.cta)}>
+        <div className={landingStyles.container}>
+          <h2 className={landingStyles.ctaHeading}>
+            What are you waiting <span className={landingStyles.heroEmber}>for</span>?
+          </h2>
+          <p className={landingStyles.ctaBody}>
+            Free while in beta. One condition takes about 30 seconds to set up.
+          </p>
+          <Link
+            to="/sign-up"
+            className={cn(landingStyles.btn, landingStyles.btnPrimary, landingStyles.btnLg)}
+          >
+            Start watching <span style={{ fontFamily: 'var(--ww-font-mono)' }}>→</span>
+          </Link>
+        </div>
+      </section>
+    </MarketingLayout>
   );
 }
