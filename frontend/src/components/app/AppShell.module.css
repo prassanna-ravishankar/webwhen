@@ -378,8 +378,44 @@
   .hamburger {
     display: inline-flex;
   }
+  /* Stack topbar vertically: crumb path row, italic page-title row, and (if
+     present) actions row. Prevents italic descenders in .crumbHere from
+     cutting through intermediate crumb links, and gives Edit/Delete clusters
+     room to breathe on watch-detail pages. */
   .topbar {
-    padding: 0 16px;
+    height: auto;
+    min-height: 56px;
+    padding: 10px 16px;
+    flex-direction: column;
+    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .topbarLeft {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    width: 100%;
+  }
+  /* Allow .crumbHere to wrap onto its own flex line below the path. */
+  .crumbs {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+  .crumbHere {
+    flex-basis: 100%;
+    /* Let the page title use the full row; no clipping needed once it owns
+       its own line. */
+    overflow: visible;
+    white-space: normal;
+    text-overflow: clip;
+  }
+  .actions {
+    width: 100%;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    row-gap: 6px;
   }
   .page {
     padding: 24px 16px 80px;
