@@ -20,7 +20,6 @@ const TOP_LEVEL_LINKS: Array<{ href: string; label: string; matchPath?: string }
   { href: '#how', label: 'How it works' },
   { href: '#cases', label: 'Use cases', matchPath: '/use-cases' },
   { href: '#manifesto', label: 'Approach', matchPath: '/concepts' },
-  { href: 'https://docs.torale.ai', label: 'Docs' },
 ]
 
 export const Nav: React.FC<NavProps> = ({ activePath }) => {

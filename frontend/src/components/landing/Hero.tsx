@@ -23,9 +23,6 @@ export const Hero: React.FC = () => {
             <Link to="/sign-up" className={cn(styles.btn, styles.btnPrimary, styles.btnLg)}>
               Start watching <span style={{ fontFamily: 'var(--ww-font-mono)' }}>→</span>
             </Link>
-            <a href="https://docs.torale.ai" className={cn(styles.btn, styles.btnSecondary, styles.btnLg)}>
-              Read the docs
-            </a>
           </div>
         </div>
         <div>
