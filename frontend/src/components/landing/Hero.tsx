@@ -40,12 +40,12 @@ export const Hero: React.FC = () => {
                 <span className={styles.composerCursor}></span>
               </p>
               <p className={styles.composerSub}>
-                webwhen will sit with this and check every few hours.
+                webwhen will sit with this and decide when to check.
               </p>
             </div>
             <div className={styles.composerFoot}>
               <div>
-                <span className={styles.chip}>every 6h</span>
+                <span className={styles.chip}>self-scheduling</span>
                 <span className={styles.chip}>notify once</span>
               </div>
               <button

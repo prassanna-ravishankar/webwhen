@@ -37,7 +37,7 @@ export const Steps: React.FC = () => {
               When the condition is met, you get one message with the answer and the sources. No false positives, no daily digest noise.
             </p>
             <div className={styles.stepHint}>
-              notifies <span className={styles.stepHintEm}>once</span> · or every time, your call
+              notifies <span className={styles.stepHintEm}>once</span> · the agent decides cadence
             </div>
           </div>
         </div>
