@@ -1,7 +1,6 @@
 import React, { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route, Navigate, useNavigate, useParams, useLocation } from 'react-router-dom'
-import { Header } from '@/components/Header'
-import { MobileNav } from '@/components/MobileNav'
+import { AppShell, type Crumb } from '@/components/app/AppShell'
 import { Toaster } from '@/components/ui/sonner'
 import { Loader2 } from 'lucide-react'
 import { useApiSetup } from '@/hooks/useApi'
@@ -71,16 +70,13 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
   )
 }
 
-function AppLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <main className="container mx-auto px-4 py-8 pb-24 md:pb-8">
-        {children}
-      </main>
-      <MobileNav />
-    </div>
-  )
+/**
+ * Thin wrapper around AppShell for routes that just need static crumbs + no
+ * page-supplied actions. Pages that own their own crumbs/actions/watches data
+ * can render <AppShell> directly and skip this.
+ */
+function AppLayout({ children, crumbs }: { children: React.ReactNode; crumbs: Crumb[] }) {
+  return <AppShell crumbs={crumbs}>{children}</AppShell>
 }
 
 function AuthRedirect({ children }: { children: React.ReactNode }) {
@@ -195,7 +191,7 @@ export default function App() {
         <Route
           path="/explore"
           element={
-            <AppLayout>
+            <AppLayout crumbs={[{ label: 'Explore' }]}>
               <Explore />
             </AppLayout>
           }
@@ -220,7 +216,7 @@ export default function App() {
           path="/welcome"
           element={
             <ProtectedRoute>
-              <AppLayout>
+              <AppLayout crumbs={[{ label: 'Welcome' }]}>
                 <Welcome />
               </AppLayout>
             </ProtectedRoute>
@@ -230,7 +226,7 @@ export default function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <AppLayout>
+              <AppLayout crumbs={[{ label: 'Watches' }]}>
                 <Dashboard onTaskClick={handleTaskClick} />
               </AppLayout>
             </ProtectedRoute>
@@ -239,7 +235,7 @@ export default function App() {
         <Route
           path="/tasks/:taskId"
           element={
-            <AppLayout>
+            <AppLayout crumbs={[{ label: 'Watches', href: '/dashboard' }, { label: 'Detail' }]}>
               <TaskDetailRoute onBack={handleBackToDashboard} onDeleted={handleBackToDashboard} />
             </AppLayout>
           }
@@ -248,7 +244,7 @@ export default function App() {
           path="/admin"
           element={
             <ProtectedRoute>
-              <AppLayout>
+              <AppLayout crumbs={[{ label: 'Admin' }]}>
                 <Admin />
               </AppLayout>
             </ProtectedRoute>
@@ -262,7 +258,7 @@ export default function App() {
           path="/settings/notifications"
           element={
             <ProtectedRoute>
-              <AppLayout>
+              <AppLayout crumbs={[{ label: 'Settings', href: '/settings' }, { label: 'Notifications' }]}>
                 <NotificationSettingsPage />
               </AppLayout>
             </ProtectedRoute>
@@ -272,7 +268,7 @@ export default function App() {
           path="/settings/connectors"
           element={
             <ProtectedRoute>
-              <AppLayout>
+              <AppLayout crumbs={[{ label: 'Settings', href: '/settings' }, { label: 'Connectors' }]}>
                 <ConnectorsRoute />
               </AppLayout>
             </ProtectedRoute>
