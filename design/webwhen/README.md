@@ -116,9 +116,29 @@ Semantic colors (success, warn, danger, info) are muted, paper-tone variants. Th
 
 See `colors_and_type.css` for the full token set.
 
+#### Ember placement
+
+The ember accent is reserved for *the one thing that matters at this moment*. Sanctioned uses:
+
+- The indicator dot inside the wordmark mark
+- The triggered StatusBadge on a Watch
+- The "Default" pill on the user's primary email (the email that matters by default)
+- An inline accent on a single key word inside a quote
+- The cursor in the composer
+- The left-border bar on a triggered MomentBlock
+
+**Anti-pattern**: more than one ember per screen. If two things compete for "the moment that matters," one of them isn't. The Explore feed is the deliberate exception — every entry on the feed *is* a triggered moment, so each carries its own ember bar; that's the page's whole job.
+
 ### Typography
 
-> **Italic restraint.** Italic for *named things in flowing copy* (watch titles, page-context titles in the topbar) and short accent flourishes. Upright for *sentences* (hero copy, body copy, display headings, composer inputs) AND for *the wordmark itself* (the logo lockup is upright Instrument Serif — its serif family + ember-bearing mark already carry the editorial voice; an italic cut on top reads as ornament). The hero "Get notified when it matters" is a sentence: upright.
+> **Italic restraint.** Italic for *named things in flowing copy* (watch titles, page-context titles in the topbar) and short accent flourishes. Upright for *sentences* (hero copy, body copy, display headings, composer inputs) **and the wordmark itself** — the mark + serif family already carry editorial voice; italic on top reads as ornament.
+>
+> **Worked examples**:
+> - Hero "Get notified when it matters" → sentence → upright.
+> - Watch title "summarize my notion activity" → named thing in flowing copy → italic.
+> - Wordmark `webwhen` → upright (the rule's load-bearing exception).
+> - Inline accent inside a quote ("the one word that *settles*") → flourish → italic.
+> - Body paragraph or composer input → sentence → upright.
 
 A three-family stack, used with restraint:
 
@@ -191,13 +211,61 @@ Used in two places only:
 ### Layout rules
 
 - Max content width: 1200px (marketing) / 1280px (app).
-- Reading column: 640px — for body paragraphs.
+- Reading column: 640–720px — for body paragraphs and editorial-flow surfaces (Watch detail, Settings, Explore feed, marketing article hero).
 - 12-column grid with 24px gutters; we use it loosely.
 - Sections are separated by **whitespace, not dividers**. A 1px hairline appears only where structure genuinely needs it (nav, footer, table rows).
+
+#### Marketing Nav on mobile (`<768px`)
+
+- Wordmark on the left.
+- Single primary CTA on the right (`Start watching` for unauth, `Dashboard` for auth).
+- The three in-page anchor links (How it works / Use cases / Approach) are hidden via `display: none`. Three scroll-anchors do not justify a hamburger drawer; users scroll past them anyway on mobile.
+- The secondary auth action (`Sign in`) is hidden too. New visitors sign up; returning users deep-link from email/bookmark/search. The signed-in deep-link path is canonical.
+- The remaining CTA gets nav proportions on mobile (`padding: 7px 12px; font-size: 13px; white-space: nowrap`), not hero-CTA proportions. Reusing hero proportions in a nav context crowds the row.
+
+#### App Topbar on mobile (`<768px`)
+
+- Stack vertically: hamburger + intermediate crumbs (small mono path) on row 1; italic-serif current page title on row 2; actions cluster wraps to row 3 right-aligned when present.
+- Topbar grows from desktop's fixed 56px to ~80–130px on mobile depending on actions. Sticky positioning preserved.
+- The italic-serif page title (`.crumbHere`) drops `white-space: nowrap` on mobile so long watch questions wrap to two lines instead of being truncated.
+- Desktop (`≥768px`) layout is a single horizontal row, untouched.
+
+#### Auth cluster pattern
+
+When a context shows both a primary action (Sign up / Dashboard / Save / Continue) and a secondary action (Sign in / Cancel / Back), the *secondary* hides on mobile. The primary always survives. This applies to marketing surfaces; in-app modals are dense enough to keep both at smaller proportions.
+
+#### CTA proportions
+
+Hero CTAs on the page body (`.btn .btnLg`) carry hero proportions — generous padding, larger font, designed to be the page's center of gravity. **Nav CTAs do not.** A nav button reuses the same `.btn` shell at default proportions on desktop, and tightens further on mobile. Crowding a nav row with a hero-sized CTA is a recurring mobile anti-pattern.
 
 ### Cards
 
 Cards are **paper on paper**: white surface on canvas, 1px hairline border, soft shadow. Internal padding 24–32px. They never have colored left borders or accent stripes.
+
+---
+
+## CONTENT RENDERING
+
+### Constrained markdown for agent or user-supplied prose
+
+Surfaces that render text from outside the editorial system (live agent output, historical executions, user-supplied content) pass that text through `react-markdown` with `rehypeSanitize` and a constrained components map. The map is the design contract — not the markdown library.
+
+**Allowed at body scale**:
+- `p`, `strong`, `em`, `ul`, `ol`, `li`
+
+**Not allowed (collapsed or stripped)**:
+- `h1`–`h6` collapse to `<p>` (no title-scale formatting from upstream content; the surrounding UI owns the title).
+- `code`, `pre` strip to plain text (no monospace inline-code register inside editorial bodies).
+- `img` strips entirely.
+- `a` renders link text as `<span>` (inert) on surfaces that already carry a dedicated sources or citations cluster — the inline link would compete.
+
+**Why**: the editorial register is the design system's job; markdown comes from elsewhere and can't dictate it. Constraining at the renderer is more reliable than asking every upstream producer to behave.
+
+**Where this applies**:
+- Watch detail `MomentBlock` body (the canonical implementation: `frontend/src/components/watch/MomentBlock.tsx` + `momentMarkdown` components map)
+- Future surfaces rendering agent output: Explore feed entries, email digests, notification body previews
+
+A new prompt (e.g. enforcing prose-only output) is *not* sufficient on its own; historical content already in the database keeps rendering forever. Constraining at render time covers both populations.
 
 ---
 
