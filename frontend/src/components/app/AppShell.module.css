@@ -361,8 +361,19 @@
   .app {
     grid-template-columns: 1fr;
   }
-  .sidebar {
+  /* Hide the desktop sidebar (direct child of .app) but NOT the sidebar
+     nested inside the mobile drawer. */
+  .app > .sidebar {
     display: none;
+  }
+  /* Drawer-nested sidebar: drop the sticky/100vh constraints since the
+     drawer container handles its own positioning + scroll. */
+  .drawer .sidebar {
+    position: static;
+    height: auto;
+    border-right: 0;
+    padding: 0;
+    flex: 1;
   }
   .hamburger {
     display: inline-flex;
