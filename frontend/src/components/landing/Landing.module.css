@@ -56,7 +56,7 @@
 }
 .brandWord {
   font-family: var(--ww-font-serif);
-  font-style: italic;
+  font-style: normal;
   font-size: 22px;
   color: var(--ww-ink-0);
   letter-spacing: -0.01em;

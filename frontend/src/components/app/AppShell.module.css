@@ -42,7 +42,7 @@
 
 .brandWord {
   font-family: var(--ww-font-serif);
-  font-style: italic;
+  font-style: normal;
   font-size: 19px;
   color: var(--ww-ink-0);
 }
