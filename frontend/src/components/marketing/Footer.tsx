@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 import { cn } from '@/lib/utils'
 
-import styles from './Landing.module.css'
+import styles from '../landing/Landing.module.css'
 
 export const Footer: React.FC = () => {
   return (

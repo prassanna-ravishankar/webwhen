@@ -1,11 +1,10 @@
 import { DynamicMeta } from "@/components/DynamicMeta";
-import { Nav } from "@/components/landing/Nav";
+import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { Hero } from "@/components/landing/Hero";
 import { Steps } from "@/components/landing/Steps";
 import { Cases } from "@/components/landing/Cases";
 import { Manifesto } from "@/components/landing/Manifesto";
 import { CTA } from "@/components/landing/CTA";
-import { Footer } from "@/components/landing/Footer";
 
 /**
  * webwhen marketing landing page.
@@ -15,10 +14,14 @@ import { Footer } from "@/components/landing/Footer";
  *   design/webwhen/ui_kits/marketing/marketing.css
  *
  * Brand voice + vocabulary: design/webwhen/README.md
+ *
+ * MarketingLayout provides Nav + Footer + .dot-bg. Pass empty activePath so
+ * Nav doesn't try to highlight a top-level link (Landing's nav links are
+ * in-page anchors).
  */
 export default function Landing() {
   return (
-    <>
+    <MarketingLayout activePath="">
       <DynamicMeta
         path="/"
         title="webwhen — the agent that waits for the web"
@@ -43,16 +46,11 @@ export default function Landing() {
           }).replace(/</g, "\\u003c"),
         }}
       />
-      <div className="dot-bg" />
-      <Nav />
-      <main>
-        <Hero />
-        <Steps />
-        <Cases />
-        <Manifesto />
-        <CTA />
-      </main>
-      <Footer />
-    </>
+      <Hero />
+      <Steps />
+      <Cases />
+      <Manifesto />
+      <CTA />
+    </MarketingLayout>
   );
 }
