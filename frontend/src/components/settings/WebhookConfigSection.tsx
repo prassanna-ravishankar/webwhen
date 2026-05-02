@@ -3,17 +3,17 @@ import {
   Loader2,
   Copy,
   CheckCircle2,
-  AlertCircle,
   RefreshCw,
   Send,
   Eye,
   EyeOff,
 } from 'lucide-react';
 import { api } from '@/lib/api';
-import { Card, CollapsibleSection, Switch } from '@/components/torale';
+import { CollapsibleSection, Switch, StatusBadge } from '@/components/torale';
 import { getErrorMessage } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { WebhookConfig } from '@/types';
+import styles from './Settings.module.css';
 
 export const WebhookConfigSection: React.FC = () => {
   const [config, setConfig] = useState<WebhookConfig>({ url: null, secret: null, enabled: false });
@@ -136,161 +136,163 @@ export const WebhookConfigSection: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Card className="p-8 flex items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
-      </Card>
+      <div className={styles.loadingRow}>
+        <Loader2 className="h-4 w-4 animate-spin" />
+        loading…
+      </div>
     );
   }
 
   return (
-    <Card>
-      {/* Header */}
-      <div className="p-4 border-b border-zinc-200 flex items-center justify-between">
-        <p className="text-xs text-zinc-500">
-          Configure webhooks to receive notifications via HTTP POST.
-        </p>
-        {config.url && (
-          <span className={`inline-flex items-center gap-1 px-2 py-1 text-[10px] font-mono uppercase tracking-wider border ${
-            config.enabled
-              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-              : 'bg-zinc-50 text-zinc-500 border-zinc-200'
-          }`}>
-            {config.enabled ? <CheckCircle2 className="h-3 w-3" /> : <AlertCircle className="h-3 w-3" />}
-            {config.enabled ? 'Active' : 'Inactive'}
-          </span>
-        )}
+    <div className="flex flex-col gap-4">
+      {/* Status pill (only when configured) */}
+      {config.url && (
+        <div className="flex justify-end">
+          <StatusBadge
+            variant={config.enabled ? 'success' : 'paused'}
+            label={config.enabled ? 'Active' : 'Inactive'}
+            size="sm"
+          />
+        </div>
+      )}
+
+      {/* Webhook URL */}
+      <div className={styles.fieldRow}>
+        <div className={styles.field}>
+          <label>Webhook URL</label>
+          <input
+            type="url"
+            placeholder="https://your-server.com/webhooks/"
+            value={webhookUrl}
+            onChange={(e) => setWebhookUrl(e.target.value)}
+            disabled={isSaving}
+          />
+        </div>
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={isSaving || !webhookUrl}
+          className={styles.btnPrimary}
+          style={{ alignSelf: 'flex-end' }}
+        >
+          {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+          Save
+        </button>
       </div>
 
-      {/* Content */}
-      <div className="p-4 space-y-4">
-        {/* Webhook URL */}
-        <div className="space-y-2">
-          <label className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">
-            Webhook URL
-          </label>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <input
-              type="url"
-              placeholder="https://your-server.com/webhooks/"
-              value={webhookUrl}
-              onChange={(e) => setWebhookUrl(e.target.value)}
-              disabled={isSaving}
-              className="flex-1 px-3 py-2 bg-white border border-zinc-200 text-xs sm:text-sm font-mono focus:outline-none focus:border-zinc-900 disabled:opacity-50 disabled:bg-zinc-50"
-            />
+      {/* Webhook Secret */}
+      {config.secret && (
+        <div className={styles.field}>
+          <label>Signing secret</label>
+          <div className="flex gap-2 items-stretch">
+            <div className={styles.secret}>
+              <code>{showSecret ? config.secret : maskSecret(config.secret)}</code>
+            </div>
             <button
-              onClick={handleSave}
-              disabled={isSaving || !webhookUrl}
-              className="px-4 py-2 bg-zinc-900 text-white text-xs sm:text-sm font-mono hover:bg-ink-1 transition-colors disabled:opacity-50 disabled:hover:bg-zinc-900 shrink-0"
+              type="button"
+              onClick={() => setShowSecret(!showSecret)}
+              className={styles.iconBtn}
+              title={showSecret ? 'Hide secret' : 'Show secret'}
+              aria-label={showSecret ? 'Hide secret' : 'Show secret'}
             >
-              {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save'}
+              {showSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+            <button
+              type="button"
+              onClick={handleCopySecret}
+              className={styles.iconBtn}
+              title="Copy secret"
+              aria-label="Copy secret"
+            >
+              {copiedSecret ? (
+                <CheckCircle2 className="h-4 w-4" style={{ color: 'var(--ww-success)' }} />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={handleRegenerateSecret}
+              disabled={isSaving}
+              className={styles.iconBtn}
+              title="Regenerate secret"
+              aria-label="Regenerate secret"
+            >
+              <RefreshCw className="h-4 w-4" />
             </button>
           </div>
-          <p className="text-[10px] text-zinc-400 font-mono">Must use HTTPS for security</p>
         </div>
+      )}
 
-        {/* Webhook Secret */}
-        {config.secret && (
-          <div className="space-y-2">
-            <label className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">
-              Signing Secret
-            </label>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex-1 flex items-center px-3 py-2 bg-zinc-900 text-zinc-300 font-mono text-[10px] sm:text-sm border border-zinc-900 min-w-0">
-                <code className="truncate">
-                  {showSecret ? config.secret : maskSecret(config.secret)}
-                </code>
-              </div>
-              <div className="flex gap-2 shrink-0">
-                <button
-                  onClick={() => setShowSecret(!showSecret)}
-                  className="p-2 border border-zinc-200 text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-colors"
-                  title={showSecret ? 'Hide secret' : 'Show secret'}
-                >
-                  {showSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-                <button
-                  onClick={handleCopySecret}
-                  className="p-2 border border-zinc-200 text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-colors"
-                  title="Copy secret"
-                >
-                  {copiedSecret ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </button>
-                <button
-                  onClick={handleRegenerateSecret}
-                  disabled={isSaving}
-                  className="p-2 border border-zinc-200 text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-colors disabled:opacity-50"
-                  title="Regenerate secret"
-                >
-                  <RefreshCw className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-            <p className="text-[10px] text-zinc-400 font-mono">
-              Use this secret to verify webhook signatures. Keep it secure!
-            </p>
+      {/* Enable/Disable Toggle */}
+      {config.secret && (
+        <div className={styles.toggleRow}>
+          <div>
+            <div className={styles.toggleLabel}>Enabled</div>
+            <div className={styles.toggleHint}>Receive notifications at this URL</div>
           </div>
-        )}
+          <Switch
+            checked={config.enabled}
+            onCheckedChange={handleToggleEnabled}
+            disabled={isSaving}
+          />
+        </div>
+      )}
 
-        {/* Enable/Disable Toggle */}
-        {config.secret && (
-          <div className="flex items-center justify-between p-3 bg-zinc-50 border border-zinc-200">
-            <div>
-              <p className="text-sm font-mono text-zinc-900">Enable Webhook</p>
-              <p className="text-[10px] text-zinc-500">Receive notifications at this URL</p>
-            </div>
-            <Switch
-              checked={config.enabled}
-              onCheckedChange={handleToggleEnabled}
-              disabled={isSaving}
-            />
-          </div>
-        )}
-
-        {/* Test Webhook Button */}
-        {config.secret && config.enabled && (
+      {/* Test Webhook Button */}
+      {config.secret && config.enabled && (
+        <div className={styles.actions} style={{ justifyContent: 'flex-start' }}>
           <button
+            type="button"
             onClick={handleTest}
             disabled={isTesting}
-            className="w-full flex items-center justify-center gap-2 p-3 border border-dashed border-zinc-300 text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-all text-sm font-mono disabled:opacity-50"
+            className={styles.btnSecondary}
           >
             {isTesting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : (
-              <Send className="h-4 w-4" />
+              <Send className="h-3.5 w-3.5" />
             )}
-            Test Webhook
+            Send test
           </button>
-        )}
+        </div>
+      )}
 
-        {/* Documentation */}
-        <CollapsibleSection
-          title="Webhook Documentation"
-          open={isDocOpen}
-          onOpenChange={setIsDocOpen}
+      {/* Documentation */}
+      <CollapsibleSection
+        title="Webhook documentation"
+        open={isDocOpen}
+        onOpenChange={setIsDocOpen}
+      >
+        <div
+          className="p-4 space-y-4 text-xs"
+          style={{
+            background: 'var(--ww-ink-1)',
+            color: 'var(--ww-ink-7)',
+            fontFamily: 'var(--ww-font-mono)',
+            borderRadius: 'var(--ww-radius-sm)',
+          }}
         >
-            <div className="bg-zinc-900 text-zinc-300 p-4 space-y-4 text-xs font-mono border-x border-b border-zinc-200">
-              <div>
-                <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Signature Header</h4>
-                <code className="text-emerald-400">X-Torale-Signature: t=&lt;timestamp&gt;,v1=&lt;signature&gt;</code>
-              </div>
+          <div>
+            <h4 className={styles.sectionLabel} style={{ marginBottom: 6 }}>Signature header</h4>
+            <code style={{ color: 'var(--ww-success)' }}>
+              X-Torale-Signature: t=&lt;timestamp&gt;,v1=&lt;signature&gt;
+            </code>
+          </div>
 
-              <div>
-                <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Headers</h4>
-                <ul className="space-y-1 text-zinc-400">
-                  <li><code className="text-zinc-300">Content-Type:</code> application/json</li>
-                  <li><code className="text-zinc-300">User-Agent:</code> Torale-Webhooks/1.0</li>
-                  <li><code className="text-zinc-300">X-Torale-Event:</code> task.condition_met</li>
-                  <li><code className="text-zinc-300">X-Torale-Delivery:</code> [execution_id]</li>
-                </ul>
-              </div>
+          <div>
+            <h4 className={styles.sectionLabel} style={{ marginBottom: 6 }}>Headers</h4>
+            <ul className="space-y-1" style={{ color: 'var(--ww-ink-5)' }}>
+              <li><code style={{ color: 'var(--ww-ink-7)' }}>Content-Type:</code> application/json</li>
+              <li><code style={{ color: 'var(--ww-ink-7)' }}>User-Agent:</code> Torale-Webhooks/1.0</li>
+              <li><code style={{ color: 'var(--ww-ink-7)' }}>X-Torale-Event:</code> task.condition_met</li>
+              <li><code style={{ color: 'var(--ww-ink-7)' }}>X-Torale-Delivery:</code> [execution_id]</li>
+            </ul>
+          </div>
 
-              <div>
-                <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Payload</h4>
-                <pre className="text-[10px] leading-relaxed overflow-x-auto text-zinc-400">{`{
+          <div>
+            <h4 className={styles.sectionLabel} style={{ marginBottom: 6 }}>Payload</h4>
+            <pre className="text-[10px] leading-relaxed overflow-x-auto" style={{ color: 'var(--ww-ink-5)' }}>{`{
   "id": "exec_123",
   "event_type": "task.condition_met",
   "created_at": 1699564800,
@@ -300,15 +302,14 @@ export const WebhookConfigSection: React.FC = () => {
     "result": { "answer": "...", "sources": [...] }
   }
 }`}</pre>
-              </div>
+          </div>
 
-              <div>
-                <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Retry Policy</h4>
-                <p className="text-zinc-400">Exponential backoff: 1min → 5min → 15min</p>
-              </div>
-            </div>
-        </CollapsibleSection>
-      </div>
-    </Card>
+          <div>
+            <h4 className={styles.sectionLabel} style={{ marginBottom: 6 }}>Retry policy</h4>
+            <p style={{ color: 'var(--ww-ink-5)' }}>Exponential backoff: 1min → 5min → 15min</p>
+          </div>
+        </div>
+      </CollapsibleSection>
+    </div>
   );
 };

@@ -15,7 +15,8 @@ import { getErrorMessage } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { EmailVerificationModal } from './EmailVerificationModal';
-import { SectionLabel, Card, StatusBadge } from '@/components/torale';
+import { StatusBadge } from '@/components/torale';
+import styles from './Settings.module.css';
 
 export const EmailManagementSection: React.FC = () => {
   const { user } = useAuth();
@@ -72,99 +73,74 @@ export const EmailManagementSection: React.FC = () => {
     setShowVerificationModal(true);
   };
 
+  const customEmails = verifiedEmails.filter((email) => email !== clerkEmail);
+
   return (
     <>
-      <Card>
-        {/* Header */}
-        <div className="p-4 border-b border-zinc-200">
-          <p className="text-xs text-zinc-500">
-            Manage email addresses for watch notifications. Your account email is always verified.
-          </p>
+      {isLoading ? (
+        <div className={styles.loadingRow}>
+          <Loader2 className="h-4 w-4 animate-spin" />
+          loading…
         </div>
+      ) : (
+        <>
+          <div className={styles.runs}>
+            {/* Clerk default email row */}
+            {clerkEmail && (
+              <div className={styles.run}>
+                <span className={styles.runT}>account</span>
+                <span className={`${styles.runDot} ${styles.runDotEmber}`} />
+                <span className={`${styles.runB} ${styles.runBStrong}`}>{clerkEmail}</span>
+                <span className="flex items-center gap-1.5">
+                  <StatusBadge variant="success" label="Verified" size="sm" />
+                  <StatusBadge variant="triggered" label="Default" size="sm" />
+                </span>
+              </div>
+            )}
 
-        {/* Content */}
-        <div className="p-4">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {/* Clerk Email (Always Verified) */}
-              {clerkEmail && (
-                <div className="p-3 bg-zinc-50 border border-zinc-200">
-                  <div className="flex items-start gap-3">
-                    <div className="bg-zinc-900 text-white w-8 h-8 flex items-center justify-center shrink-0">
-                      <Mail className="h-4 w-4" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs sm:text-sm font-mono text-zinc-900 break-all">{clerkEmail}</p>
-                      <SectionLabel className="mt-0.5">Account Email</SectionLabel>
-                      <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                        <StatusBadge variant="success" label="Verified" size="sm" />
-                        <span className="px-1.5 py-0.5 bg-zinc-900 text-white text-[9px] font-mono uppercase tracking-wider">
-                          Default
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
+            {/* Custom verified emails */}
+            {customEmails.map((email) => (
+              <div key={email} className={styles.run}>
+                <span className={styles.runT}>custom</span>
+                <span className={`${styles.runDot} ${styles.runDotSuccess}`} />
+                <span className={styles.runB}>{email}</span>
+                <span className="flex items-center gap-1.5">
+                  <StatusBadge variant="success" label="Verified" size="sm" />
+                  <button
+                    onClick={() => handleDeleteClick(email)}
+                    disabled={isDeleting === email}
+                    className={`${styles.iconBtn} ${styles.iconBtnDanger}`}
+                    aria-label={`Remove ${email}`}
+                  >
+                    {isDeleting === email ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
+                  </button>
+                </span>
+              </div>
+            ))}
+          </div>
 
-              {/* Custom Verified Emails */}
-              {verifiedEmails.filter(email => email !== clerkEmail).map((email) => (
-                <div key={email} className="p-3 border border-zinc-200 hover:border-zinc-300 transition-colors">
-                  <div className="flex items-start gap-3">
-                    <div className="bg-zinc-100 w-8 h-8 flex items-center justify-center shrink-0">
-                      <Mail className="h-4 w-4 text-zinc-600" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0">
-                          <p className="text-xs sm:text-sm font-mono text-zinc-900 break-all">{email}</p>
-                          <SectionLabel className="mt-0.5">Custom Email</SectionLabel>
-                        </div>
-                        <button
-                          onClick={() => handleDeleteClick(email)}
-                          disabled={isDeleting === email}
-                          className="p-1.5 text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 shrink-0"
-                        >
-                          {isDeleting === email ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="h-4 w-4" />
-                          )}
-                        </button>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                        <StatusBadge variant="success" label="Verified" size="sm" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              {/* No Custom Emails Message */}
-              {verifiedEmails.filter(email => email !== clerkEmail).length === 0 && (
-                <div className="p-3 bg-zinc-50 border border-dashed border-zinc-300 text-center">
-                  <p className="text-xs text-zinc-500 font-mono">
-                    No custom emails. Add one to receive notifications at a different address.
-                  </p>
-                </div>
-              )}
-
-              {/* Add Email Button */}
-              <button
-                onClick={handleAddEmailClick}
-                className="w-full flex items-center justify-center gap-2 p-3 border border-dashed border-zinc-300 text-zinc-500 hover:border-zinc-900 hover:text-zinc-900 hover:bg-zinc-50 transition-all text-sm font-mono"
-              >
-                <Plus className="h-4 w-4" />
-                Add Email
-              </button>
+          {customEmails.length === 0 && (
+            <div className={styles.emptyHint} style={{ marginTop: 12 }}>
+              No custom emails yet. Add one to receive notifications at a different address.
             </div>
           )}
-        </div>
-      </Card>
+
+          <div className={styles.actions} style={{ marginTop: 16, justifyContent: 'flex-start' }}>
+            <button
+              type="button"
+              onClick={handleAddEmailClick}
+              className={styles.btnSecondary}
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Add email
+            </button>
+          </div>
+        </>
+      )}
 
       {/* Email Verification Modal */}
       <EmailVerificationModal
@@ -175,19 +151,22 @@ export const EmailManagementSection: React.FC = () => {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!emailToDelete} onOpenChange={() => setEmailToDelete(null)}>
-        <AlertDialogContent className="border border-zinc-900">
+        <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="">Remove Email Address?</AlertDialogTitle>
-            <AlertDialogDescription className="text-zinc-600">
-              Are you sure you want to remove <strong className="font-mono">{emailToDelete}</strong>? Watches configured to
+            <AlertDialogTitle>
+              <Mail className="inline h-4 w-4 mr-2" style={{ color: 'var(--ww-ink-3)' }} />
+              Remove email?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Remove <strong className="font-mono">{emailToDelete}</strong>? Watches configured to
               use this email will fall back to your account email.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="font-mono text-sm">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className={styles.btnSecondary}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
-              className="bg-red-600 hover:bg-red-700 font-mono text-sm"
+              className={styles.btnDanger}
             >
               Remove
             </AlertDialogAction>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Mail, Webhook, Key, History } from 'lucide-react';
 import { EmailManagementSection } from '@/components/settings/EmailManagementSection';
 import { WebhookConfigSection } from '@/components/settings/WebhookConfigSection';
-import { NotificationHistorySection } from '@/components/settings/NotificationHistorySection';
+import { RecentDeliveriesSection } from '@/components/settings/RecentDeliveriesSection';
 import { ApiKeyManagementSection } from '@/components/settings/ApiKeyManagementSection';
 import { SettingsTabs } from '@/components/settings/SettingsTabs';
 import styles from '@/components/settings/Settings.module.css';
@@ -52,7 +52,7 @@ export const NotificationSettingsPage: React.FC = () => {
           <span className={styles.sectionLabel}>Recent deliveries</span>
           <span className={styles.sectionRule} />
         </div>
-        <NotificationHistorySection />
+        <RecentDeliveriesSection />
       </section>
     </div>
   );

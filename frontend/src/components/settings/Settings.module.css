@@ -232,3 +232,216 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* === Icon button (ghost square, used for trash / copy / eye toggle) ===== */
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-sm);
+  background: var(--ww-paper);
+  color: var(--ww-ink-3);
+  cursor: pointer;
+  transition: all var(--ww-dur-fast) var(--ww-ease-out);
+}
+
+.iconBtn:hover {
+  color: var(--ww-ink-0);
+  border-color: var(--ww-ink-5);
+}
+
+.iconBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.iconBtnDanger:hover {
+  color: var(--ww-danger);
+  border-color: var(--ww-danger);
+}
+
+/* === Run-style row pattern (shared across list sections) =============== */
+
+.runs {
+  display: flex;
+  flex-direction: column;
+}
+
+.run {
+  display: grid;
+  grid-template-columns: 100px 14px 1fr auto;
+  gap: 14px;
+  padding: 12px 0;
+  align-items: center;
+  border-top: 1px dashed var(--ww-ink-6);
+  font-family: var(--ww-font-mono);
+  font-size: 12px;
+}
+
+.run:first-child {
+  border-top: 0;
+}
+
+.runT {
+  color: var(--ww-ink-4);
+}
+
+.runDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ww-ink-5);
+  justify-self: center;
+}
+
+.runDotSuccess {
+  background: var(--ww-success);
+}
+
+.runDotDanger {
+  background: var(--ww-danger);
+}
+
+.runDotInfo {
+  background: var(--ww-info);
+}
+
+.runDotEmber {
+  background: var(--ww-ember);
+}
+
+.runB {
+  color: var(--ww-ink-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.runBStrong {
+  color: var(--ww-ink-0);
+}
+
+.runBMuted {
+  color: var(--ww-ink-4);
+  text-decoration: line-through;
+}
+
+.runMeta {
+  color: var(--ww-ink-4);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* Two-line variant of .run for rows that need a sub-line below the body */
+.runDetail {
+  grid-column: 3 / -1;
+  color: var(--ww-ink-4);
+  font-size: 11px;
+  margin-top: 4px;
+  white-space: normal;
+}
+
+/* === Field row with inline action button (e.g. URL + Save) ============= */
+
+.fieldRow {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.fieldRow .field {
+  flex: 1;
+  min-width: 0;
+}
+
+/* === Secret display (mono, dark surface) =============================== */
+
+.secret {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--ww-ink-1);
+  color: var(--ww-ink-7);
+  border-radius: var(--ww-radius-sm);
+  font-family: var(--ww-font-mono);
+  font-size: 12px;
+  min-width: 0;
+}
+
+.secret code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+/* === Toggle row (label left, switch right) ============================= */
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-sm);
+  background: var(--ww-paper);
+}
+
+.toggleLabel {
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ww-ink-3);
+}
+
+.toggleHint {
+  font-family: var(--ww-font-sans);
+  font-size: 12px;
+  color: var(--ww-ink-4);
+  text-transform: none;
+  letter-spacing: 0;
+  margin-top: 2px;
+}
+
+/* === One-time disclosure card (created API key) ======================== */
+
+.disclosure {
+  background: var(--ww-paper);
+  border: 1px solid var(--ww-ink-6);
+  border-left: 3px solid var(--ww-warn);
+  border-radius: var(--ww-radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.disclosureWarn {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  color: var(--ww-warn);
+}
+
+/* === Inline loading row =============================================== */
+
+.loadingRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0;
+  color: var(--ww-ink-4);
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  gap: 8px;
+}
