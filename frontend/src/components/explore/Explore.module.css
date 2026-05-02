@@ -1,0 +1,265 @@
+/* ============================================================================
+   webwhen — Explore feed
+   ----------------------------------------------------------------------------
+   Single editorial column of triggered moments. Mirrors the .moment block
+   from Watch.module.css — paper-on-canvas, ember left-bar, mono eyebrow,
+   serif italic answer, dashed sources row underneath.
+   Tokens (--ww-*) live globally in frontend/src/index.css.
+   ========================================================================== */
+
+.column {
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* === Entry — the moment block ============================================ */
+
+.entry {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--ww-paper);
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-md);
+  padding: 24px 26px 22px;
+  box-shadow: var(--ww-shadow-sm);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: box-shadow var(--ww-dur-normal) var(--ww-ease-out),
+              border-color var(--ww-dur-normal) var(--ww-ease-out);
+}
+
+.entry::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--ww-ember);
+}
+
+.entry:hover {
+  box-shadow: var(--ww-shadow-md);
+  border-color: var(--ww-ink-5);
+}
+
+.entry:focus-visible {
+  outline: none;
+  box-shadow: var(--ww-shadow-focus);
+}
+
+.entryEyebrow {
+  font-family: var(--ww-font-mono);
+  font-size: var(--ww-fs-xs);
+  letter-spacing: 0.08em;
+  color: var(--ww-ember);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.entryEyebrow::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--ww-ember);
+  opacity: 0.25;
+}
+
+.entryEyebrowName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60%;
+}
+
+.entryEyebrowSep {
+  opacity: 0.5;
+}
+
+.entryEyebrowTime {
+  flex-shrink: 0;
+}
+
+/* === Body — serif italic answer ========================================== */
+
+.entryBodyWrap {
+  position: relative;
+}
+
+.entryBody {
+  font-family: var(--ww-font-serif);
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.35;
+  color: var(--ww-ink-0);
+  text-wrap: pretty;
+}
+
+.entryBody p {
+  margin: 0 0 12px;
+}
+
+.entryBody p:last-child {
+  margin-bottom: 0;
+}
+
+.entryBody ul,
+.entryBody ol {
+  font-family: var(--ww-font-sans);
+  font-style: normal;
+  font-size: var(--ww-fs-body);
+  line-height: var(--ww-lh-loose);
+  color: var(--ww-ink-2);
+  margin: 12px 0;
+  padding-left: 22px;
+}
+
+.entryBody li {
+  margin-bottom: 4px;
+}
+
+.entryBody strong {
+  color: var(--ww-ink-0);
+  font-weight: 600;
+}
+
+.entryBody code {
+  font-family: var(--ww-font-mono);
+  font-style: normal;
+  font-size: 0.85em;
+  background: var(--ww-ink-7);
+  padding: 1px 5px;
+  border-radius: var(--ww-radius-xs);
+  color: var(--ww-ink-1);
+}
+
+.entryBody a {
+  color: var(--ww-ember);
+  text-decoration: none;
+}
+
+.entryBody a:hover {
+  text-decoration: underline;
+}
+
+.entryClipped {
+  max-height: 480px;
+  overflow: hidden;
+}
+
+.entryFade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 64px;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--ww-paper), transparent);
+}
+
+/* === Sources row ========================================================= */
+
+.entrySources {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--ww-ink-6);
+}
+
+.entrySource {
+  display: flex;
+  gap: 10px;
+  font-family: var(--ww-font-mono);
+  font-size: var(--ww-fs-xs);
+  color: var(--ww-ink-3);
+  min-width: 0;
+}
+
+.entrySourceHost {
+  color: var(--ww-ink-2);
+  width: 140px;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.entrySourceLink {
+  color: var(--ww-ink-3);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  transition: color var(--ww-dur-fast) var(--ww-ease-out);
+}
+
+.entry:hover .entrySourceLink {
+  color: var(--ww-ink-2);
+}
+
+/* === Empty + loading states ============================================= */
+
+.empty {
+  text-align: center;
+  padding: 80px 0;
+}
+
+.emptyPull {
+  font-family: var(--ww-font-serif);
+  font-style: italic;
+  font-size: 28px;
+  color: var(--ww-ink-2);
+  margin: 0 0 12px;
+  text-wrap: balance;
+}
+
+.emptySub {
+  font-family: var(--ww-font-mono);
+  font-size: var(--ww-fs-xs);
+  letter-spacing: 0.05em;
+  color: var(--ww-ink-4);
+  margin: 0;
+}
+
+.loading {
+  display: grid;
+  place-items: center;
+  padding: 96px 0;
+  color: var(--ww-ink-4);
+  font-family: var(--ww-font-mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+
+/* === Mobile ============================================================= */
+
+@media (max-width: 720px) {
+  .entry {
+    padding: 20px 22px 18px;
+  }
+
+  .entryBody {
+    font-size: 22px;
+  }
+
+  .entrySourceHost {
+    width: 110px;
+  }
+}
