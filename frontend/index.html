@@ -2,25 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicons/logo-32.png" />
-    <link rel="icon" type="image/png" sizes="64x64" href="/favicons/logo-64.png" />
-    <link rel="apple-touch-icon" sizes="128x128" href="/favicons/logo-128.png" />
-    <link rel="apple-touch-icon" sizes="256x256" href="/favicons/logo-256.png" />
+    <link rel="icon" type="image/svg+xml" href="/brand/webwhen-mark-favicon.svg" />
+    <!-- PNG favicon fallback regenerated separately; see milestone #9. -->
+    <link rel="apple-touch-icon" href="/brand/webwhen-mark.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Title + description are set per-page via <DynamicMeta>. react-helmet-async
          only dedupes tags it rendered, so static fallbacks here would collide. -->
-    <meta property="og:site_name" content="Torale">
-    <meta property="og:image" content="https://torale.ai/og-image.webp">
+    <meta property="og:site_name" content="webwhen">
+    <meta property="og:image" content="https://webwhen.ai/og-image.webp">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://torale.ai/og-image.webp">
+    <meta name="twitter:image" content="https://webwhen.ai/og-image.webp">
 
-    <!-- Warm up TLS to the API so Landing's /public/stats fetch is not gated on DNS+TLS -->
+    <!-- Warm up TLS to the API so Landing fetches are not gated on DNS+TLS.
+         Pre-cutover this still resolves via api.torale.ai; flips at cutover. -->
     <link rel="preconnect" href="https://api.torale.ai" crossorigin>
-
-    <!-- Neo-Brutalist Fonts: Space Grotesk (Structure) + JetBrains Mono (Data). Self-hosted, see src/index.css. -->
-    <link rel="preload" as="font" type="font/woff2" href="/fonts/space-grotesk-latin.woff2" crossorigin>
 
     <!-- Load runtime config (deferred for better performance) -->
     <script src="/config.js" defer></script>
@@ -30,10 +26,10 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "name": "Torale",
-      "url": "https://torale.ai",
-      "logo": "https://torale.ai/logo.svg",
-      "description": "Describe what you're watching for. Torale searches the web and notifies you when your condition is met.",
+      "name": "webwhen",
+      "url": "https://webwhen.ai",
+      "logo": "https://webwhen.ai/brand/webwhen-mark.svg",
+      "description": "The agent that waits for the web. Tell webwhen what to watch for in plain English; it sits with the question and tells you the moment your condition is met.",
       "foundingDate": "2025"
     }
     </script>

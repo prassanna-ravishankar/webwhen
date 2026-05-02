@@ -74,6 +74,8 @@ The canonical brand + UI system for **webwhen** (rebrand in flight from Torale) 
 - `design/webwhen/ui_kits/marketing/` and `design/webwhen/ui_kits/app/` — HTML/CSS/JSX prototypes. **These are design artefacts, not production code.** Recreate the *visual output* in our React + Vite + Tailwind stack; don't port the prototype structure wholesale. Don't render them in a browser unless asked — read source directly.
 - `design/webwhen/preview/` — specimen cards (colour ramps, type, components). Visual reference only.
 
+**Styling paradigm — direction**: rebrand-era components use **CSS Modules** (`*.module.css`) co-located with the component. Tokens still come from `--ww-*` CSS vars (defined globally in `frontend/src/index.css`) and Tailwind utilities for trivial layout. First instance: `frontend/src/components/landing/Landing.module.css`. End state: app-shell + dashboard surfaces will follow the same pattern as they get redesigned. Existing Tailwind-utility code stays in place until its surface is rebuilt.
+
 **Deprecated** (do not build against, even if you find them in the codebase):
 - The old "neo-brutalist Machine" system: `border-2`, `shadow-[4px_4px_0px_0px_*]`, `brand-orange` (`hsl(10, 90%, 55%)`), `font-grotesk` headings, brutalist offset shadows generally, 2px borders, "Deploy Monitor"/"Initialize"/"Terminate" copy.
 - Vocabulary: "monitor" (noun) → use **"watch"**. "alert" → use **"trigger"** or **"the moment"**. "rule" → use **"condition"**. "data points/signals" → use **"evidence"**.

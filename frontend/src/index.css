@@ -336,4 +336,17 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Faint dotted background — half opacity vs. legacy Torale.
+     Ported from design/webwhen/ui_kits/marketing/marketing.css.
+     Lives here (not Landing.module.css) so it stays a true utility. */
+  .dot-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.18;
+    background-image: radial-gradient(#9A9AA0 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
 }
