@@ -226,9 +226,8 @@ export default function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <AppLayout crumbs={[{ label: 'Watches' }]}>
-                <Dashboard onTaskClick={handleTaskClick} />
-              </AppLayout>
+              {/* Dashboard owns its AppShell so the Sidebar can read watches data. */}
+              <Dashboard onTaskClick={handleTaskClick} />
             </ProtectedRoute>
           }
         />
