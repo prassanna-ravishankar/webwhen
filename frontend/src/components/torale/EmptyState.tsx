@@ -33,14 +33,14 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   const commonContent = (
     <>
-      <div className="w-12 h-12 rounded-full bg-zinc-50 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+      <div className="w-12 h-12 rounded-full bg-[var(--ww-ink-7)] flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
         <Icon className="w-6 h-6" />
       </div>
-      <span className="font-mono text-xs uppercase tracking-widest font-bold">
+      <span className="font-mono text-xs uppercase tracking-widest font-bold text-[var(--ww-ink-2)]">
         {title}
       </span>
       {description && (
-        <p className="text-xs text-zinc-500 mt-2 max-w-md text-center">
+        <p className="text-xs text-[var(--ww-ink-3)] mt-2 max-w-md text-center">
           {description}
         </p>
       )}
@@ -54,8 +54,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         animate={{ opacity: 1 }}
         onClick={action.onClick}
         className={cn(
-          'w-full border border-dashed border-zinc-200 rounded-sm flex flex-col items-center justify-center p-12 text-zinc-400 transition-all min-h-[200px]',
-          'hover:border-zinc-400 hover:text-zinc-600 cursor-pointer group',
+          'w-full border border-dashed border-[var(--ww-ink-6)] rounded-sm flex flex-col items-center justify-center p-12 text-[var(--ww-ink-4)] transition-all min-h-[200px]',
+          'hover:border-[var(--ww-ink-4)] hover:text-[var(--ww-ink-2)] cursor-pointer group',
           className
         )}
       >
@@ -69,7 +69,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className={cn(
-        'w-full border border-dashed border-zinc-200 rounded-sm flex flex-col items-center justify-center p-12 text-zinc-400 transition-all min-h-[200px]',
+        'w-full border border-dashed border-[var(--ww-ink-6)] rounded-sm flex flex-col items-center justify-center p-12 text-[var(--ww-ink-4)] transition-all min-h-[200px]',
         className
       )}
     >

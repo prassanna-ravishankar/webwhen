@@ -107,11 +107,13 @@
   --ww-ember:       #C9582A;
   --ww-ember-hover: #B14B22;
   --ww-ember-soft:  #F4E4DA;
+  --ww-ember-bg:    #F4E4DA;
   --ww-ember-ink:   #6B2A12;
 
   /* Semantic */
   --ww-success:      #2F7D5C;
   --ww-success-soft: #E5EFE9;
+  --ww-success-bg:   #E5EFE9;
   --ww-warn:         #B57F1A;
   --ww-warn-soft:    #F5EDD8;
   --ww-danger:       #B23A2A;

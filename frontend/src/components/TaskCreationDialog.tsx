@@ -6,6 +6,7 @@ import api from "@/lib/api";
 import { toast } from "sonner";
 import { cn, getErrorMessage } from "@/lib/utils";
 import styles from "./composer/Composer.module.css";
+import modalStyles from "./ui/modal/Modal.module.css";
 import landing from "./landing/Landing.module.css";
 
 interface TaskCreationDialogProps {
@@ -73,18 +74,18 @@ export const TaskCreationDialog: React.FC<TaskCreationDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={styles.modal}>
+      <DialogContent className={modalStyles.modal}>
         {/* Visually-hidden title/description for a11y (Radix requires DialogTitle) */}
         <DialogTitle className="sr-only">New watch</DialogTitle>
         <DialogDescription className="sr-only">
           Describe the condition you want to watch for in plain English.
         </DialogDescription>
 
-        <div className={styles.head}>
-          <span className={styles.headTitle}>new watch · plain english · no rules</span>
+        <div className={modalStyles.head}>
+          <span className={modalStyles.headTitle}>new watch · plain english · no rules</span>
           <button
             type="button"
-            className={styles.headClose}
+            className={modalStyles.headClose}
             onClick={() => onOpenChange(false)}
             aria-label="Close"
           >
@@ -92,7 +93,7 @@ export const TaskCreationDialog: React.FC<TaskCreationDialogProps> = ({
           </button>
         </div>
 
-        <div className={styles.body}>
+        <div className={modalStyles.body}>
           <div className={styles.conditionLabel}>The condition</div>
           <textarea
             className={cn(styles.conditionInput, "posthog-no-capture")}
@@ -114,11 +115,11 @@ export const TaskCreationDialog: React.FC<TaskCreationDialogProps> = ({
           {error && <div className={styles.error}>{error}</div>}
         </div>
 
-        <div className={styles.foot}>
-          <span className={styles.footHint}>
+        <div className={modalStyles.foot}>
+          <span className={modalStyles.footHint}>
             the agent decides cadence + when to notify
           </span>
-          <div className={styles.footActions}>
+          <div className={modalStyles.footActions}>
             <button
               type="button"
               onClick={() => onOpenChange(false)}

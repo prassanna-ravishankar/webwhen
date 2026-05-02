@@ -12,6 +12,7 @@ import type { Task } from "@/types";
 import { Switch } from "@/components/torale";
 import { ConnectorPickerSection } from "@/components/connectors/ConnectorPickerSection";
 import styles from "./composer/Composer.module.css";
+import modalStyles from "./ui/modal/Modal.module.css";
 import landing from "./landing/Landing.module.css";
 
 interface TaskEditDialogProps {
@@ -108,17 +109,17 @@ export const TaskEditDialog: React.FC<TaskEditDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={styles.modal}>
+      <DialogContent className={modalStyles.modal}>
         <DialogTitle className="sr-only">Edit watch</DialogTitle>
         <DialogDescription className="sr-only">
           Edit the condition and visibility for this watch.
         </DialogDescription>
 
-        <div className={styles.head}>
-          <span className={styles.headTitle}>edit watch · plain english · no rules</span>
+        <div className={modalStyles.head}>
+          <span className={modalStyles.headTitle}>edit watch · plain english · no rules</span>
           <button
             type="button"
-            className={styles.headClose}
+            className={modalStyles.headClose}
             onClick={() => onOpenChange(false)}
             aria-label="Close"
           >
@@ -126,7 +127,7 @@ export const TaskEditDialog: React.FC<TaskEditDialogProps> = ({
           </button>
         </div>
 
-        <div className={styles.body}>
+        <div className={modalStyles.body}>
           <div className={styles.conditionLabel}>The condition</div>
           <textarea
             className={cn(styles.conditionInput, "posthog-no-capture")}
@@ -192,11 +193,11 @@ export const TaskEditDialog: React.FC<TaskEditDialogProps> = ({
           {error && <div className={styles.error}>{error}</div>}
         </div>
 
-        <div className={styles.foot}>
-          <span className={styles.footHint}>
+        <div className={modalStyles.foot}>
+          <span className={modalStyles.footHint}>
             the agent decides cadence + when to notify
           </span>
-          <div className={styles.footActions}>
+          <div className={modalStyles.footActions}>
             <button
               type="button"
               onClick={() => onOpenChange(false)}
