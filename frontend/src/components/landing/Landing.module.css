@@ -553,6 +553,12 @@
   }
 }
 
+@media (max-width: 768px) {
+  .navLinks {
+    display: none;
+  }
+}
+
 /* === Keyframes (module-scoped by Vite/CSS Modules) ================== */
 @keyframes live {
   0%,
