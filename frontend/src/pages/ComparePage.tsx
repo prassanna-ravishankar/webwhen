@@ -39,7 +39,7 @@ export function ComparePage() {
               transition={{ duration: 0.4 }}
               className="mb-8"
             >
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-white border-2 border-zinc-900 text-zinc-900 text-xs font-mono font-bold uppercase tracking-wider shadow-brutalist">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-white border border-zinc-900 text-zinc-900 text-xs font-mono font-bold uppercase tracking-wider shadow-ww-sm">
                 <Zap className="w-3 h-3" />
                 {data.tagline}
               </span>
@@ -49,7 +49,7 @@ export function ComparePage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
-              className="text-5xl md:text-6xl font-bold font-grotesk tracking-tight mb-6 text-zinc-900"
+              className="text-5xl md:text-6xl font-bold tracking-tight mb-6 text-zinc-900"
             >
               {data.heroTitle}
             </motion.h1>
@@ -71,7 +71,7 @@ export function ComparePage() {
             >
               <button
                 onClick={() => navigate('/dashboard')}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-brand-orange text-white text-lg font-bold hover:bg-[hsl(10,90%,50%)] transition-all shadow-brutalist-lg hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(24,24,27,1)] border-2 border-zinc-900"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-ember text-white text-lg font-bold hover:bg-ember-hover transition-all shadow-ww-md hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-ww-sm border border-zinc-900"
               >
                 Try Torale Free
                 <ArrowRight className="h-5 w-5" />
@@ -83,7 +83,7 @@ export function ComparePage() {
         {/* Why Torale Section */}
         <section className="py-24 px-6 bg-white">
           <div className="container mx-auto max-w-4xl">
-            <h2 className="text-3xl md:text-4xl font-bold font-grotesk mb-8 text-zinc-900">
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-zinc-900">
               Why Choose Torale Over {data.competitorName}?
             </h2>
 
@@ -101,12 +101,12 @@ export function ComparePage() {
         {/* Comparison Table */}
         <section className="py-24 px-6 bg-zinc-50">
           <div className="container mx-auto max-w-4xl">
-            <h2 className="text-3xl md:text-4xl font-bold font-grotesk mb-12 text-zinc-900 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-zinc-900 text-center">
               Feature Comparison
             </h2>
 
             <div className="overflow-x-auto">
-              <table className="w-full border-2 border-zinc-900 bg-white">
+              <table className="w-full border border-zinc-900 bg-white">
                 <thead>
                   <tr className="border-b-2 border-zinc-900">
                     <th className="px-6 py-4 text-left font-bold text-zinc-900 border-r-2 border-zinc-900">Feature</th>
@@ -139,14 +139,14 @@ export function ComparePage() {
         {/* Use Cases */}
         <section className="py-24 px-6 bg-white">
           <div className="container mx-auto max-w-4xl">
-            <h2 className="text-3xl md:text-4xl font-bold font-grotesk mb-12 text-zinc-900">
+            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-zinc-900">
               Use Cases Where Torale Excels
             </h2>
 
             <div className="grid gap-8">
               {data.useCases.map((useCase, idx) => (
-                <div key={idx} className="p-8 border-2 border-zinc-100 hover:border-zinc-900 transition-colors">
-                  <h3 className="text-xl font-bold font-grotesk text-zinc-900 mb-3">{useCase.title}</h3>
+                <div key={idx} className="p-8 border border-zinc-100 hover:border-zinc-900 transition-colors">
+                  <h3 className="text-xl font-bold text-zinc-900 mb-3">{useCase.title}</h3>
                   <p className="text-zinc-600 mb-4">{useCase.description}</p>
                   <div className="bg-zinc-50 p-4 border-l-4 border-emerald-500 font-mono text-sm text-zinc-700">
                     {useCase.example}
@@ -166,7 +166,7 @@ export function ComparePage() {
             }}
           />
           <div className="container mx-auto max-w-3xl">
-            <h2 className="text-3xl md:text-4xl font-bold font-grotesk mb-12 text-zinc-900 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-zinc-900 text-center">
               Frequently Asked Questions
             </h2>
 
@@ -184,7 +184,7 @@ export function ComparePage() {
         {/* CTA Section */}
         <section className="py-24 px-6 bg-zinc-900 text-white">
           <div className="container mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl md:text-4xl font-bold font-grotesk mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
               Ready to Try Torale?
             </h2>
             <p className="text-xl text-zinc-300 mb-10">
@@ -192,7 +192,7 @@ export function ComparePage() {
             </p>
             <button
               onClick={() => navigate('/dashboard')}
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-brand-orange text-white text-lg font-bold hover:bg-[hsl(10,90%,50%)] transition-all shadow-brutalist-lg hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.1)]"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-ember text-white text-lg font-bold hover:bg-ember-hover transition-all shadow-ww-md hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-ww-sm"
             >
               Start Monitoring Free
               <ArrowRight className="h-5 w-5" />

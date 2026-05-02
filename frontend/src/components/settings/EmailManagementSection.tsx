@@ -156,7 +156,7 @@ export const EmailManagementSection: React.FC = () => {
               {/* Add Email Button */}
               <button
                 onClick={handleAddEmailClick}
-                className="w-full flex items-center justify-center gap-2 p-3 border-2 border-dashed border-zinc-300 text-zinc-500 hover:border-zinc-900 hover:text-zinc-900 hover:bg-zinc-50 transition-all text-sm font-mono"
+                className="w-full flex items-center justify-center gap-2 p-3 border border-dashed border-zinc-300 text-zinc-500 hover:border-zinc-900 hover:text-zinc-900 hover:bg-zinc-50 transition-all text-sm font-mono"
               >
                 <Plus className="h-4 w-4" />
                 Add Email
@@ -175,9 +175,9 @@ export const EmailManagementSection: React.FC = () => {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!emailToDelete} onOpenChange={() => setEmailToDelete(null)}>
-        <AlertDialogContent className="border-2 border-zinc-900">
+        <AlertDialogContent className="border border-zinc-900">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-grotesk">Remove Email Address?</AlertDialogTitle>
+            <AlertDialogTitle className="">Remove Email Address?</AlertDialogTitle>
             <AlertDialogDescription className="text-zinc-600">
               Are you sure you want to remove <strong className="font-mono">{emailToDelete}</strong>? Tasks configured to
               use this email will fall back to your account email.

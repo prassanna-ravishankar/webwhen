@@ -62,7 +62,7 @@ export function Admin() {
               <Shield className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold font-grotesk tracking-tight">Admin Console</h1>
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Admin Console</h1>
               <p className="text-sm text-zinc-500 font-mono">Platform management and monitoring</p>
             </div>
           </div>

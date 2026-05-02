@@ -219,7 +219,7 @@ export const ApiKeyManagementSection: React.FC = () => {
                   <button
                     onClick={handleCreateClick}
                     disabled={isCreating}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-900 text-white text-sm font-mono hover:bg-[hsl(10,90%,55%)] transition-colors disabled:opacity-50"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-900 text-white text-sm font-mono hover:bg-ink-1 transition-colors disabled:opacity-50"
                   >
                     <Plus className="h-4 w-4" />
                     Generate API Key
@@ -259,9 +259,9 @@ export const ApiKeyManagementSection: React.FC = () => {
 
       {/* Create API Key Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="border-2 border-zinc-900">
+        <DialogContent className="border border-zinc-900">
           <DialogHeader>
-            <DialogTitle className="font-grotesk">Generate API Key</DialogTitle>
+            <DialogTitle className="">Generate API Key</DialogTitle>
             <DialogDescription className="text-zinc-600">
               Create a new API key for programmatic access to your Torale account.
             </DialogDescription>
@@ -275,7 +275,7 @@ export const ApiKeyManagementSection: React.FC = () => {
               value={newKeyName}
               onChange={(e) => setNewKeyName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleCreateKey()}
-              className="w-full px-3 py-2 border-2 border-zinc-200 text-sm font-mono focus:outline-none focus:border-zinc-900"
+              className="w-full px-3 py-2 border border-zinc-200 text-sm font-mono focus:outline-none focus:border-zinc-900"
             />
           </div>
           <DialogFooter>
@@ -289,7 +289,7 @@ export const ApiKeyManagementSection: React.FC = () => {
             <button
               onClick={handleCreateKey}
               disabled={isCreating || !newKeyName.trim()}
-              className="px-4 py-2 bg-zinc-900 text-white text-sm font-mono hover:bg-[hsl(10,90%,55%)] transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="px-4 py-2 bg-zinc-900 text-white text-sm font-mono hover:bg-ink-1 transition-colors disabled:opacity-50 flex items-center gap-2"
             >
               {isCreating && <Loader2 className="h-4 w-4 animate-spin" />}
               {isCreating ? 'Generating...' : 'Generate Key'}
@@ -300,24 +300,24 @@ export const ApiKeyManagementSection: React.FC = () => {
 
       {/* Show Created Key Dialog (One-time display) */}
       <Dialog open={showCreatedKeyDialog} onOpenChange={setShowCreatedKeyDialog}>
-        <DialogContent className="border-2 border-zinc-900">
+        <DialogContent className="border border-zinc-900">
           <DialogHeader>
-            <DialogTitle className="font-grotesk">API Key Created</DialogTitle>
+            <DialogTitle className="">API Key Created</DialogTitle>
             <DialogDescription className="text-zinc-600">
               Save this key securely. You won't be able to see it again!
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="p-3 bg-red-50 border-2 border-red-200 text-red-700 text-xs font-mono">
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-mono">
               This is the only time you'll see this key. Copy it now and store it securely.
             </div>
             <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex-1 px-3 py-2 bg-zinc-900 text-zinc-300 font-mono text-[10px] sm:text-sm border-2 border-zinc-900 break-all min-w-0">
+              <div className="flex-1 px-3 py-2 bg-zinc-900 text-zinc-300 font-mono text-[10px] sm:text-sm border border-zinc-900 break-all min-w-0">
                 {createdKey}
               </div>
               <button
                 onClick={() => handleCopyKey(createdKey || '')}
-                className="p-2 border-2 border-zinc-200 text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-colors shrink-0 self-start"
+                className="p-2 border border-zinc-200 text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-colors shrink-0 self-start"
               >
                 {keyToCopy === createdKey ? (
                   <CheckCircle2 className="h-4 w-4 text-emerald-600" />
@@ -333,7 +333,7 @@ export const ApiKeyManagementSection: React.FC = () => {
                 setShowCreatedKeyDialog(false);
                 setCreatedKey(null);
               }}
-              className="px-4 py-2 bg-zinc-900 text-white text-sm font-mono hover:bg-[hsl(10,90%,55%)] transition-colors"
+              className="px-4 py-2 bg-zinc-900 text-white text-sm font-mono hover:bg-ink-1 transition-colors"
             >
               Done
             </button>
@@ -343,9 +343,9 @@ export const ApiKeyManagementSection: React.FC = () => {
 
       {/* Revoke Confirmation Dialog */}
       <AlertDialog open={!!keyToRevoke} onOpenChange={() => setKeyToRevoke(null)}>
-        <AlertDialogContent className="border-2 border-zinc-900">
+        <AlertDialogContent className="border border-zinc-900">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-grotesk">Revoke API Key?</AlertDialogTitle>
+            <AlertDialogTitle className="">Revoke API Key?</AlertDialogTitle>
             <AlertDialogDescription className="text-zinc-600">
               This will permanently revoke the API key "<strong className="font-mono">{keyToRevoke?.name}</strong>".
               Any applications using this key will no longer be able to access your account.

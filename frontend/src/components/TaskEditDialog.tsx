@@ -168,9 +168,9 @@ export const TaskEditDialog: React.FC<TaskEditDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col overflow-hidden border-2 border-zinc-900 shadow-brutalist-lg">
+      <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col overflow-hidden border border-zinc-900 shadow-ww-md">
         <DialogHeader className="flex-shrink-0 border-b-2 border-zinc-100 pb-4">
-          <DialogTitle className="text-2xl font-bold font-grotesk tracking-tight">
+          <DialogTitle className="text-2xl font-bold tracking-tight">
             Edit Monitor
           </DialogTitle>
           <DialogDescription className="text-zinc-500">
@@ -225,7 +225,7 @@ export const TaskEditDialog: React.FC<TaskEditDialogProps> = ({
           />
 
           {/* Sharing Section */}
-          <div className="space-y-4 p-4 bg-zinc-50 border-2 border-zinc-200">
+          <div className="space-y-4 p-4 bg-zinc-50 border border-zinc-200">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2">
@@ -303,7 +303,7 @@ export const TaskEditDialog: React.FC<TaskEditDialogProps> = ({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isUpdating}>
             Cancel
           </Button>
-          <Button onClick={handleUpdate} disabled={isUpdating} className="shadow-brutalist">
+          <Button onClick={handleUpdate} disabled={isUpdating} className="shadow-ww-sm">
             {isUpdating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Save Changes
           </Button>

@@ -22,7 +22,7 @@ export function TaskCard({ task, isExpanded, onToggle }: TaskCardProps) {
             <Search className="h-4 w-4" />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="text-xs sm:text-sm font-grotesk font-bold text-zinc-900 truncate" title={task.name}>
+            <h3 className="text-xs sm:text-sm font-bold text-zinc-900 truncate" title={task.name}>
               {task.name}
             </h3>
             <div className="flex items-center gap-1 text-[10px] font-mono text-zinc-400 mt-0.5">

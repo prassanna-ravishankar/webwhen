@@ -175,12 +175,12 @@ export const WebhookConfigSection: React.FC = () => {
               value={webhookUrl}
               onChange={(e) => setWebhookUrl(e.target.value)}
               disabled={isSaving}
-              className="flex-1 px-3 py-2 bg-white border-2 border-zinc-200 text-xs sm:text-sm font-mono focus:outline-none focus:border-zinc-900 disabled:opacity-50 disabled:bg-zinc-50"
+              className="flex-1 px-3 py-2 bg-white border border-zinc-200 text-xs sm:text-sm font-mono focus:outline-none focus:border-zinc-900 disabled:opacity-50 disabled:bg-zinc-50"
             />
             <button
               onClick={handleSave}
               disabled={isSaving || !webhookUrl}
-              className="px-4 py-2 bg-zinc-900 text-white text-xs sm:text-sm font-mono hover:bg-[hsl(10,90%,55%)] transition-colors disabled:opacity-50 disabled:hover:bg-zinc-900 shrink-0"
+              className="px-4 py-2 bg-zinc-900 text-white text-xs sm:text-sm font-mono hover:bg-ink-1 transition-colors disabled:opacity-50 disabled:hover:bg-zinc-900 shrink-0"
             >
               {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save'}
             </button>
@@ -195,7 +195,7 @@ export const WebhookConfigSection: React.FC = () => {
               Signing Secret
             </label>
             <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex-1 flex items-center px-3 py-2 bg-zinc-900 text-zinc-300 font-mono text-[10px] sm:text-sm border-2 border-zinc-900 min-w-0">
+              <div className="flex-1 flex items-center px-3 py-2 bg-zinc-900 text-zinc-300 font-mono text-[10px] sm:text-sm border border-zinc-900 min-w-0">
                 <code className="truncate">
                   {showSecret ? config.secret : maskSecret(config.secret)}
                 </code>
@@ -203,14 +203,14 @@ export const WebhookConfigSection: React.FC = () => {
               <div className="flex gap-2 shrink-0">
                 <button
                   onClick={() => setShowSecret(!showSecret)}
-                  className="p-2 border-2 border-zinc-200 text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-colors"
+                  className="p-2 border border-zinc-200 text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-colors"
                   title={showSecret ? 'Hide secret' : 'Show secret'}
                 >
                   {showSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
                 <button
                   onClick={handleCopySecret}
-                  className="p-2 border-2 border-zinc-200 text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-colors"
+                  className="p-2 border border-zinc-200 text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-colors"
                   title="Copy secret"
                 >
                   {copiedSecret ? (
@@ -222,7 +222,7 @@ export const WebhookConfigSection: React.FC = () => {
                 <button
                   onClick={handleRegenerateSecret}
                   disabled={isSaving}
-                  className="p-2 border-2 border-zinc-200 text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-colors disabled:opacity-50"
+                  className="p-2 border border-zinc-200 text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-colors disabled:opacity-50"
                   title="Regenerate secret"
                 >
                   <RefreshCw className="h-4 w-4" />
@@ -255,7 +255,7 @@ export const WebhookConfigSection: React.FC = () => {
           <button
             onClick={handleTest}
             disabled={isTesting}
-            className="w-full flex items-center justify-center gap-2 p-3 border-2 border-dashed border-zinc-300 text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-all text-sm font-mono disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2 p-3 border border-dashed border-zinc-300 text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-all text-sm font-mono disabled:opacity-50"
           >
             {isTesting ? (
               <Loader2 className="h-4 w-4 animate-spin" />

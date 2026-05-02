@@ -164,7 +164,7 @@ export const ConnectorsPage: React.FC = () => {
               <Plug className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold font-grotesk tracking-tight">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
                 Connectors
               </h1>
               <p className="text-sm text-zinc-500 font-mono">

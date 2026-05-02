@@ -22,7 +22,7 @@ export function TermsOfService() {
           </button>
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-sm font-bold text-zinc-900 hover:text-[hsl(10,90%,55%)] transition-colors"
+            className="flex items-center gap-2 text-sm font-bold text-zinc-900 hover:text-ink-1 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Home
@@ -32,14 +32,14 @@ export function TermsOfService() {
 
       {/* Content */}
       <main className="container mx-auto max-w-4xl px-6 py-16">
-        <div className="bg-white border-2 border-zinc-200 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] p-12">
-          <h1 className="text-4xl font-bold font-grotesk text-zinc-900 mb-2">Terms of Service</h1>
+        <div className="bg-white border border-zinc-200 shadow-ww-md p-12">
+          <h1 className="text-4xl font-bold text-zinc-900 mb-2">Terms of Service</h1>
           <p className="text-sm text-zinc-500 font-mono mb-12">Effective Date: December 2, 2025</p>
 
           <div className="prose prose-zinc max-w-none space-y-8">
             {/* Acceptance */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">1. Acceptance of Terms</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">1. Acceptance of Terms</h2>
               <p className="text-zinc-600 leading-relaxed">
                 By accessing or using Torale ("Service"), you agree to be bound by these Terms of Service ("Terms").
                 If you disagree with any part of the Terms, you may not access the Service.
@@ -48,7 +48,7 @@ export function TermsOfService() {
 
             {/* Service Description */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">2. Service Description</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">2. Service Description</h2>
               <p className="text-zinc-600 leading-relaxed mb-4">
                 Torale is a web monitoring platform that performs automated search queries, evaluates conditions using
                 large language models (LLMs), and sends notifications when specified criteria are met.
@@ -61,7 +61,7 @@ export function TermsOfService() {
 
             {/* User Accounts */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">3. User Accounts and Authentication</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">3. User Accounts and Authentication</h2>
               <p className="text-zinc-600 leading-relaxed mb-4">
                 You may create an account using email/password authentication or OAuth providers (Google, GitHub) via
                 our authentication service provider, Clerk.
@@ -81,7 +81,7 @@ export function TermsOfService() {
 
             {/* Acceptable Use */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">4. Acceptable Use</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">4. Acceptable Use</h2>
               <p className="text-zinc-600 leading-relaxed mb-4">You agree NOT to use the Service to:</p>
               <ul className="list-disc pl-6 text-zinc-600 space-y-2">
                 <li>Monitor websites in violation of their Terms of Service or robots.txt directives</li>
@@ -96,10 +96,10 @@ export function TermsOfService() {
 
             {/* Data Collection & Admin Access */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">5. Data Collection and Administrative Access</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">5. Data Collection and Administrative Access</h2>
 
               <div className="bg-amber-50 border-l-4 border-amber-500 p-6 mb-6">
-                <h3 className="text-lg font-bold font-grotesk text-amber-900 mb-2">⚠️ Important Disclosure</h3>
+                <h3 className="text-lg font-bold text-amber-900 mb-2">⚠️ Important Disclosure</h3>
                 <p className="text-amber-800 text-sm leading-relaxed">
                   Torale operators have administrative access to platform data for operational, support, and analytical purposes.
                 </p>
@@ -135,13 +135,13 @@ export function TermsOfService() {
 
               <p className="text-zinc-600 leading-relaxed">
                 <strong className="text-zinc-900">Your Rights:</strong> You may request data deletion, export your data,
-                or deactivate your account at any time by contacting <a href="mailto:support@torale.ai" className="text-[hsl(10,90%,55%)] hover:underline">support@torale.ai</a>.
+                or deactivate your account at any time by contacting <a href="mailto:support@torale.ai" className="text-ink-1 hover:underline">support@torale.ai</a>.
               </p>
             </section>
 
             {/* Third-Party Services */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">6. Third-Party Services and AI Providers</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">6. Third-Party Services and AI Providers</h2>
               <p className="text-zinc-600 leading-relaxed mb-4">
                 The Service integrates with third-party providers:
               </p>
@@ -159,7 +159,7 @@ export function TermsOfService() {
 
             {/* Intellectual Property */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">7. Intellectual Property</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">7. Intellectual Property</h2>
               <p className="text-zinc-600 leading-relaxed mb-4">
                 <strong className="text-zinc-900">Service Ownership:</strong> The Service, including its source code,
                 design, functionality, and documentation, is owned by Torale Labs Inc. and protected by copyright and
@@ -173,13 +173,13 @@ export function TermsOfService() {
               </p>
               <p className="text-zinc-600 leading-relaxed">
                 <strong className="text-zinc-900">Open Source:</strong> Portions of the Service are released under the
-                MIT License. See our <a href="https://github.com/prassanna-ravishankar/torale" target="_blank" rel="noopener noreferrer" className="text-[hsl(10,90%,55%)] hover:underline">GitHub repository</a> for details.
+                MIT License. See our <a href="https://github.com/prassanna-ravishankar/torale" target="_blank" rel="noopener noreferrer" className="text-ink-1 hover:underline">GitHub repository</a> for details.
               </p>
             </section>
 
             {/* Beta Access & Pricing */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">8. Beta Access and Pricing</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">8. Beta Access and Pricing</h2>
               <p className="text-zinc-600 leading-relaxed mb-4">
                 <strong className="text-zinc-900">Beta Status:</strong> The Service is currently in beta. Features may
                 change, and availability is not guaranteed. We may introduce usage limits, feature restrictions, or
@@ -193,7 +193,7 @@ export function TermsOfService() {
 
             {/* Disclaimers */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">9. Disclaimers and Limitations of Liability</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">9. Disclaimers and Limitations of Liability</h2>
               <p className="text-zinc-600 leading-relaxed mb-4">
                 THE SERVICE IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
                 BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.
@@ -215,20 +215,20 @@ export function TermsOfService() {
 
             {/* Termination */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">10. Termination</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">10. Termination</h2>
               <p className="text-zinc-600 leading-relaxed mb-4">
                 We may suspend or terminate your access to the Service at any time, with or without cause or notice,
                 including for violations of these Terms.
               </p>
               <p className="text-zinc-600 leading-relaxed">
-                You may terminate your account at any time by contacting <a href="mailto:support@torale.ai" className="text-[hsl(10,90%,55%)] hover:underline">support@torale.ai</a>.
+                You may terminate your account at any time by contacting <a href="mailto:support@torale.ai" className="text-ink-1 hover:underline">support@torale.ai</a>.
                 Upon termination, your data will be retained for 90 days before permanent deletion.
               </p>
             </section>
 
             {/* Changes to Terms */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">11. Changes to Terms</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">11. Changes to Terms</h2>
               <p className="text-zinc-600 leading-relaxed">
                 We reserve the right to modify these Terms at any time. Material changes will be communicated via email
                 or in-app notification. Continued use of the Service after changes constitutes acceptance of the revised Terms.
@@ -237,7 +237,7 @@ export function TermsOfService() {
 
             {/* Governing Law */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">12. Governing Law and Dispute Resolution</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">12. Governing Law and Dispute Resolution</h2>
               <p className="text-zinc-600 leading-relaxed">
                 These Terms are governed by the laws of the State of Delaware, United States, without regard to conflict
                 of law principles. Any disputes shall be resolved through binding arbitration in accordance with the
@@ -247,13 +247,13 @@ export function TermsOfService() {
 
             {/* Contact */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">13. Contact Information</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">13. Contact Information</h2>
               <p className="text-zinc-600 leading-relaxed">
                 For questions about these Terms, contact us at:
               </p>
               <div className="mt-4 p-4 bg-zinc-50 border border-zinc-200 rounded font-mono text-sm">
                 <p className="text-zinc-900">Torale Labs Inc.</p>
-                <p className="text-zinc-600">Email: <a href="mailto:legal@torale.ai" className="text-[hsl(10,90%,55%)] hover:underline">legal@torale.ai</a></p>
+                <p className="text-zinc-600">Email: <a href="mailto:legal@torale.ai" className="text-ink-1 hover:underline">legal@torale.ai</a></p>
               </div>
             </section>
           </div>

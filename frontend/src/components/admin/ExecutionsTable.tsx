@@ -80,7 +80,7 @@ export function ExecutionsTable({ onTaskClick }: ExecutionsTableProps = {}) {
             <Activity className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-grotesk font-bold">Execution History</h3>
+            <h3 className="text-sm font-bold">Execution History</h3>
             <p className="text-[10px] font-mono text-zinc-400">
               View all task executions across users
             </p>
@@ -91,7 +91,7 @@ export function ExecutionsTable({ onTaskClick }: ExecutionsTableProps = {}) {
         <div className="relative">
           <button
             onClick={() => setShowDropdown(!showDropdown)}
-            className="flex items-center justify-between gap-2 px-3 py-2 w-full sm:w-[180px] border-2 border-zinc-200 bg-white text-sm font-mono text-zinc-900 hover:border-zinc-400 transition-colors"
+            className="flex items-center justify-between gap-2 px-3 py-2 w-full sm:w-[180px] border border-zinc-200 bg-white text-sm font-mono text-zinc-900 hover:border-zinc-400 transition-colors"
           >
             {statusOptions.find(o => o.value === statusFilter)?.label}
             <ChevronDown className={`h-4 w-4 text-zinc-400 transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
@@ -99,7 +99,7 @@ export function ExecutionsTable({ onTaskClick }: ExecutionsTableProps = {}) {
           {showDropdown && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setShowDropdown(false)} />
-              <div className="absolute right-0 mt-1 w-full sm:w-[180px] bg-white border-2 border-zinc-900 z-20 shadow-lg">
+              <div className="absolute right-0 mt-1 w-full sm:w-[180px] bg-white border border-zinc-900 z-20 shadow-lg">
                 {statusOptions.map((option) => (
                   <button
                     key={option.value}

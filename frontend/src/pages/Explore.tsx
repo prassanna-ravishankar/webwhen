@@ -92,7 +92,7 @@ export function Explore() {
             <div className="p-2 bg-zinc-900 text-white">
               <Compass className="h-6 w-6" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold font-grotesk tracking-tight text-zinc-900">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-900">
               Explore
             </h1>
           </div>
@@ -105,13 +105,13 @@ export function Explore() {
           <TabsList className="bg-transparent p-0 gap-8 h-auto border-b border-zinc-200 w-full justify-start rounded-none">
             <TabsTrigger 
               value="feed" 
-              className="px-0 pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-zinc-900 data-[state=active]:bg-transparent shadow-none font-bold font-grotesk text-lg"
+              className="px-0 pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-zinc-900 data-[state=active]:bg-transparent shadow-none font-bold text-lg"
             >
               Global Feed
             </TabsTrigger>
             <TabsTrigger 
               value="tasks"
-              className="px-0 pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-zinc-900 data-[state=active]:bg-transparent shadow-none font-bold font-grotesk text-lg"
+              className="px-0 pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-zinc-900 data-[state=active]:bg-transparent shadow-none font-bold text-lg"
             >
               Browse Tasks
             </TabsTrigger>
@@ -125,7 +125,7 @@ export function Explore() {
             ) : feed.length === 0 ? (
               <Card className="p-12 text-center">
                 <Globe className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
-                <h3 className="text-lg font-grotesk font-bold text-zinc-900 mb-2">
+                <h3 className="text-lg font-bold text-zinc-900 mb-2">
                   No public results yet
                 </h3>
                 <p className="text-sm text-zinc-500 font-mono">
@@ -150,7 +150,7 @@ export function Explore() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-3">
                 <SectionLabel>Sort by</SectionLabel>
-                <div className="flex gap-2 border-2 border-zinc-200 bg-white p-0.5">
+                <div className="flex gap-2 border border-zinc-200 bg-white p-0.5">
                   <button
                     onClick={() => setSortBy('popular')}
                     className={`px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider transition-colors ${
@@ -187,7 +187,7 @@ export function Explore() {
             ) : tasks.length === 0 ? (
               <Card className="p-12 text-center">
                 <Compass className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
-                <h3 className="text-lg font-grotesk font-bold text-zinc-900 mb-2">
+                <h3 className="text-lg font-bold text-zinc-900 mb-2">
                   No public tasks yet
                 </h3>
                 <p className="text-sm text-zinc-500 font-mono">
@@ -206,7 +206,7 @@ export function Explore() {
                     {/* Header */}
                     <div className="p-4 border-b border-zinc-100 flex justify-between items-start">
                       <div className="min-w-0">
-                        <h3 className="text-lg font-bold font-grotesk text-zinc-900 mb-1 group-hover:text-zinc-700 transition-colors">
+                        <h3 className="text-lg font-bold text-zinc-900 mb-1 group-hover:text-zinc-700 transition-colors">
                           {task.name}
                         </h3>
                         <div className="flex items-center gap-3">
@@ -270,7 +270,7 @@ export function Explore() {
                 <button
                   onClick={handlePreviousPage}
                   disabled={offset === 0}
-                  className="flex items-center gap-1.5 px-4 py-2 border-2 border-zinc-200 bg-white text-sm font-mono hover:border-zinc-900 transition-colors disabled:opacity-50 disabled:hover:border-zinc-200 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1.5 px-4 py-2 border border-zinc-200 bg-white text-sm font-mono hover:border-zinc-900 transition-colors disabled:opacity-50 disabled:hover:border-zinc-200 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft className="h-4 w-4" />
                   Previous
@@ -281,7 +281,7 @@ export function Explore() {
                 <button
                   onClick={handleNextPage}
                   disabled={offset + limit >= total}
-                  className="flex items-center gap-1.5 px-4 py-2 border-2 border-zinc-200 bg-white text-sm font-mono hover:border-zinc-900 transition-colors disabled:opacity-50 disabled:hover:border-zinc-200 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1.5 px-4 py-2 border border-zinc-200 bg-white text-sm font-mono hover:border-zinc-900 transition-colors disabled:opacity-50 disabled:hover:border-zinc-200 disabled:cursor-not-allowed"
                 >
                   Next
                   <ChevronRight className="h-4 w-4" />

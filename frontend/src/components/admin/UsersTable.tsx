@@ -217,7 +217,7 @@ export function UsersTable() {
           </div>
         </div>
         <div className="space-y-2">
-          <p className="text-2xl font-grotesk font-bold tracking-tight">
+          <p className="text-2xl font-bold tracking-tight">
             {data.capacity.used}
             <span className="text-zinc-400 text-lg">/{data.capacity.total}</span>
           </p>
@@ -237,7 +237,7 @@ export function UsersTable() {
 
       {/* Bulk Actions Toolbar */}
       {selectedUserIds.size > 0 && (
-        <div className="bg-zinc-900 text-white border-2 border-zinc-900 p-4">
+        <div className="bg-zinc-900 text-white border border-zinc-900 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="bg-white text-zinc-900 w-8 h-8 flex items-center justify-center">
@@ -275,7 +275,7 @@ export function UsersTable() {
             <Users className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-grotesk font-bold">All Users</h3>
+            <h3 className="text-sm font-bold">All Users</h3>
             <p className="text-[10px] font-mono text-zinc-400">
               Manage platform users and view their activity
             </p>
@@ -292,7 +292,7 @@ export function UsersTable() {
                     type="checkbox"
                     checked={allSelected}
                     onChange={toggleSelectAll}
-                    className="w-4 h-4 border-2 border-zinc-300 accent-zinc-900"
+                    className="w-4 h-4 border border-zinc-300 accent-zinc-900"
                     aria-label="Select all users"
                   />
                 </th>
@@ -325,7 +325,7 @@ export function UsersTable() {
                             type="checkbox"
                             checked={selectedUserIds.has(user.id)}
                             onChange={() => toggleUserSelection(user.id)}
-                            className="w-4 h-4 border-2 border-zinc-300 accent-zinc-900"
+                            className="w-4 h-4 border border-zinc-300 accent-zinc-900"
                             aria-label={`Select ${user.email}`}
                           />
                         )}
@@ -408,9 +408,9 @@ export function UsersTable() {
 
       {/* Single User Role Edit Dialog */}
       <Dialog open={!!editingUser} onOpenChange={() => setEditingUser(null)}>
-        <DialogContent className="border-2 border-zinc-900 p-0">
+        <DialogContent className="border border-zinc-900 p-0">
           <DialogHeader className="p-4 border-b border-zinc-200">
-            <DialogTitle className="font-grotesk">Edit User Role</DialogTitle>
+            <DialogTitle className="">Edit User Role</DialogTitle>
             <DialogDescription className="text-xs font-mono text-zinc-500">
               Change the role for {editingUser?.email}
             </DialogDescription>
@@ -419,7 +419,7 @@ export function UsersTable() {
             <div className="relative">
               <button
                 onClick={() => setShowRoleDropdown(!showRoleDropdown)}
-                className="flex items-center justify-between w-full px-3 py-2 border-2 border-zinc-200 bg-white text-sm font-mono text-zinc-900 hover:border-zinc-400 transition-colors"
+                className="flex items-center justify-between w-full px-3 py-2 border border-zinc-200 bg-white text-sm font-mono text-zinc-900 hover:border-zinc-400 transition-colors"
               >
                 {roleOptions.find(o => o.value === selectedRole)?.label || 'Select a role'}
                 <ChevronDown className={`h-4 w-4 text-zinc-400 transition-transform ${showRoleDropdown ? 'rotate-180' : ''}`} />
@@ -427,7 +427,7 @@ export function UsersTable() {
               {showRoleDropdown && (
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setShowRoleDropdown(false)} />
-                  <div className="absolute left-0 right-0 mt-1 bg-white border-2 border-zinc-900 z-20 shadow-lg">
+                  <div className="absolute left-0 right-0 mt-1 bg-white border border-zinc-900 z-20 shadow-lg">
                     {roleOptions.map((option) => {
                       const Icon = option.icon
                       return (
@@ -462,7 +462,7 @@ export function UsersTable() {
             <button
               onClick={handleUpdateRole}
               disabled={isUpdating}
-              className="px-4 py-2 bg-zinc-900 text-white text-sm font-mono hover:bg-[hsl(10,90%,55%)] transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="px-4 py-2 bg-zinc-900 text-white text-sm font-mono hover:bg-ink-1 transition-colors disabled:opacity-50 flex items-center gap-2"
             >
               {isUpdating && <Loader2 className="h-4 w-4 animate-spin" />}
               {isUpdating ? 'Updating...' : 'Update Role'}
@@ -473,9 +473,9 @@ export function UsersTable() {
 
       {/* Bulk Role Edit Dialog */}
       <Dialog open={showBulkDialog} onOpenChange={setShowBulkDialog}>
-        <DialogContent className="border-2 border-zinc-900 p-0">
+        <DialogContent className="border border-zinc-900 p-0">
           <DialogHeader className="p-4 border-b border-zinc-200">
-            <DialogTitle className="font-grotesk">Bulk Update Roles</DialogTitle>
+            <DialogTitle className="">Bulk Update Roles</DialogTitle>
             <DialogDescription className="text-xs font-mono text-zinc-500">
               Change the role for {selectedUserIds.size} selected user(s)
             </DialogDescription>
@@ -484,7 +484,7 @@ export function UsersTable() {
             <div className="relative">
               <button
                 onClick={() => setShowBulkRoleDropdown(!showBulkRoleDropdown)}
-                className="flex items-center justify-between w-full px-3 py-2 border-2 border-zinc-200 bg-white text-sm font-mono text-zinc-900 hover:border-zinc-400 transition-colors"
+                className="flex items-center justify-between w-full px-3 py-2 border border-zinc-200 bg-white text-sm font-mono text-zinc-900 hover:border-zinc-400 transition-colors"
               >
                 {roleOptions.find(o => o.value === bulkRole)?.label || 'Select a role'}
                 <ChevronDown className={`h-4 w-4 text-zinc-400 transition-transform ${showBulkRoleDropdown ? 'rotate-180' : ''}`} />
@@ -492,7 +492,7 @@ export function UsersTable() {
               {showBulkRoleDropdown && (
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setShowBulkRoleDropdown(false)} />
-                  <div className="absolute left-0 right-0 mt-1 bg-white border-2 border-zinc-900 z-20 shadow-lg">
+                  <div className="absolute left-0 right-0 mt-1 bg-white border border-zinc-900 z-20 shadow-lg">
                     {roleOptions.map((option) => {
                       const Icon = option.icon
                       return (
@@ -537,7 +537,7 @@ export function UsersTable() {
             <button
               onClick={handleBulkRoleUpdate}
               disabled={isBulkUpdating || !bulkRole}
-              className="px-4 py-2 bg-zinc-900 text-white text-sm font-mono hover:bg-[hsl(10,90%,55%)] transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="px-4 py-2 bg-zinc-900 text-white text-sm font-mono hover:bg-ink-1 transition-colors disabled:opacity-50 flex items-center gap-2"
             >
               {isBulkUpdating && <Loader2 className="h-4 w-4 animate-spin" />}
               {isBulkUpdating ? 'Updating...' : 'Update Roles'}

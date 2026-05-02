@@ -19,7 +19,7 @@ export const TerminalSection = () => {
       <div className="p-8 text-zinc-300 space-y-6">
         <div>
           <div className="flex gap-2 mb-2">
-            <span className="text-[hsl(10,90%,55%)]">➜</span>
+            <span className="text-ink-3">➜</span>
             <span className="text-zinc-500">~</span>
             <span>pip install torale</span>
           </div>
@@ -30,7 +30,7 @@ export const TerminalSection = () => {
 
         <div>
           <div className="flex gap-2 mb-2">
-            <span className="text-[hsl(10,90%,55%)]">➜</span>
+            <span className="text-ink-3">➜</span>
             <span className="text-zinc-500">~/monitors</span>
             <span>torale create "Competitor Pricing" \</span>
           </div>
@@ -53,7 +53,7 @@ export const TerminalSection = () => {
         </div>
 
         <div className="pl-6 pt-2">
-          <div className="text-[hsl(10,90%,55%)] flex items-center gap-2 mb-1">
+          <div className="text-ember flex items-center gap-2 mb-1">
             <CheckCircle2 className="w-4 h-4" />
             <span>Monitor deployed successfully</span>
           </div>
@@ -62,7 +62,7 @@ export const TerminalSection = () => {
         </div>
 
         <div className="flex gap-2">
-          <span className="text-[hsl(10,90%,55%)]">➜</span>
+          <span className="text-ink-3">➜</span>
           <span className="text-zinc-500">~/monitors</span>
           <span className="w-2 h-5 bg-zinc-500 animate-pulse block"></span>
         </div>

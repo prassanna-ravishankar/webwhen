@@ -58,7 +58,7 @@ export function ChangelogEntryCard({ entry, index }: ChangelogEntryCardProps) {
       <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-zinc-200 -ml-px md:-ml-0.5" />
 
       {/* Timeline Node */}
-      <div className="absolute left-0 md:left-1/2 top-8 w-3 h-3 bg-white border-2 border-zinc-300 rounded-full -ml-1.5 md:-ml-1.5 z-10 group-hover:border-zinc-900 group-hover:scale-125 transition-all duration-300" />
+      <div className="absolute left-0 md:left-1/2 top-8 w-3 h-3 bg-white border border-zinc-300 rounded-full -ml-1.5 md:-ml-1.5 z-10 group-hover:border-zinc-900 group-hover:scale-125 transition-all duration-300" />
 
       {/* Content Card Layout */}
       <div className={`md:flex items-start justify-between md:gap-12 ${isEven ? 'md:flex-row-reverse' : ''}`}>
@@ -96,7 +96,7 @@ export function ChangelogEntryCard({ entry, index }: ChangelogEntryCardProps) {
               <TypeBadge category={entry.category} />
             </div>
 
-            <h3 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4 leading-tight">
+            <h3 className="text-2xl font-bold text-zinc-900 mb-4 leading-tight">
               {entry.title}
             </h3>
 

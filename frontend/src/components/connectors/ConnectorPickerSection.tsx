@@ -147,7 +147,7 @@ export const ConnectorPickerSection: React.FC<ConnectorPickerSectionProps> = ({
 };
 
 const EmptyPickerState: React.FC = () => (
-  <div className="flex items-center gap-3 border-2 border-dashed border-zinc-200 p-4">
+  <div className="flex items-center gap-3 border border-dashed border-zinc-200 p-4">
     <Plug2 className="h-5 w-5 text-zinc-400 flex-shrink-0" />
     <p className="text-sm text-zinc-600 flex-1">
       No tools connected yet.

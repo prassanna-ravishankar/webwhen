@@ -122,7 +122,7 @@ export const ConnectorCard: React.FC<ConnectorCardProps> = ({
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <h3 className="font-grotesk text-base font-bold tracking-tight text-zinc-900">
+                <h3 className="text-base font-bold tracking-tight text-zinc-900">
                   {toolkit.display_name}
                 </h3>
                 <p className="font-mono text-[11px] text-zinc-500 truncate">

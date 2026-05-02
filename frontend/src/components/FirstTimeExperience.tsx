@@ -59,7 +59,7 @@ export function FirstTimeExperience({ onComplete }: FirstTimeExperienceProps) {
             y: [0, 30, 0],
           }}
           transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] bg-brand-orange/15 blur-[120px] rounded-full"
+          className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] bg-ember-soft blur-[120px] rounded-full"
         />
         <motion.div 
           animate={{
@@ -123,7 +123,7 @@ export function FirstTimeExperience({ onComplete }: FirstTimeExperienceProps) {
                       times: [0, 0.45, 0.65, 0.8],
                       ease: SILKY_EASE
                     }}
-                    className="absolute bg-brand-orange text-white p-7 rounded-[30px] shadow-2xl shadow-brand-orange/25"
+                    className="absolute bg-ember text-white p-7 rounded-[30px] shadow-2xl shadow-ember/25"
                   >
                     <Bell className="w-14 h-14" />
                   </motion.div>
@@ -134,7 +134,7 @@ export function FirstTimeExperience({ onComplete }: FirstTimeExperienceProps) {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6, duration: 1, ease: SILKY_EASE }}
-                    className="text-5xl font-bold text-zinc-900 font-grotesk tracking-tight leading-[1.1]"
+                    className="text-5xl font-bold text-zinc-900 tracking-tight leading-[1.1]"
                   >
                     Stop checking.<br />Start knowing.
                   </motion.h1>
@@ -160,11 +160,11 @@ export function FirstTimeExperience({ onComplete }: FirstTimeExperienceProps) {
                 className="p-16"
               >
                 <div className="space-y-8">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-orange/10 text-brand-orange text-[10px] font-mono font-bold uppercase tracking-wider">
-                    <span className="w-1.5 h-1.5 bg-brand-orange rounded-full animate-pulse" />
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ember-soft text-ember text-[10px] font-mono font-bold uppercase tracking-wider">
+                    <span className="w-1.5 h-1.5 bg-ember rounded-full animate-pulse" />
                     Initialization
                   </div>
-                  <h2 className="text-4xl font-bold text-zinc-900 font-grotesk leading-tight">
+                  <h2 className="text-4xl font-bold text-zinc-900 leading-tight">
                     Describe what you're<br />watching for
                   </h2>
                   <p className="text-xl text-zinc-500 font-sans leading-relaxed">
@@ -188,7 +188,7 @@ export function FirstTimeExperience({ onComplete }: FirstTimeExperienceProps) {
                     <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                     Process
                   </div>
-                  <h2 className="text-4xl font-bold text-zinc-900 font-grotesk leading-tight">
+                  <h2 className="text-4xl font-bold text-zinc-900 leading-tight">
                     The machine scans<br />the horizon
                   </h2>
                   <p className="text-xl text-zinc-500 font-sans leading-relaxed">
@@ -212,7 +212,7 @@ export function FirstTimeExperience({ onComplete }: FirstTimeExperienceProps) {
                     <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
                     Delivery
                   </div>
-                  <h2 className="text-4xl font-bold text-zinc-900 font-grotesk leading-tight">
+                  <h2 className="text-4xl font-bold text-zinc-900 leading-tight">
                     Get notified when<br />it matters
                   </h2>
                   <p className="text-xl text-zinc-500 font-sans leading-relaxed">
@@ -235,11 +235,11 @@ export function FirstTimeExperience({ onComplete }: FirstTimeExperienceProps) {
                     <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                     System Ready
                   </div>
-                  <h2 className="text-4xl font-bold text-zinc-900 font-grotesk leading-tight">
+                  <h2 className="text-4xl font-bold text-zinc-900 leading-tight">
                     The machine is at<br />your command
                   </h2>
                   <div className="relative group">
-                    <div className="absolute -inset-4 bg-gradient-to-b from-brand-orange/20 to-transparent opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-1000" />
+                    <div className="absolute -inset-4 bg-gradient-to-b from-ink-7 to-transparent opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-1000" />
                     <img
                       src="/images/torale-monitor.png"
                       alt="Torale monitor example"
@@ -249,7 +249,7 @@ export function FirstTimeExperience({ onComplete }: FirstTimeExperienceProps) {
                   <Button
                     onClick={handleComplete}
                     size="lg"
-                    className="w-full sm:w-auto bg-zinc-900 hover:bg-brand-orange text-white font-bold font-grotesk px-10 py-7 text-lg rounded-2xl shadow-xl hover:shadow-brand-orange/20 transition-all active:scale-[0.98]"
+                    className="w-full sm:w-auto bg-zinc-900 hover:bg-ember text-white font-bold px-10 py-7 text-lg rounded-2xl shadow-xl hover:shadow-ember/20 transition-all active:scale-[0.98]"
                   >
                     INITIALIZE FIRST MONITOR
                   </Button>

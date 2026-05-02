@@ -33,7 +33,7 @@ const BackgroundPattern = () => (
 
 // Badge Component
 const Badge = ({ children }: { children: React.ReactNode }) => (
-  <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white border-2 border-zinc-900 text-zinc-900 text-xs font-mono font-bold uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
+  <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white border border-zinc-900 text-zinc-900 text-xs font-mono font-bold uppercase tracking-wider shadow-ww-sm">
     {children}
   </div>
 );
@@ -47,7 +47,7 @@ const SectionHeader = ({ title, subtitle, label }: { title: string; subtitle: st
     className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 border-b-2 border-zinc-100 pb-8"
   >
     <div className="max-w-2xl">
-      <h2 className="text-4xl md:text-5xl font-bold font-grotesk tracking-tight mb-4 text-zinc-900">{title}</h2>
+      <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900">{title}</h2>
       <p className="text-zinc-500 text-lg font-light leading-relaxed max-w-xl">{subtitle}</p>
     </div>
     {label && <span className="font-mono text-sm font-bold text-zinc-300 mt-4 md:mt-0 tracking-widest uppercase">[{label}]</span>}
@@ -105,7 +105,7 @@ export default function Landing() {
           }).replace(/</g, '\\u003c')
         }}
       />
-      <div className="min-h-screen bg-[#fafafa] text-zinc-900 font-sans selection:bg-[hsl(10,90%,55%)] selection:text-white">
+      <div className="min-h-screen bg-[#fafafa] text-zinc-900 font-sans selection:bg-ember selection:text-white">
 
         <BackgroundPattern />
 
@@ -127,7 +127,7 @@ export default function Landing() {
 
           <div className="flex items-center gap-4">
             <button onClick={() => navigate('/sign-in')} className="text-sm font-bold text-zinc-900 hover:underline px-3 py-2">Sign In</button>
-            <button onClick={() => navigate('/dashboard')} className="bg-zinc-900 text-white px-5 py-2 text-sm font-bold hover:bg-[hsl(10,90%,55%)] transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] active:translate-y-[2px] active:shadow-none">
+            <button onClick={() => navigate('/dashboard')} className="bg-zinc-900 text-white px-5 py-2 text-sm font-bold hover:bg-ink-1 transition-colors shadow-ww-sm active:translate-y-[2px] active:shadow-none">
               Start Monitoring
             </button>
           </div>
@@ -153,7 +153,7 @@ export default function Landing() {
                 </Badge>
               </motion.div>
 
-              <h1 className="text-6xl md:text-7xl font-bold font-grotesk tracking-tight mb-8 mt-8 leading-[0.95] text-zinc-900">
+              <h1 className="text-6xl md:text-7xl font-serif italic tracking-tight mb-8 mt-8 leading-[0.95] text-zinc-900">
                 Get notified<br />
                 <span className="text-zinc-400">when it matters.</span>
               </h1>
@@ -170,7 +170,7 @@ export default function Landing() {
               >
                 <button
                   onClick={() => navigate('/dashboard')}
-                  className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-[hsl(10,90%,55%)] text-white text-lg font-bold hover:bg-[hsl(10,90%,50%)] transition-all shadow-[6px_6px_0px_0px_rgba(24,24,27,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(24,24,27,1)] border-2 border-zinc-900"
+                  className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-ember text-white text-lg font-bold hover:bg-ember-hover transition-all shadow-ww-md hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-ww-sm border border-zinc-900"
                 >
                   Create Monitor
                   <ArrowRight className="h-5 w-5" />
@@ -180,7 +180,7 @@ export default function Landing() {
                   href="https://docs.torale.ai"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white hover:bg-zinc-50 transition-all font-bold text-zinc-900 border-2 border-zinc-200"
+                  className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white hover:bg-zinc-50 transition-all font-bold text-zinc-900 border border-zinc-200"
                 >
                   <Terminal className="h-4 w-4 text-zinc-400 group-hover:text-black" />
                   Documentation
@@ -226,13 +226,13 @@ export default function Landing() {
 
               {/* Use Case 1: Steam Game Price Alerts */}
               <Link to="/use-cases/steam-game-price-alerts" className="block">
-                <div className="bg-white p-8 border-2 border-zinc-100 hover:border-zinc-900 transition-all shadow-sm hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] group h-full flex flex-col">
+                <div className="bg-white p-8 border border-zinc-100 hover:border-zinc-900 transition-all shadow-sm hover:shadow-ww-md group h-full flex flex-col">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="p-3 bg-blue-50 text-blue-600 rounded-lg border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                       <TrendingUp className="w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold font-grotesk text-zinc-900">Steam Game Prices</h3>
+                      <h3 className="text-xl font-bold text-zinc-900">Steam Game Prices</h3>
                       <span className="font-mono text-xs text-zinc-400">#gaming #deals</span>
                     </div>
                   </div>
@@ -243,7 +243,7 @@ export default function Landing() {
                     &gt; Price detected: $29.99<br />
                     &gt; Target met: <span className="text-green-600 font-bold">ALERT SENT</span>
                   </div>
-                  <div className="mt-4 flex items-center gap-2 text-zinc-900 font-bold text-sm group-hover:text-[hsl(10,90%,55%)] transition-colors">
+                  <div className="mt-4 flex items-center gap-2 text-zinc-900 font-bold text-sm group-hover:text-ink-1 transition-colors">
                     Learn More <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
@@ -251,13 +251,13 @@ export default function Landing() {
 
               {/* Use Case 2: Competitor Price Monitoring */}
               <Link to="/use-cases/competitor-price-change-monitor" className="block">
-                <div className="bg-white p-8 border-2 border-zinc-100 hover:border-zinc-900 transition-all shadow-sm hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] group h-full flex flex-col">
+                <div className="bg-white p-8 border border-zinc-100 hover:border-zinc-900 transition-all shadow-sm hover:shadow-ww-md group h-full flex flex-col">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="p-3 bg-purple-50 text-purple-600 rounded-lg border border-purple-100 group-hover:bg-purple-600 group-hover:text-white transition-colors">
                       <Shield className="w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold font-grotesk text-zinc-900">Competitor Pricing</h3>
+                      <h3 className="text-xl font-bold text-zinc-900">Competitor Pricing</h3>
                       <span className="font-mono text-xs text-zinc-400">#saas #intel</span>
                     </div>
                   </div>
@@ -268,7 +268,7 @@ export default function Landing() {
                     &gt; Competitor X pricing change<br />
                     &gt; <span className="text-red-600">$999/mo</span> → <span className="text-amber-600 font-bold">$800/mo</span>
                   </div>
-                  <div className="mt-4 flex items-center gap-2 text-zinc-900 font-bold text-sm group-hover:text-[hsl(10,90%,55%)] transition-colors">
+                  <div className="mt-4 flex items-center gap-2 text-zinc-900 font-bold text-sm group-hover:text-ink-1 transition-colors">
                     Learn More <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
@@ -276,13 +276,13 @@ export default function Landing() {
 
               {/* Use Case 3: Crypto Exchange Listings */}
               <Link to="/use-cases/crypto-exchange-listing-alert" className="block">
-                <div className="bg-white p-8 border-2 border-zinc-100 hover:border-zinc-900 transition-all shadow-sm hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] group h-full flex flex-col">
+                <div className="bg-white p-8 border border-zinc-100 hover:border-zinc-900 transition-all shadow-sm hover:shadow-ww-md group h-full flex flex-col">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="p-3 bg-emerald-50 text-emerald-600 rounded-lg border border-emerald-100 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                       <Zap className="w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold font-grotesk text-zinc-900">Crypto Listings</h3>
+                      <h3 className="text-xl font-bold text-zinc-900">Crypto Listings</h3>
                       <span className="font-mono text-xs text-zinc-400">#crypto #trading</span>
                     </div>
                   </div>
@@ -293,7 +293,7 @@ export default function Landing() {
                     &gt; New listing detected<br />
                     &gt; Exchange: <span className="text-amber-600 font-bold">BINANCE SPOT</span>
                   </div>
-                  <div className="mt-4 flex items-center gap-2 text-zinc-900 font-bold text-sm group-hover:text-[hsl(10,90%,55%)] transition-colors">
+                  <div className="mt-4 flex items-center gap-2 text-zinc-900 font-bold text-sm group-hover:text-ink-1 transition-colors">
                     Learn More <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
@@ -316,12 +316,12 @@ export default function Landing() {
 
               {/* vs VisualPing */}
               <Link to="/compare/visualping-alternative" className="block">
-                <div className="bg-white p-8 border-2 border-zinc-100 hover:border-zinc-900 transition-all shadow-sm hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] group h-full flex flex-col">
-                  <h3 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">vs VisualPing</h3>
+                <div className="bg-white p-8 border border-zinc-100 hover:border-zinc-900 transition-all shadow-sm hover:shadow-ww-md group h-full flex flex-col">
+                  <h3 className="text-2xl font-bold text-zinc-900 mb-4">vs VisualPing</h3>
                   <p className="text-zinc-600 mb-6 flex-grow">
                     AI semantic monitoring vs pixel diffs. Get notified about meaningful changes, not CSS updates.
                   </p>
-                  <div className="flex items-center gap-2 text-zinc-900 font-bold group-hover:text-[hsl(10,90%,55%)] transition-colors">
+                  <div className="flex items-center gap-2 text-zinc-900 font-bold group-hover:text-ink-1 transition-colors">
                     Compare <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
@@ -329,12 +329,12 @@ export default function Landing() {
 
               {/* vs Distill */}
               <Link to="/compare/distill-alternative" className="block">
-                <div className="bg-white p-8 border-2 border-zinc-100 hover:border-zinc-900 transition-all shadow-sm hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] group h-full flex flex-col">
-                  <h3 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">vs Distill</h3>
+                <div className="bg-white p-8 border border-zinc-100 hover:border-zinc-900 transition-all shadow-sm hover:shadow-ww-md group h-full flex flex-col">
+                  <h3 className="text-2xl font-bold text-zinc-900 mb-4">vs Distill</h3>
                   <p className="text-zinc-600 mb-6 flex-grow">
                     Natural language conditions vs XPath selectors. Monitor what matters without regex hell.
                   </p>
-                  <div className="flex items-center gap-2 text-zinc-900 font-bold group-hover:text-[hsl(10,90%,55%)] transition-colors">
+                  <div className="flex items-center gap-2 text-zinc-900 font-bold group-hover:text-ink-1 transition-colors">
                     Compare <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
@@ -342,12 +342,12 @@ export default function Landing() {
 
               {/* vs ChangeTower */}
               <Link to="/compare/changetower-alternative" className="block">
-                <div className="bg-white p-8 border-2 border-zinc-100 hover:border-zinc-900 transition-all shadow-sm hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] group h-full flex flex-col">
-                  <h3 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">vs ChangeTower</h3>
+                <div className="bg-white p-8 border border-zinc-100 hover:border-zinc-900 transition-all shadow-sm hover:shadow-ww-md group h-full flex flex-col">
+                  <h3 className="text-2xl font-bold text-zinc-900 mb-4">vs ChangeTower</h3>
                   <p className="text-zinc-600 mb-6 flex-grow">
                     Conditional alerts vs basic notifications. Set precise triggers, not just "something changed".
                   </p>
-                  <div className="flex items-center gap-2 text-zinc-900 font-bold group-hover:text-[hsl(10,90%,55%)] transition-colors">
+                  <div className="flex items-center gap-2 text-zinc-900 font-bold group-hover:text-ink-1 transition-colors">
                     Compare <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
@@ -367,7 +367,7 @@ export default function Landing() {
               className="space-y-8"
             >
               <div>
-                <h2 className="text-4xl md:text-5xl font-bold font-grotesk tracking-tight mb-4 text-zinc-900">
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900">
                   Simple Pricing
                 </h2>
                 <p className="text-xl text-zinc-500 max-w-2xl mx-auto">
@@ -375,13 +375,13 @@ export default function Landing() {
                 </p>
               </div>
 
-              <div className="bg-white p-12 border-2 border-zinc-900 shadow-brutalist-lg max-w-lg mx-auto">
+              <div className="bg-white p-12 border border-zinc-900 shadow-ww-md max-w-lg mx-auto">
                 <div className="mb-6">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 border-2 border-emerald-500 text-emerald-700 text-xs font-mono font-bold uppercase tracking-wider mb-4">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-500 text-emerald-700 text-xs font-mono font-bold uppercase tracking-wider mb-4">
                     <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                     Beta Access
                   </div>
-                  <div className="text-6xl font-bold font-grotesk text-zinc-900 mb-2">
+                  <div className="text-6xl font-bold text-zinc-900 mb-2">
                     $0
                   </div>
                   <p className="text-zinc-500 font-mono text-sm">
@@ -412,7 +412,7 @@ export default function Landing() {
 
                 <button
                   onClick={() => navigate('/dashboard')}
-                  className="w-full bg-zinc-900 text-white px-8 py-4 text-lg font-bold hover:bg-[hsl(10,90%,55%)] transition-colors shadow-brutalist active:translate-y-[2px] active:shadow-none"
+                  className="w-full bg-zinc-900 text-white px-8 py-4 text-lg font-bold hover:bg-ink-1 transition-colors shadow-ww-sm active:translate-y-[2px] active:shadow-none"
                 >
                   Start Monitoring
                 </button>
@@ -430,7 +430,7 @@ export default function Landing() {
           <div className="container mx-auto max-w-6xl">
             <div className="grid md:grid-cols-6 gap-8 mb-16">
               <div className="col-span-2">
-                <span className="font-bold text-xl tracking-tight block mb-6 text-white font-grotesk">τorale</span>
+                <span className="font-bold text-xl tracking-tight block mb-6 text-white">τorale</span>
                 <p className="text-zinc-500 text-sm leading-relaxed">
                   Reliable, intelligent web monitoring.
                 </p>

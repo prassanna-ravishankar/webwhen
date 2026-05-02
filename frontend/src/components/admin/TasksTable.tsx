@@ -73,7 +73,7 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
             <Search className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-grotesk font-bold">All Tasks</h3>
+            <h3 className="text-sm font-bold">All Tasks</h3>
             <p className="text-[10px] font-mono text-zinc-400">
               Click a row to view task details and execution history
             </p>

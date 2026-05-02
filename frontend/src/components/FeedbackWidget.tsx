@@ -33,7 +33,7 @@ export function FeedbackWidget({ context, contextId, compact = false }: Feedback
           <button
             onClick={() => handleVote('positive')}
             className={cn(
-              'border-2 border-zinc-200 hover:border-zinc-900 transition-colors',
+              'border border-zinc-200 hover:border-zinc-900 transition-colors',
               compact ? 'p-1' : 'p-2'
             )}
             aria-label="Thumbs up"
@@ -43,7 +43,7 @@ export function FeedbackWidget({ context, contextId, compact = false }: Feedback
           <button
             onClick={() => handleVote('negative')}
             className={cn(
-              'border-2 border-zinc-200 hover:border-zinc-900 transition-colors',
+              'border border-zinc-200 hover:border-zinc-900 transition-colors',
               compact ? 'p-1' : 'p-2'
             )}
             aria-label="Thumbs down"

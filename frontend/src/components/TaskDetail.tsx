@@ -228,7 +228,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
           )}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <h1 className={`font-grotesk font-bold truncate ${compact ? 'text-xl' : 'text-2xl md:text-4xl'}`}>
+              <h1 className={`font-bold truncate ${compact ? 'text-xl' : 'text-2xl md:text-4xl'}`}>
                 {task.name}
               </h1>
               <StatusBadge variant={status.activityState} />
@@ -293,21 +293,21 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
             <TabsList className="bg-transparent p-0 gap-8 h-auto w-full justify-start rounded-none">
               <TabsTrigger 
                 value="executions"
-                className="px-0 pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-zinc-900 data-[state=active]:bg-transparent shadow-none font-bold font-grotesk flex items-center gap-2"
+                className="px-0 pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-zinc-900 data-[state=active]:bg-transparent shadow-none font-bold flex items-center gap-2"
               >
                 <Activity className="h-4 w-4" />
                 Intelligence <span className="text-xs text-zinc-400 font-mono ml-1">({executions.length})</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="notifications"
-                className="px-0 pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-zinc-900 data-[state=active]:bg-transparent shadow-none font-bold font-grotesk flex items-center gap-2"
+                className="px-0 pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-zinc-900 data-[state=active]:bg-transparent shadow-none font-bold flex items-center gap-2"
               >
                 <Mail className="h-4 w-4" />
                 Findings <span className="text-xs text-zinc-400 font-mono ml-1">({notifications.length})</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="settings"
-                className="px-0 pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-zinc-900 data-[state=active]:bg-transparent shadow-none font-bold font-grotesk flex items-center gap-2"
+                className="px-0 pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-zinc-900 data-[state=active]:bg-transparent shadow-none font-bold flex items-center gap-2"
               >
                 <Settings className="h-4 w-4" />
                 Config
@@ -329,7 +329,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
 
         <TabsContent value="settings" className="mt-0 outline-none space-y-8">
           {isOwner && (
-            <div className="flex flex-wrap items-center gap-3 p-6 bg-white border-2 border-zinc-200">
+            <div className="flex flex-wrap items-center gap-3 p-6 bg-white border border-zinc-200">
               <div className="flex-1 min-w-[200px]">
                 <h4 className="font-bold text-sm mb-1">Quick Actions</h4>
                 <p className="text-xs text-zinc-500 font-mono">Trigger manual runs or manage task lifecycle.</p>

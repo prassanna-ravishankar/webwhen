@@ -171,9 +171,9 @@ export const TaskCreationDialog: React.FC<TaskCreationDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col overflow-hidden border-2 border-zinc-900 shadow-brutalist-lg">
+      <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col overflow-hidden border border-zinc-900 shadow-ww-md">
         <DialogHeader className="flex-shrink-0 border-b-2 border-zinc-100 pb-4">
-          <DialogTitle className="text-2xl font-bold font-grotesk tracking-tight">
+          <DialogTitle className="text-2xl font-bold tracking-tight">
             Create Monitor
           </DialogTitle>
           <DialogDescription className="text-zinc-500">
@@ -224,8 +224,8 @@ export const TaskCreationDialog: React.FC<TaskCreationDialogProps> = ({
                           type="button"
                           onClick={() => handleTemplateSelect(template.id)}
                           className={cn(
-                            "inline-flex items-center gap-1.5 px-3 py-1.5 border-2 border-zinc-200 bg-white font-mono text-xs hover:border-zinc-900 hover:shadow-brutalist transition-all",
-                            selectedTemplateId === template.id && "border-zinc-900 bg-zinc-50 shadow-brutalist"
+                            "inline-flex items-center gap-1.5 px-3 py-1.5 border border-zinc-200 bg-white font-mono text-xs hover:border-zinc-900 hover:shadow-ww-sm transition-all",
+                            selectedTemplateId === template.id && "border-zinc-900 bg-zinc-50 shadow-ww-sm"
                           )}
                         >
                           <IconComponent className="h-3.5 w-3.5 flex-shrink-0" />
@@ -249,7 +249,7 @@ export const TaskCreationDialog: React.FC<TaskCreationDialogProps> = ({
                             type="button"
                             onClick={() => handleTemplateSelect(template.id)}
                             className={cn(
-                              "inline-flex items-center gap-1.5 px-3 py-1.5 border-2 border-zinc-200 bg-white font-mono text-xs hover:border-zinc-900 transition-colors flex-shrink-0",
+                              "inline-flex items-center gap-1.5 px-3 py-1.5 border border-zinc-200 bg-white font-mono text-xs hover:border-zinc-900 transition-colors flex-shrink-0",
                               selectedTemplateId === template.id && "border-zinc-900 bg-zinc-50"
                             )}
                           >
@@ -285,7 +285,7 @@ export const TaskCreationDialog: React.FC<TaskCreationDialogProps> = ({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
             Cancel
           </Button>
-          <Button onClick={handleCreateTask} disabled={isSubmitting} className="shadow-brutalist">
+          <Button onClick={handleCreateTask} disabled={isSubmitting} className="shadow-ww-sm">
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Start Monitor
           </Button>

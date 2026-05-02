@@ -198,12 +198,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ onTaskClick }) => {
                 <span>/</span>
                 <span className="text-zinc-900">Mission Control</span>
               </div>
-              <h1 className="text-3xl font-bold font-grotesk tracking-tight">Dashboard</h1>
+              <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
             </div>
 
             <button
               onClick={() => setIsCreating(true)}
-              className="flex items-center justify-center gap-2 bg-zinc-900 text-white px-4 py-2.5 rounded-sm text-sm font-bold hover:bg-[hsl(10,90%,55%)] transition-colors shadow-brutalist active:translate-y-[1px] whitespace-nowrap"
+              className="flex items-center justify-center gap-2 bg-zinc-900 text-white px-4 py-2.5 rounded-sm text-sm font-bold hover:bg-ink-1 transition-colors shadow-ww-sm active:translate-y-[1px] whitespace-nowrap"
             >
               <Plus className="w-4 h-4" />
               New Monitor
@@ -216,13 +216,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ onTaskClick }) => {
             <TabsList className="bg-transparent p-0 gap-6">
               <TabsTrigger 
                 value="feed" 
-                className="bg-transparent p-0 pb-2 rounded-none border-b-2 border-transparent data-[state=active]:border-zinc-900 data-[state=active]:bg-transparent shadow-none font-bold font-grotesk"
+                className="bg-transparent p-0 pb-2 rounded-none border-b-2 border-transparent data-[state=active]:border-zinc-900 data-[state=active]:bg-transparent shadow-none font-bold"
               >
                 My Feed
               </TabsTrigger>
               <TabsTrigger 
                 value="monitors"
-                className="bg-transparent p-0 pb-2 rounded-none border-b-2 border-transparent data-[state=active]:border-zinc-900 data-[state=active]:bg-transparent shadow-none font-bold font-grotesk"
+                className="bg-transparent p-0 pb-2 rounded-none border-b-2 border-transparent data-[state=active]:border-zinc-900 data-[state=active]:bg-transparent shadow-none font-bold"
               >
                 Manage Monitors
               </TabsTrigger>
@@ -319,7 +319,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onTaskClick }) => {
                 }}
               />
             ) : viewMode === 'list' ? (
-              <div className="md:bg-white md:border-2 md:border-zinc-200">
+              <div className="md:bg-white md:border md:border-zinc-200">
                 <table className="w-full table-fixed">
                   <thead className="hidden md:table-header-group border-b-2 border-zinc-200 bg-zinc-50">
                     <tr>

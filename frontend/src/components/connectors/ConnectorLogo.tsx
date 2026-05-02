@@ -41,7 +41,7 @@ export const ConnectorLogo: React.FC<ConnectorLogoProps> = ({
   return (
     <div
       className={cn(
-        'flex items-center justify-center font-grotesk font-bold',
+        'flex items-center justify-center font-bold',
         sizeClass[size],
         muted ? 'bg-zinc-200 text-zinc-500' : 'bg-zinc-900 text-white',
         className

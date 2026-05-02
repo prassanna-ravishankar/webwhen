@@ -70,7 +70,7 @@ export function ErrorsList() {
           <AlertTriangle className="h-4 w-4" />
         </div>
         <div>
-          <h3 className="text-sm font-grotesk font-bold">Recent Errors</h3>
+          <h3 className="text-sm font-bold">Recent Errors</h3>
           <p className="text-[10px] font-mono text-zinc-400">
             Failed task executions requiring attention
           </p>
@@ -80,15 +80,15 @@ export function ErrorsList() {
       {/* Content */}
       <div className="p-4">
         {errors.length === 0 ? (
-          <div className="p-8 bg-emerald-50 border-2 border-emerald-200 text-center">
+          <div className="p-8 bg-emerald-50 border border-emerald-200 text-center">
             <CheckCircle2 className="h-8 w-8 text-emerald-600 mx-auto mb-3" />
-            <p className="text-sm font-grotesk font-bold text-emerald-900">System Healthy</p>
+            <p className="text-sm font-bold text-emerald-900">System Healthy</p>
             <p className="text-xs font-mono text-emerald-700 mt-1">No recent errors detected</p>
           </div>
         ) : (
           <div className="space-y-4">
             {errors.map((errorExec) => (
-              <div key={errorExec.id} className="border-2 border-red-200 bg-red-50">
+              <div key={errorExec.id} className="border border-red-200 bg-red-50">
                 {/* Error Header */}
                 <div className="p-3 border-b border-red-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div className="flex items-center gap-2 min-w-0">

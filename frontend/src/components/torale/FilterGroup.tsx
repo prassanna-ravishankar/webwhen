@@ -87,7 +87,7 @@ export const FilterGroup = <T extends string = string>({
       {/* Trigger button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between bg-white border-2 border-zinc-200 rounded-sm pl-3 pr-3 py-2 text-xs font-medium text-zinc-900 hover:border-zinc-400 transition-colors"
+        className="w-full flex items-center justify-between bg-white border border-zinc-200 rounded-sm pl-3 pr-3 py-2 text-xs font-medium text-zinc-900 hover:border-zinc-400 transition-colors"
       >
         <span className="flex items-center gap-2">
           {activeFilter?.icon && <activeFilter.icon className="w-3 h-3" />}
@@ -99,7 +99,7 @@ export const FilterGroup = <T extends string = string>({
 
       {/* Dropdown menu */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border-2 border-zinc-900 rounded-sm shadow-brutalist z-50 max-h-60 overflow-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-zinc-900 rounded-sm shadow-ww-md z-50 max-h-60 overflow-auto">
           {filters.map((filter) => {
             const Icon = filter.icon;
             const isActive = active === filter.id;

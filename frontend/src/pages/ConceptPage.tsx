@@ -44,7 +44,7 @@ export function ConceptPage() {
               transition={{ duration: 0.4 }}
               className="mb-8"
             >
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-white border-2 border-zinc-900 text-zinc-900 text-xs font-mono font-bold uppercase tracking-wider shadow-brutalist">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-white border border-zinc-900 text-zinc-900 text-xs font-mono font-bold uppercase tracking-wider shadow-ww-sm">
                 {data.tagline}
               </span>
             </motion.div>
@@ -53,7 +53,7 @@ export function ConceptPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
-              className="text-4xl md:text-5xl font-bold font-grotesk tracking-tight mb-6 text-zinc-900"
+              className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-zinc-900"
             >
               {data.heroTitle}
             </motion.h1>
@@ -84,7 +84,7 @@ export function ConceptPage() {
             className={`py-16 px-6 ${idx % 2 === 0 ? 'bg-white' : 'bg-zinc-50'}`}
           >
             <div className="container mx-auto max-w-3xl">
-              <h2 className="text-2xl md:text-3xl font-bold font-grotesk mb-6 text-zinc-900">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6 text-zinc-900">
                 {section.heading}
               </h2>
               <div className="space-y-4 text-zinc-700 leading-relaxed">
@@ -104,7 +104,7 @@ export function ConceptPage() {
               </p>
               <a
                 href={data.engineeringDoc.href}
-                className="group inline-flex items-center gap-3 text-xl font-grotesk font-bold hover:text-brand-orange transition-colors"
+                className="group inline-flex items-center gap-3 text-xl font-bold hover:text-ink-1 transition-colors"
               >
                 {data.engineeringDoc.label}
                 <ArrowUpRight className="h-5 w-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -115,7 +115,7 @@ export function ConceptPage() {
 
         <section className="py-16 px-6 bg-white">
           <div className="container mx-auto max-w-3xl">
-            <h2 className="text-2xl md:text-3xl font-bold font-grotesk mb-8 text-zinc-900">
+            <h2 className="text-2xl md:text-3xl font-bold mb-8 text-zinc-900">
               Frequently Asked Questions
             </h2>
             <div className="space-y-6">
@@ -140,7 +140,7 @@ export function ConceptPage() {
                   <li key={link.href}>
                     <a
                       href={link.href}
-                      className="inline-flex items-center gap-2 text-zinc-900 font-medium hover:text-brand-orange transition-colors"
+                      className="inline-flex items-center gap-2 text-zinc-900 font-medium hover:text-ink-1 transition-colors"
                     >
                       {link.label}
                       <ArrowRight className="h-4 w-4" />
@@ -154,12 +154,12 @@ export function ConceptPage() {
 
         <section className="py-16 px-6 bg-yellow-400 border-t-4 border-zinc-900">
           <div className="container mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl md:text-4xl font-bold font-grotesk mb-6 text-zinc-900">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-zinc-900">
               Ready to try it?
             </h2>
             <button
               onClick={() => navigate('/dashboard')}
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-zinc-900 text-white text-lg font-bold hover:bg-zinc-800 transition-all shadow-brutalist-lg hover:translate-x-[2px] hover:translate-y-[2px] border-2 border-zinc-900"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-zinc-900 text-white text-lg font-bold hover:bg-zinc-800 transition-all shadow-ww-md hover:translate-x-[2px] hover:translate-y-[2px] border border-zinc-900"
             >
               Start Monitoring Free
               <ArrowRight className="h-5 w-5" />

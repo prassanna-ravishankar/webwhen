@@ -94,7 +94,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             <Globe className="w-4 h-4" />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="font-bold text-sm text-zinc-900 font-grotesk leading-tight mb-1">
+            <h3 className="font-bold text-sm text-zinc-900 leading-tight mb-1">
               {task.name}
             </h3>
             <div className="flex items-center gap-2 text-[10px] text-zinc-400 font-mono">

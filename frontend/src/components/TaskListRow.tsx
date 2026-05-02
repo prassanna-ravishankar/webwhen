@@ -48,7 +48,7 @@ export const TaskListRow: React.FC<TaskListRowProps> = ({
       {/* Collapsed Row - renders as card on mobile, table row on desktop */}
       <motion.tr
         onClick={handleRowClick}
-        className="block md:table-row bg-white md:bg-transparent border-2 md:border-b md:border-zinc-200 border-zinc-200 md:last:border-0 rounded-sm md:rounded-none p-4 md:p-0 mb-2 md:mb-0 cursor-pointer hover:bg-zinc-50 transition-colors"
+        className="block md:table-row bg-white md:bg-transparent border md:border-b md:border-zinc-200 border-zinc-200 md:last:border-0 rounded-sm md:rounded-none p-4 md:p-0 mb-2 md:mb-0 cursor-pointer hover:bg-zinc-50 transition-colors"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -64,7 +64,7 @@ export const TaskListRow: React.FC<TaskListRowProps> = ({
               >
                 <ChevronRight className="w-4 h-4" />
               </motion.div>
-              <span className="font-grotesk font-bold text-sm truncate">{task.name}</span>
+              <span className="font-bold text-sm truncate">{task.name}</span>
             </div>
             <StatusBadge variant={status.activityState} />
           </div>
@@ -100,7 +100,7 @@ export const TaskListRow: React.FC<TaskListRowProps> = ({
               <ChevronRight className="w-4 h-4" />
             </motion.div>
             <div className="flex flex-col gap-1">
-              <span className="font-grotesk font-bold text-sm">{task.name}</span>
+              <span className="font-bold text-sm">{task.name}</span>
               <span className="text-xs text-zinc-500 truncate max-w-xs">{task.search_query}</span>
             </div>
           </div>
@@ -143,7 +143,7 @@ export const TaskListRow: React.FC<TaskListRowProps> = ({
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden"
               >
-                <div className="bg-white border-2 border-zinc-200 rounded-sm p-4 mb-2 mt-[-8px]">
+                <div className="bg-white border border-zinc-200 rounded-sm p-4 mb-2 mt-[-8px]">
                   {/* Latest Result */}
                   {getResultDisplayText(lastExecution?.result) ? (
                     <div className="mb-4">

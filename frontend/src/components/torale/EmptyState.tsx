@@ -54,7 +54,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         animate={{ opacity: 1 }}
         onClick={action.onClick}
         className={cn(
-          'w-full border-2 border-dashed border-zinc-200 rounded-sm flex flex-col items-center justify-center p-12 text-zinc-400 transition-all min-h-[200px]',
+          'w-full border border-dashed border-zinc-200 rounded-sm flex flex-col items-center justify-center p-12 text-zinc-400 transition-all min-h-[200px]',
           'hover:border-zinc-400 hover:text-zinc-600 cursor-pointer group',
           className
         )}
@@ -69,7 +69,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className={cn(
-        'w-full border-2 border-dashed border-zinc-200 rounded-sm flex flex-col items-center justify-center p-12 text-zinc-400 transition-all min-h-[200px]',
+        'w-full border border-dashed border-zinc-200 rounded-sm flex flex-col items-center justify-center p-12 text-zinc-400 transition-all min-h-[200px]',
         className
       )}
     >

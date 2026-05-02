@@ -109,9 +109,9 @@ export const TaskPreviewModal: React.FC<TaskPreviewModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col overflow-hidden border-2 border-zinc-900 shadow-brutalist-lg">
+      <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col overflow-hidden border border-zinc-900 shadow-ww-md">
         <DialogHeader className="flex-shrink-0 border-b-2 border-zinc-100 pb-4">
-          <DialogTitle className="text-xl font-bold font-grotesk">Preview: {task.name}</DialogTitle>
+          <DialogTitle className="text-xl font-bold">Preview: {task.name}</DialogTitle>
           <DialogDescription className="text-zinc-500">
             Testing your monitoring task (notifications suppressed)
           </DialogDescription>
@@ -141,7 +141,7 @@ export const TaskPreviewModal: React.FC<TaskPreviewModalProps> = ({
           {/* Results */}
           {execution && execution.status === 'success' && execution.result && (
             <div className="space-y-4">
-              <div className="p-3 bg-zinc-50 border-2 border-zinc-100">
+              <div className="p-3 bg-zinc-50 border border-zinc-100">
                 <p className="text-[10px] font-mono uppercase text-zinc-400 mb-1 tracking-wider">Search Query</p>
                 <p className="text-sm text-zinc-600">"{task.search_query}"</p>
               </div>
@@ -158,7 +158,7 @@ export const TaskPreviewModal: React.FC<TaskPreviewModalProps> = ({
                     showConditionBadge={true}
                   />
                 ) : (
-                  <div className="p-4 border-2 border-amber-200 bg-amber-50">
+                  <div className="p-4 border border-amber-200 bg-amber-50">
                     <p className="text-sm text-amber-700">
                       The agent completed but did not produce a summary.
                     </p>
@@ -191,7 +191,7 @@ export const TaskPreviewModal: React.FC<TaskPreviewModalProps> = ({
             <ExternalLink className="h-4 w-4 mr-2" />
             View History
           </Button>
-          <Button onClick={() => onOpenChange(false)} className="shadow-brutalist">
+          <Button onClick={() => onOpenChange(false)} className="shadow-ww-sm">
             Close
           </Button>
         </DialogFooter>

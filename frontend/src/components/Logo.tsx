@@ -17,7 +17,7 @@ export const Logo: React.FC<LogoProps> = ({
             <div className="relative w-8 h-8 flex items-center justify-center">
                 <svg
                     viewBox="0 0 32 32"
-                    className="w-full h-full transition-colors duration-200 fill-zinc-900 group-hover:fill-[hsl(10,90%,55%)]"
+                    className="w-full h-full transition-colors duration-200 fill-zinc-900 group-hover:fill-ember"
                     xmlns="http://www.w3.org/2000/svg"
                 >
                     {/* Top bar - split and shifted */}
@@ -36,7 +36,7 @@ export const Logo: React.FC<LogoProps> = ({
 
             {showText && (
                 <span className={cn(
-                    "font-grotesk font-bold text-xl tracking-tight text-zinc-900",
+                    "font-bold text-xl tracking-tight text-zinc-900",
                     textClassName
                 )}>
                     torale

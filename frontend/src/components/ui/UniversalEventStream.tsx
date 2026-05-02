@@ -53,11 +53,11 @@ export const UniversalEventStream = () => {
     <div className="relative w-full max-w-md mx-auto perspective-1000">
       <div className="absolute inset-0 bg-zinc-100 rounded-xl transform rotate-3 scale-105 opacity-50 blur-sm"></div>
 
-      <div className="bg-white border-2 border-zinc-100 rounded-xl shadow-2xl overflow-hidden relative z-10 flex flex-col h-[380px]">
+      <div className="bg-white border border-zinc-100 rounded-xl shadow-2xl overflow-hidden relative z-10 flex flex-col h-[380px]">
         <div className="bg-white border-b border-zinc-100 px-5 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-[hsl(10,90%,55%)] animate-pulse"></div>
-            <span className="text-xs font-grotesk font-bold text-zinc-900 tracking-wider uppercase">Incoming Signals</span>
+            <div className="h-2 w-2 rounded-full bg-ember animate-pulse"></div>
+            <span className="text-xs font-bold text-zinc-900 tracking-wider uppercase">Incoming Signals</span>
           </div>
           <span className="text-[10px] text-zinc-400 font-mono">Stream: Active</span>
         </div>

@@ -174,7 +174,7 @@ export function TaskDetailPanel({ task, onTaskUpdate }: TaskDetailPanelProps) {
         <button
           onClick={handleExecute}
           disabled={isBusy}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-900 text-white text-xs font-mono hover:bg-[hsl(10,90%,55%)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-900 text-white text-xs font-mono hover:bg-ink-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isExecuting ? (
             <Loader2 className="h-3 w-3 animate-spin" />

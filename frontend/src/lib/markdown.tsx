@@ -16,7 +16,7 @@ export const markdownFull: Components = {
   ol: ({ children }) => <ol className="list-decimal pl-5 mb-3 space-y-1.5">{children}</ol>,
   li: ({ children }) => <li className="text-sm leading-relaxed text-zinc-700">{children}</li>,
   strong: ({ children }) => <strong className="font-bold text-zinc-900">{children}</strong>,
-  h1: ({ children }) => <h1 className="text-xl font-grotesk font-bold mb-3 mt-4 text-zinc-900">{children}</h1>,
-  h2: ({ children }) => <h2 className="text-lg font-grotesk font-bold mb-2 mt-3 text-zinc-900">{children}</h2>,
-  h3: ({ children }) => <h3 className="text-base font-grotesk font-bold mb-2 mt-2 text-zinc-900">{children}</h3>,
+  h1: ({ children }) => <h1 className="text-xl font-bold mb-3 mt-4 text-zinc-900">{children}</h1>,
+  h2: ({ children }) => <h2 className="text-lg font-bold mb-2 mt-3 text-zinc-900">{children}</h2>,
+  h3: ({ children }) => <h3 className="text-base font-bold mb-2 mt-2 text-zinc-900">{children}</h3>,
 };

@@ -58,7 +58,7 @@ export default function Changelog() {
           }}
         />
       )}
-      <div className="min-h-screen bg-zinc-50 text-zinc-900 font-sans selection:bg-[hsl(10,90%,55%)] selection:text-white">
+      <div className="min-h-screen bg-zinc-50 text-zinc-900 font-sans selection:bg-ember selection:text-white">
       {/* Background Grid */}
       <div
         className="fixed inset-0 pointer-events-none z-0 opacity-[0.3]"
@@ -105,7 +105,7 @@ export default function Changelog() {
             transition={{ duration: 0.5 }}
             className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-100 border border-zinc-200 rounded-full text-[10px] font-mono font-medium tracking-widest uppercase mb-6"
           >
-            <div className="w-2 h-2 bg-[hsl(10,90%,55%)] rounded-full animate-pulse" />
+            <div className="w-2 h-2 bg-ember rounded-full animate-pulse" />
             Live Feed
           </motion.div>
 
@@ -113,7 +113,7 @@ export default function Changelog() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-5xl md:text-7xl font-bold font-grotesk tracking-tight mb-6 text-zinc-900"
+            className="text-5xl md:text-7xl font-bold tracking-tight mb-6 text-zinc-900"
           >
             What's New
           </motion.h1>
@@ -134,7 +134,7 @@ export default function Changelog() {
             href={GITHUB_REPO_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm font-bold text-zinc-900 hover:text-[hsl(10,90%,55%)] transition-colors border-b border-zinc-900 hover:border-[hsl(10,90%,55%)] pb-0.5"
+            className="inline-flex items-center gap-2 text-sm font-bold text-zinc-900 hover:text-ink-1 transition-colors border-b border-zinc-900 hover:border-ink-1 pb-0.5"
           >
             <Github className="w-4 h-4" />
             View Source on GitHub

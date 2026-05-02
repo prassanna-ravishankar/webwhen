@@ -22,7 +22,7 @@ export function PrivacyPolicy() {
           </button>
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-sm font-bold text-zinc-900 hover:text-[hsl(10,90%,55%)] transition-colors"
+            className="flex items-center gap-2 text-sm font-bold text-zinc-900 hover:text-ink-1 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Home
@@ -32,14 +32,14 @@ export function PrivacyPolicy() {
 
       {/* Content */}
       <main className="container mx-auto max-w-4xl px-6 py-16">
-        <div className="bg-white border-2 border-zinc-200 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] p-12">
-          <h1 className="text-4xl font-bold font-grotesk text-zinc-900 mb-2">Privacy Policy</h1>
+        <div className="bg-white border border-zinc-200 shadow-ww-md p-12">
+          <h1 className="text-4xl font-bold text-zinc-900 mb-2">Privacy Policy</h1>
           <p className="text-sm text-zinc-500 font-mono mb-12">Effective Date: December 2, 2025</p>
 
           <div className="prose prose-zinc max-w-none space-y-8">
             {/* Introduction */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">1. Introduction</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">1. Introduction</h2>
               <p className="text-zinc-600 leading-relaxed">
                 Torale Labs Inc. ("we," "us," "our") operates the Torale web monitoring platform ("Service").
                 This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you
@@ -49,9 +49,9 @@ export function PrivacyPolicy() {
 
             {/* Information We Collect */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">2. Information We Collect</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">2. Information We Collect</h2>
 
-              <h3 className="text-xl font-bold font-grotesk text-zinc-900 mb-3 mt-6">2.1 Account Information</h3>
+              <h3 className="text-xl font-bold text-zinc-900 mb-3 mt-6">2.1 Account Information</h3>
               <p className="text-zinc-600 leading-relaxed mb-4">When you create an account, we collect:</p>
               <ul className="list-disc pl-6 text-zinc-600 space-y-2">
                 <li><strong>Email address:</strong> Used for authentication, account recovery, and service communications</li>
@@ -60,7 +60,7 @@ export function PrivacyPolicy() {
                 <li><strong>Account metadata:</strong> Creation date, last login, account status (active/inactive)</li>
               </ul>
 
-              <h3 className="text-xl font-bold font-grotesk text-zinc-900 mb-3 mt-6">2.2 Task and Monitoring Data</h3>
+              <h3 className="text-xl font-bold text-zinc-900 mb-3 mt-6">2.2 Task and Monitoring Data</h3>
               <p className="text-zinc-600 leading-relaxed mb-4">When you create monitoring tasks, we collect:</p>
               <ul className="list-disc pl-6 text-zinc-600 space-y-2">
                 <li><strong>Search queries:</strong> The questions or topics you want to monitor (e.g., "When is the iPhone 17 release?")</li>
@@ -69,7 +69,7 @@ export function PrivacyPolicy() {
                 <li><strong>Notification preferences:</strong> How you want to be notified (once, always)</li>
               </ul>
 
-              <h3 className="text-xl font-bold font-grotesk text-zinc-900 mb-3 mt-6">2.3 Execution and Results Data</h3>
+              <h3 className="text-xl font-bold text-zinc-900 mb-3 mt-6">2.3 Execution and Results Data</h3>
               <p className="text-zinc-600 leading-relaxed mb-4">When tasks execute, we store:</p>
               <ul className="list-disc pl-6 text-zinc-600 space-y-2">
                 <li><strong>Execution metadata:</strong> Start time, completion time, status (success/failed), error messages</li>
@@ -80,7 +80,7 @@ export function PrivacyPolicy() {
                 <li><strong>Change summaries:</strong> Human-readable descriptions of what changed since the last execution</li>
               </ul>
 
-              <h3 className="text-xl font-bold font-grotesk text-zinc-900 mb-3 mt-6">2.4 API Keys</h3>
+              <h3 className="text-xl font-bold text-zinc-900 mb-3 mt-6">2.4 API Keys</h3>
               <p className="text-zinc-600 leading-relaxed mb-4">When you generate API keys for programmatic access, we collect:</p>
               <ul className="list-disc pl-6 text-zinc-600 space-y-2">
                 <li><strong>Key hash:</strong> SHA256 hash of the API key (never stored in plain text)</li>
@@ -89,7 +89,7 @@ export function PrivacyPolicy() {
                 <li><strong>Usage metadata:</strong> Creation date, last used timestamp</li>
               </ul>
 
-              <h3 className="text-xl font-bold font-grotesk text-zinc-900 mb-3 mt-6">2.5 Usage and Analytics Data</h3>
+              <h3 className="text-xl font-bold text-zinc-900 mb-3 mt-6">2.5 Usage and Analytics Data</h3>
               <p className="text-zinc-600 leading-relaxed mb-4">We automatically collect:</p>
               <ul className="list-disc pl-6 text-zinc-600 space-y-2">
                 <li><strong>System logs:</strong> API requests, error traces, performance metrics</li>
@@ -101,7 +101,7 @@ export function PrivacyPolicy() {
 
             {/* How We Use Information */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">3. How We Use Your Information</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">3. How We Use Your Information</h2>
               <p className="text-zinc-600 leading-relaxed mb-4">We use collected information to:</p>
               <ul className="list-disc pl-6 text-zinc-600 space-y-2">
                 <li><strong>Provide the Service:</strong> Execute monitoring tasks, evaluate conditions, send notifications</li>
@@ -115,9 +115,9 @@ export function PrivacyPolicy() {
 
             {/* Data Sharing */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">4. How We Share Your Information</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">4. How We Share Your Information</h2>
 
-              <h3 className="text-xl font-bold font-grotesk text-zinc-900 mb-3 mt-6">4.1 Third-Party Service Providers</h3>
+              <h3 className="text-xl font-bold text-zinc-900 mb-3 mt-6">4.1 Third-Party Service Providers</h3>
               <p className="text-zinc-600 leading-relaxed mb-4">We share data with trusted third-party providers:</p>
               <ul className="list-disc pl-6 text-zinc-600 space-y-2 mb-4">
                 <li><strong>Clerk:</strong> Authentication, user management, session handling</li>
@@ -130,7 +130,7 @@ export function PrivacyPolicy() {
                 These providers may use inputs to improve their models unless you opt out through their respective settings.
               </p>
 
-              <h3 className="text-xl font-bold font-grotesk text-zinc-900 mb-3 mt-6">4.2 Legal Requirements</h3>
+              <h3 className="text-xl font-bold text-zinc-900 mb-3 mt-6">4.2 Legal Requirements</h3>
               <p className="text-zinc-600 leading-relaxed mb-4">
                 We may disclose your information if required by law, subpoena, or other legal process, or if we believe
                 disclosure is necessary to:
@@ -142,7 +142,7 @@ export function PrivacyPolicy() {
                 <li>Enforce our Terms of Service</li>
               </ul>
 
-              <h3 className="text-xl font-bold font-grotesk text-zinc-900 mb-3 mt-6">4.3 Business Transfers</h3>
+              <h3 className="text-xl font-bold text-zinc-900 mb-3 mt-6">4.3 Business Transfers</h3>
               <p className="text-zinc-600 leading-relaxed">
                 If Torale Labs Inc. is involved in a merger, acquisition, or sale of assets, your information may be
                 transferred as part of that transaction. We will notify you via email of any such change in ownership.
@@ -151,10 +151,10 @@ export function PrivacyPolicy() {
 
             {/* Administrative Access */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">5. Administrative Access to Data</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">5. Administrative Access to Data</h2>
 
               <div className="bg-blue-50 border-l-4 border-blue-500 p-6 mb-6">
-                <h3 className="text-lg font-bold font-grotesk text-blue-900 mb-2">🔍 Transparency Notice</h3>
+                <h3 className="text-lg font-bold text-blue-900 mb-2">🔍 Transparency Notice</h3>
                 <p className="text-blue-800 text-sm leading-relaxed">
                   Torale administrators have access to user data through an internal administrative console for operational
                   and support purposes. We believe in transparency about how your data is accessed.
@@ -197,7 +197,7 @@ export function PrivacyPolicy() {
 
             {/* Data Security */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">6. Data Security</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">6. Data Security</h2>
               <p className="text-zinc-600 leading-relaxed mb-4">We implement industry-standard security measures:</p>
               <ul className="list-disc pl-6 text-zinc-600 space-y-2">
                 <li><strong>Encryption:</strong> TLS 1.3 for data in transit, AES-256 for data at rest</li>
@@ -214,7 +214,7 @@ export function PrivacyPolicy() {
 
             {/* Data Retention */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">7. Data Retention</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">7. Data Retention</h2>
               <p className="text-zinc-600 leading-relaxed mb-4">We retain your information:</p>
               <ul className="list-disc pl-6 text-zinc-600 space-y-2">
                 <li><strong>Active accounts:</strong> For the duration of your account</li>
@@ -227,7 +227,7 @@ export function PrivacyPolicy() {
 
             {/* Your Rights */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">8. Your Privacy Rights</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">8. Your Privacy Rights</h2>
               <p className="text-zinc-600 leading-relaxed mb-4">Depending on your jurisdiction, you may have the right to:</p>
               <ul className="list-disc pl-6 text-zinc-600 space-y-2">
                 <li><strong>Access:</strong> Request a copy of your personal data</li>
@@ -238,14 +238,14 @@ export function PrivacyPolicy() {
                 <li><strong>Restrict processing:</strong> Request limitations on how we use your data</li>
               </ul>
               <p className="text-zinc-600 leading-relaxed mt-4">
-                To exercise these rights, contact <a href="mailto:privacy@torale.ai" className="text-[hsl(10,90%,55%)] hover:underline">privacy@torale.ai</a>.
+                To exercise these rights, contact <a href="mailto:privacy@torale.ai" className="text-ink-1 hover:underline">privacy@torale.ai</a>.
                 We will respond within 30 days.
               </p>
             </section>
 
             {/* International Transfers */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">9. International Data Transfers</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">9. International Data Transfers</h2>
               <p className="text-zinc-600 leading-relaxed">
                 The Service is hosted in the United States (Google Cloud us-central1 region). If you access the Service
                 from outside the US, your data will be transferred to and processed in the United States. By using the
@@ -255,16 +255,16 @@ export function PrivacyPolicy() {
 
             {/* Children's Privacy */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">10. Children's Privacy</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">10. Children's Privacy</h2>
               <p className="text-zinc-600 leading-relaxed">
                 The Service is not intended for users under 18 years of age. We do not knowingly collect personal information
-                from children. If you believe we have collected data from a child, contact <a href="mailto:privacy@torale.ai" className="text-[hsl(10,90%,55%)] hover:underline">privacy@torale.ai</a>.
+                from children. If you believe we have collected data from a child, contact <a href="mailto:privacy@torale.ai" className="text-ink-1 hover:underline">privacy@torale.ai</a>.
               </p>
             </section>
 
             {/* Cookies and Tracking */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">11. Cookies and Tracking</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">11. Cookies and Tracking</h2>
               <p className="text-zinc-600 leading-relaxed mb-4">
                 We use essential cookies for authentication and session management via Clerk. We do not use third-party
                 analytics, advertising cookies, or tracking pixels.
@@ -276,7 +276,7 @@ export function PrivacyPolicy() {
 
             {/* Changes to Policy */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">12. Changes to This Privacy Policy</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">12. Changes to This Privacy Policy</h2>
               <p className="text-zinc-600 leading-relaxed">
                 We may update this Privacy Policy from time to time. Material changes will be communicated via email or
                 in-app notification. Continued use of the Service after changes constitutes acceptance of the updated policy.
@@ -285,14 +285,14 @@ export function PrivacyPolicy() {
 
             {/* Contact */}
             <section>
-              <h2 className="text-2xl font-bold font-grotesk text-zinc-900 mb-4">13. Contact Us</h2>
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">13. Contact Us</h2>
               <p className="text-zinc-600 leading-relaxed mb-4">
                 For questions, concerns, or requests regarding this Privacy Policy or your personal data:
               </p>
               <div className="p-4 bg-zinc-50 border border-zinc-200 rounded font-mono text-sm">
                 <p className="text-zinc-900">Torale Labs Inc.</p>
                 <p className="text-zinc-600">Privacy Officer</p>
-                <p className="text-zinc-600">Email: <a href="mailto:privacy@torale.ai" className="text-[hsl(10,90%,55%)] hover:underline">privacy@torale.ai</a></p>
+                <p className="text-zinc-600">Email: <a href="mailto:privacy@torale.ai" className="text-ink-1 hover:underline">privacy@torale.ai</a></p>
               </div>
             </section>
           </div>

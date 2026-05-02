@@ -111,7 +111,7 @@ export const ExecutionTimeline: React.FC<ExecutionTimelineProps> = ({
 
   if (visibleExecutions.length === 0) {
     return (
-      <div className="text-center py-20 bg-white border-2 border-zinc-200">
+      <div className="text-center py-20 bg-white border border-zinc-200">
         <Clock className="h-12 w-12 mx-auto text-zinc-200 mb-4" />
         <h3 className="text-lg font-bold text-zinc-900 mb-1">No activity recorded</h3>
         <p className="text-sm text-zinc-400 font-mono">
@@ -122,7 +122,7 @@ export const ExecutionTimeline: React.FC<ExecutionTimelineProps> = ({
   }
 
   return (
-    <div className="bg-white border-2 border-zinc-200 px-6 sm:px-12 divide-y divide-zinc-50">
+    <div className="bg-white border border-zinc-200 px-6 sm:px-12 divide-y divide-zinc-50">
       {visibleExecutions.map((execution) => (
         <ExecutionCard
           key={execution.id}

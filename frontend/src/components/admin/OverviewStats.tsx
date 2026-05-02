@@ -51,7 +51,7 @@ export function OverviewStats() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64 bg-white border-2 border-zinc-200">
+      <div className="flex items-center justify-center h-64 bg-white border border-zinc-200">
         <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
       </div>
     )
@@ -59,7 +59,7 @@ export function OverviewStats() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-64 bg-white border-2 border-zinc-200">
+      <div className="flex items-center justify-center h-64 bg-white border border-zinc-200">
         <div className="text-center">
           <p className="text-sm font-mono text-red-600">Error: {error}</p>
           <button
@@ -91,7 +91,7 @@ export function OverviewStats() {
             </div>
           </div>
           <div className="space-y-2">
-            <p className="text-3xl font-grotesk font-bold tracking-tight">
+            <p className="text-3xl font-bold tracking-tight">
               {stats.users.total}
               <span className="text-zinc-400 text-lg">/{stats.users.capacity}</span>
             </p>
@@ -118,7 +118,7 @@ export function OverviewStats() {
             </div>
           </div>
           <div className="space-y-2">
-            <p className="text-3xl font-grotesk font-bold tracking-tight">
+            <p className="text-3xl font-bold tracking-tight">
               {stats.tasks.total}
             </p>
             <div className="flex items-center gap-2">
@@ -142,7 +142,7 @@ export function OverviewStats() {
             </div>
           </div>
           <div className="space-y-2">
-            <p className="text-3xl font-grotesk font-bold tracking-tight">
+            <p className="text-3xl font-bold tracking-tight">
               {stats.executions_24h.total}
             </p>
             <div className="flex items-center gap-2">
@@ -168,7 +168,7 @@ export function OverviewStats() {
             </div>
           </div>
           <div className="space-y-2">
-            <p className="text-3xl font-grotesk font-bold tracking-tight text-emerald-600">
+            <p className="text-3xl font-bold tracking-tight text-emerald-600">
               {stats.executions_24h.success_rate}
             </p>
             <p className="text-xs font-mono text-zinc-500">Last 24 hours</p>
@@ -180,7 +180,7 @@ export function OverviewStats() {
       <Card>
         <div className="p-4 border-b border-zinc-200 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-grotesk font-bold">Popular Queries</h3>
+            <h3 className="text-sm font-bold">Popular Queries</h3>
             <p className="text-[10px] font-mono text-zinc-400 mt-0.5">
               Top 10 most common search queries
             </p>

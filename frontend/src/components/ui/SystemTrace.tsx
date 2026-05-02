@@ -38,11 +38,11 @@ const TerminalLog = ({ activeStep }: { activeStep: number }) => {
         >
           <span className="text-zinc-500 w-20 shrink-0">{log.cmd}</span>
           <span className={`
-            ${i >= visibleSteps - 2 ? 'text-[hsl(10,90%,55%)]' : 'text-zinc-300'}
+            ${i >= visibleSteps - 2 ? 'text-ember' : 'text-zinc-300'}
           `}>{log.msg}</span>
         </motion.div>
       ))}
-      <div className="animate-pulse w-3 h-5 bg-[hsl(10,90%,55%)]" />
+      <div className="animate-pulse w-3 h-5 bg-ember" />
     </div>
   );
 };
@@ -102,7 +102,7 @@ export const SystemTrace = () => {
 
         {/* Sticky Visualization */}
         <div className="hidden md:block relative h-full">
-          <div className="sticky top-32 h-[500px] w-full bg-zinc-950 border-2 border-zinc-900 rounded-lg overflow-hidden shadow-2xl z-20 flex flex-col">
+          <div className="sticky top-32 h-[500px] w-full bg-zinc-950 border border-zinc-900 rounded-lg overflow-hidden shadow-2xl z-20 flex flex-col">
             <div className="h-12 border-b border-zinc-800 bg-zinc-900 flex items-center px-4 justify-between">
               <span className="font-mono text-xs text-zinc-400 font-bold uppercase tracking-widest">
                 Monitor_Trace
@@ -123,7 +123,7 @@ export const SystemTrace = () => {
             {/* Active Step Indicator */}
             <div className="h-2 bg-zinc-900 w-full flex">
               {[1,2,3,4].map(s => (
-                <div key={s} className={`flex-1 transition-colors duration-300 ${s <= activeStep ? 'bg-[hsl(10,90%,55%)]' : 'bg-zinc-800'}`} />
+                <div key={s} className={`flex-1 transition-colors duration-300 ${s <= activeStep ? 'bg-ink-3' : 'bg-zinc-800'}`} />
               ))}
             </div>
           </div>
@@ -137,14 +137,14 @@ export const SystemTrace = () => {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ margin: "-20% 0px -20% 0px" }}
-              className="bg-white p-8 border-l-4 border-zinc-200 hover:border-[hsl(10,90%,55%)] transition-colors pl-8"
+              className="bg-white p-8 border-l-4 border-zinc-200 hover:border-ink-1 transition-colors pl-8"
             >
               <div className="flex items-center gap-4 mb-4">
                 <div className="font-mono text-3xl font-bold text-zinc-200">0{step.id}</div>
                 <div className="p-2 bg-zinc-100 rounded text-zinc-900"><step.icon className="w-5 h-5" /></div>
               </div>
 
-              <h3 className="text-2xl font-bold font-grotesk mb-4 text-zinc-900">{step.title}</h3>
+              <h3 className="text-2xl font-bold mb-4 text-zinc-900">{step.title}</h3>
               <p className="text-zinc-500 leading-relaxed text-base mb-6 font-medium">
                 {step.description}
               </p>
