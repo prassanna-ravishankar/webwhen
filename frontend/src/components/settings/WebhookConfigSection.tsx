@@ -10,7 +10,7 @@ import {
   EyeOff,
 } from 'lucide-react';
 import { api } from '@/lib/api';
-import { BrutalistCard, CollapsibleSection, BrutalistSwitch } from '@/components/torale';
+import { Card, CollapsibleSection, Switch } from '@/components/torale';
 import { getErrorMessage } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { WebhookConfig } from '@/types';
@@ -136,14 +136,14 @@ export const WebhookConfigSection: React.FC = () => {
 
   if (isLoading) {
     return (
-      <BrutalistCard className="p-8 flex items-center justify-center">
+      <Card className="p-8 flex items-center justify-center">
         <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
-      </BrutalistCard>
+      </Card>
     );
   }
 
   return (
-    <BrutalistCard>
+    <Card>
       {/* Header */}
       <div className="p-4 border-b border-zinc-200 flex items-center justify-between">
         <p className="text-xs text-zinc-500">
@@ -242,7 +242,7 @@ export const WebhookConfigSection: React.FC = () => {
               <p className="text-sm font-mono text-zinc-900">Enable Webhook</p>
               <p className="text-[10px] text-zinc-500">Receive notifications at this URL</p>
             </div>
-            <BrutalistSwitch
+            <Switch
               checked={config.enabled}
               onCheckedChange={handleToggleEnabled}
               disabled={isSaving}
@@ -309,6 +309,6 @@ export const WebhookConfigSection: React.FC = () => {
             </div>
         </CollapsibleSection>
       </div>
-    </BrutalistCard>
+    </Card>
   );
 };

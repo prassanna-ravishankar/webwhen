@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Loader2, RefreshCw, Unplug, X } from 'lucide-react';
-import { BrutalistCard, StatusBadge, ActionMenu, type Action } from '@/components/torale';
+import { Card, StatusBadge, ActionMenu, type Action } from '@/components/torale';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -111,7 +111,7 @@ export const ConnectorCard: React.FC<ConnectorCardProps> = ({
 
   return (
     <>
-      <BrutalistCard className={cn('p-0', accentClass)} animate hoverEffect={!isConnecting}>
+      <Card className={cn('p-0', accentClass)} animate hoverEffect={!isConnecting}>
         <div className="flex items-start gap-3 p-5 pb-4">
           <ConnectorLogo
             slug={toolkit.slug}
@@ -216,7 +216,7 @@ export const ConnectorCard: React.FC<ConnectorCardProps> = ({
             </Button>
           )}
         </div>
-      </BrutalistCard>
+      </Card>
 
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent>

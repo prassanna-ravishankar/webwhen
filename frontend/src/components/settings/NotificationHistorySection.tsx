@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Loader2, Mail, Webhook } from 'lucide-react';
 import { api } from '@/lib/api';
 import type { WebhookDelivery, NotificationSend } from '@/types';
-import { BrutalistCard, StatusBadge, type StatusVariant } from '@/components/torale';
+import { Card, StatusBadge, type StatusVariant } from '@/components/torale';
 import { formatTimeAgo } from '@/lib/utils';
 
 export const NotificationHistorySection: React.FC = () => {
@@ -58,7 +58,7 @@ export const NotificationHistorySection: React.FC = () => {
   };
 
   return (
-    <BrutalistCard>
+    <Card>
       {/* Header */}
       <div className="p-4 border-b border-zinc-200">
         <p className="text-xs text-zinc-500">
@@ -188,6 +188,6 @@ export const NotificationHistorySection: React.FC = () => {
           )
         )}
       </div>
-    </BrutalistCard>
+    </Card>
   );
 };

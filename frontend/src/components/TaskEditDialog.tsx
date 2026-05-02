@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn, getErrorMessage } from '@/lib/utils';
-import { BrutalistSwitch, FieldError } from "@/components/torale";
+import { Switch, FieldError } from "@/components/torale";
 import { ConnectorPickerSection } from "@/components/connectors/ConnectorPickerSection";
 
 interface TaskEditDialogProps {
@@ -244,7 +244,7 @@ export const TaskEditDialog: React.FC<TaskEditDialogProps> = ({
                     : 'Only you can see this task'}
                 </p>
               </div>
-              <BrutalistSwitch
+              <Switch
                 checked={isPublic}
                 onCheckedChange={handleVisibilityToggle}
                 disabled={isTogglingVisibility}

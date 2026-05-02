@@ -28,7 +28,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import { SectionLabel, BrutalistCard, StatusBadge } from '@/components/torale'
+import { SectionLabel, Card, StatusBadge } from '@/components/torale'
 import type { UserData, UsersDataResponse } from './types'
 
 export function UsersTable() {
@@ -176,15 +176,15 @@ export function UsersTable() {
 
   if (loading) {
     return (
-      <BrutalistCard className="flex items-center justify-center h-64">
+      <Card className="flex items-center justify-center h-64">
         <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
-      </BrutalistCard>
+      </Card>
     )
   }
 
   if (error) {
     return (
-      <BrutalistCard className="flex items-center justify-center h-64">
+      <Card className="flex items-center justify-center h-64">
         <div className="text-center">
           <p className="text-sm font-mono text-red-600">Error: {error}</p>
           <button
@@ -194,7 +194,7 @@ export function UsersTable() {
             Retry
           </button>
         </div>
-      </BrutalistCard>
+      </Card>
     )
   }
 
@@ -209,7 +209,7 @@ export function UsersTable() {
   return (
     <div className="space-y-4">
       {/* Capacity Card */}
-      <BrutalistCard className="p-4">
+      <Card className="p-4">
         <div className="flex items-center justify-between mb-3">
           <SectionLabel>Platform Capacity</SectionLabel>
           <div className="bg-zinc-100 w-8 h-8 flex items-center justify-center">
@@ -233,7 +233,7 @@ export function UsersTable() {
             {data.capacity.available} seats available
           </p>
         </div>
-      </BrutalistCard>
+      </Card>
 
       {/* Bulk Actions Toolbar */}
       {selectedUserIds.size > 0 && (
@@ -268,7 +268,7 @@ export function UsersTable() {
       )}
 
       {/* Users Table */}
-      <BrutalistCard>
+      <Card>
         {/* Header */}
         <div className="p-4 border-b border-zinc-200 flex items-center gap-3">
           <div className="bg-zinc-900 text-white w-8 h-8 flex items-center justify-center shrink-0">
@@ -404,7 +404,7 @@ export function UsersTable() {
             ))
           )}
         </div>
-      </BrutalistCard>
+      </Card>
 
       {/* Single User Role Edit Dialog */}
       <Dialog open={!!editingUser} onOpenChange={() => setEditingUser(null)}>

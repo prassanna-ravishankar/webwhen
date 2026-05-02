@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { getErrorMessage } from '@/lib/utils'
 import { api } from '@/lib/api'
 import { Users, ListChecks, Activity, TrendingUp, Loader2, Search, Zap } from 'lucide-react'
-import { SectionLabel, BrutalistCard } from '@/components/torale'
+import { SectionLabel, Card } from '@/components/torale'
 
 interface PlatformStats {
   users: {
@@ -83,7 +83,7 @@ export function OverviewStats() {
       {/* KPI Cards Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* User Capacity */}
-        <BrutalistCard className="p-4">
+        <Card className="p-4">
           <div className="flex items-center justify-between mb-3">
             <SectionLabel>User Capacity</SectionLabel>
             <div className="bg-zinc-100 w-8 h-8 flex items-center justify-center">
@@ -107,10 +107,10 @@ export function OverviewStats() {
               {stats.users.available} seats available
             </p>
           </div>
-        </BrutalistCard>
+        </Card>
 
         {/* Active Tasks */}
-        <BrutalistCard className="p-4">
+        <Card className="p-4">
           <div className="flex items-center justify-between mb-3">
             <SectionLabel>Active Tasks</SectionLabel>
             <div className="bg-zinc-100 w-8 h-8 flex items-center justify-center">
@@ -131,10 +131,10 @@ export function OverviewStats() {
               </span>
             </div>
           </div>
-        </BrutalistCard>
+        </Card>
 
         {/* 24h Executions */}
-        <BrutalistCard className="p-4">
+        <Card className="p-4">
           <div className="flex items-center justify-between mb-3">
             <SectionLabel>24h Executions</SectionLabel>
             <div className="bg-zinc-100 w-8 h-8 flex items-center justify-center">
@@ -157,10 +157,10 @@ export function OverviewStats() {
               )}
             </div>
           </div>
-        </BrutalistCard>
+        </Card>
 
         {/* Success Rate */}
-        <BrutalistCard className="p-4">
+        <Card className="p-4">
           <div className="flex items-center justify-between mb-3">
             <SectionLabel>Success Rate</SectionLabel>
             <div className="bg-zinc-100 w-8 h-8 flex items-center justify-center">
@@ -173,11 +173,11 @@ export function OverviewStats() {
             </p>
             <p className="text-xs font-mono text-zinc-500">Last 24 hours</p>
           </div>
-        </BrutalistCard>
+        </Card>
       </div>
 
       {/* Popular Queries */}
-      <BrutalistCard>
+      <Card>
         <div className="p-4 border-b border-zinc-200 flex items-center justify-between">
           <div>
             <h3 className="text-sm font-grotesk font-bold">Popular Queries</h3>
@@ -225,7 +225,7 @@ export function OverviewStats() {
             </div>
           )}
         </div>
-      </BrutalistCard>
+      </Card>
     </div>
   )
 }

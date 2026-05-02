@@ -15,7 +15,7 @@ import { getErrorMessage } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { EmailVerificationModal } from './EmailVerificationModal';
-import { SectionLabel, BrutalistCard, StatusBadge } from '@/components/torale';
+import { SectionLabel, Card, StatusBadge } from '@/components/torale';
 
 export const EmailManagementSection: React.FC = () => {
   const { user } = useAuth();
@@ -74,7 +74,7 @@ export const EmailManagementSection: React.FC = () => {
 
   return (
     <>
-      <BrutalistCard>
+      <Card>
         {/* Header */}
         <div className="p-4 border-b border-zinc-200">
           <p className="text-xs text-zinc-500">
@@ -164,7 +164,7 @@ export const EmailManagementSection: React.FC = () => {
             </div>
           )}
         </div>
-      </BrutalistCard>
+      </Card>
 
       {/* Email Verification Modal */}
       <EmailVerificationModal

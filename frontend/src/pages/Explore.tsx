@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/lib/api';
 import type { Task, FeedExecution } from '@/types';
-import { BrutalistCard, SectionLabel } from '@/components/torale';
+import { Card, SectionLabel } from '@/components/torale';
 import { ResultCard } from '@/components/ResultCard';
 import { TaskDetailOverlay } from '@/components/TaskDetailOverlay';
 import { Loader2, Eye, Users, ChevronLeft, ChevronRight, Compass, Copy, Rss, Globe } from 'lucide-react';
@@ -123,7 +123,7 @@ export function Explore() {
                 <Loader2 className="h-8 w-8 animate-spin text-zinc-300" />
               </div>
             ) : feed.length === 0 ? (
-              <BrutalistCard className="p-12 text-center">
+              <Card className="p-12 text-center">
                 <Globe className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
                 <h3 className="text-lg font-grotesk font-bold text-zinc-900 mb-2">
                   No public results yet
@@ -131,7 +131,7 @@ export function Explore() {
                 <p className="text-sm text-zinc-500 font-mono">
                   Results from public monitors will appear here.
                 </p>
-              </BrutalistCard>
+              </Card>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {feed.map((execution) => (
@@ -185,7 +185,7 @@ export function Explore() {
                 <Loader2 className="h-8 w-8 animate-spin text-zinc-300" />
               </div>
             ) : tasks.length === 0 ? (
-              <BrutalistCard className="p-12 text-center">
+              <Card className="p-12 text-center">
                 <Compass className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
                 <h3 className="text-lg font-grotesk font-bold text-zinc-900 mb-2">
                   No public tasks yet
@@ -193,11 +193,11 @@ export function Explore() {
                 <p className="text-sm text-zinc-500 font-mono">
                   Be the first to share a monitor with the community!
                 </p>
-              </BrutalistCard>
+              </Card>
             ) : (
               <div className="space-y-4">
                 {tasks.map((task) => (
-                  <BrutalistCard
+                  <Card
                     key={task.id}
                     variant="clickable"
                     onClick={() => handleTaskClick(task)}
@@ -259,7 +259,7 @@ export function Explore() {
                         {task.condition_description}
                       </p>
                     </div>
-                  </BrutalistCard>
+                  </Card>
                 ))}
               </div>
             )}

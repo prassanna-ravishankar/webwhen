@@ -2,7 +2,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeSanitize from 'rehype-sanitize';
 import { FeedExecution } from '@/types';
-import { BrutalistCard } from '@/components/torale';
+import { Card } from '@/components/torale';
 import { markdownCompact } from '@/lib/markdown';
 import { formatTimeAgo, formatShortDateTime } from '@/lib/utils';
 import { Search, Clock, ArrowUpRight } from 'lucide-react';
@@ -18,7 +18,7 @@ export const ResultCard: React.FC<ResultCardProps> = ({ execution, onClick }) =>
   const content = execution.notification || execution.result?.evidence;
 
   return (
-    <BrutalistCard
+    <Card
       variant="clickable"
       onClick={onClick}
       hoverEffect={true}
@@ -73,6 +73,6 @@ export const ResultCard: React.FC<ResultCardProps> = ({ execution, onClick }) =>
            </div>
          )}
       </div>
-    </BrutalistCard>
+    </Card>
   );
 };

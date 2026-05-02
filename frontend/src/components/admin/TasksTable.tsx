@@ -4,7 +4,7 @@ import { api } from '@/lib/api'
 import { TaskCard } from './cards/TaskCard'
 import { TaskDetailPanel } from './TaskDetailPanel'
 import { Loader2, Search, Zap } from 'lucide-react'
-import { SectionLabel, BrutalistCard, StatusBadge, BrutalistSwitch } from '@/components/torale'
+import { SectionLabel, Card, StatusBadge, Switch } from '@/components/torale'
 import { stateToVariant } from './types'
 import type { TaskData } from './types'
 
@@ -42,15 +42,15 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
 
   if (loading) {
     return (
-      <BrutalistCard className="flex items-center justify-center h-64">
+      <Card className="flex items-center justify-center h-64">
         <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
-      </BrutalistCard>
+      </Card>
     )
   }
 
   if (error) {
     return (
-      <BrutalistCard className="flex items-center justify-center h-64">
+      <Card className="flex items-center justify-center h-64">
         <div className="text-center">
           <p className="text-sm font-mono text-red-600">Error: {error}</p>
           <button
@@ -60,12 +60,12 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
             Retry
           </button>
         </div>
-      </BrutalistCard>
+      </Card>
     )
   }
 
   return (
-    <BrutalistCard>
+    <Card>
       {/* Header */}
       <div className="p-4 border-b border-zinc-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
@@ -80,7 +80,7 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <BrutalistSwitch
+          <Switch
             checked={activeOnly}
             onCheckedChange={setActiveOnly}
           />
@@ -191,6 +191,6 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
           ))
         )}
       </div>
-    </BrutalistCard>
+    </Card>
   )
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Task } from '@/types';
-import { StatusBadge, SectionLabel, ActionMenu, BrutalistCard, DeleteMonitorDialog, type Action } from '@/components/torale';
+import { StatusBadge, SectionLabel, ActionMenu, Card, DeleteMonitorDialog, type Action } from '@/components/torale';
 import { Clock, Globe, Trash2, Play, Edit, Pause, Zap } from 'lucide-react';
 import { getTaskStatus } from '@/lib/taskStatus';
 import { formatTimeAgo, formatTimeUntil, formatShortDateTime, getTaskExecuteLabel } from '@/lib/utils';
@@ -76,7 +76,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   };
 
   return (
-    <BrutalistCard
+    <Card
       variant="clickable"
       animate={true}
       hoverEffect={true}
@@ -151,6 +151,6 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         onOpenChange={setShowDeleteDialog}
         onConfirm={handleDelete}
       />
-    </BrutalistCard>
+    </Card>
   );
 };

@@ -3,10 +3,10 @@ import { AlertTriangle, Plug2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import {
-  BrutalistTable,
-  BrutalistTableBody,
-  BrutalistTableCell,
-  BrutalistTableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
   CollapsibleSection,
   StatusBadge,
   type StatusVariant,
@@ -127,8 +127,8 @@ export const ConnectorPickerSection: React.FC<ConnectorPickerSectionProps> = ({
         ) : connections.length === 0 ? (
           <EmptyPickerState />
         ) : (
-          <BrutalistTable>
-            <BrutalistTableBody>
+          <Table>
+            <TableBody>
               {connections.map((conn) => (
                 <ConnectorRow
                   key={conn.toolkit_slug}
@@ -138,8 +138,8 @@ export const ConnectorPickerSection: React.FC<ConnectorPickerSectionProps> = ({
                   onToggle={() => toggle(conn.toolkit_slug)}
                 />
               ))}
-            </BrutalistTableBody>
-          </BrutalistTable>
+            </TableBody>
+          </Table>
         )}
       </div>
     </CollapsibleSection>
@@ -178,11 +178,11 @@ const ConnectorRow: React.FC<ConnectorRowProps> = ({
   const isExpired = connection.status === "EXPIRED";
 
   return (
-    <BrutalistTableRow
+    <TableRow
       onClick={disabled ? undefined : onToggle}
       className={cn(isExpired && "bg-amber-50/40")}
     >
-      <BrutalistTableCell className="w-10">
+      <TableCell className="w-10">
         <Checkbox
           checked={checked}
           onCheckedChange={onToggle}
@@ -190,8 +190,8 @@ const ConnectorRow: React.FC<ConnectorRowProps> = ({
           aria-label={`Attach ${connection.display_name}`}
           onClick={(e) => e.stopPropagation()}
         />
-      </BrutalistTableCell>
-      <BrutalistTableCell>
+      </TableCell>
+      <TableCell>
         <div className="flex flex-col">
           <span className="font-medium text-zinc-900">
             {connection.display_name}
@@ -201,11 +201,11 @@ const ConnectorRow: React.FC<ConnectorRowProps> = ({
             {isExpired && " — reconnect required"}
           </span>
         </div>
-      </BrutalistTableCell>
-      <BrutalistTableCell align="right" className="w-32">
+      </TableCell>
+      <TableCell align="right" className="w-32">
         <StatusBadge variant={variant} label={label} />
-      </BrutalistTableCell>
-    </BrutalistTableRow>
+      </TableCell>
+    </TableRow>
   );
 };
 

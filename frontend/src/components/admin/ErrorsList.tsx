@@ -3,7 +3,7 @@ import { getErrorMessage } from '@/lib/utils'
 import { api } from '@/lib/api'
 import { AlertTriangle, Loader2, CheckCircle2, Search, User, Clock } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
-import { SectionLabel, BrutalistCard } from '@/components/torale'
+import { SectionLabel, Card } from '@/components/torale'
 
 interface ErrorExecution {
   id: string
@@ -40,15 +40,15 @@ export function ErrorsList() {
 
   if (loading) {
     return (
-      <BrutalistCard className="flex items-center justify-center h-64">
+      <Card className="flex items-center justify-center h-64">
         <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
-      </BrutalistCard>
+      </Card>
     )
   }
 
   if (error) {
     return (
-      <BrutalistCard className="flex items-center justify-center h-64">
+      <Card className="flex items-center justify-center h-64">
         <div className="text-center">
           <p className="text-sm font-mono text-red-600">Error: {error}</p>
           <button
@@ -58,12 +58,12 @@ export function ErrorsList() {
             Retry
           </button>
         </div>
-      </BrutalistCard>
+      </Card>
     )
   }
 
   return (
-    <BrutalistCard>
+    <Card>
       {/* Header */}
       <div className="p-4 border-b border-zinc-200 flex items-center gap-3">
         <div className="bg-red-600 text-white w-8 h-8 flex items-center justify-center shrink-0">
@@ -147,6 +147,6 @@ export function ErrorsList() {
           </div>
         )}
       </div>
-    </BrutalistCard>
+    </Card>
   )
 }

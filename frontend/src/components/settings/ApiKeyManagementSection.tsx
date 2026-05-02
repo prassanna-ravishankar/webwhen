@@ -23,7 +23,7 @@ import { getErrorMessage } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import type { ApiKey } from '@/types';
-import { SectionLabel, BrutalistCard, StatusBadge } from '@/components/torale';
+import { SectionLabel, Card, StatusBadge } from '@/components/torale';
 
 export const ApiKeyManagementSection: React.FC = () => {
   const { user } = useAuth();
@@ -129,7 +129,7 @@ export const ApiKeyManagementSection: React.FC = () => {
 
   if (!isDeveloper) {
     return (
-      <BrutalistCard>
+      <Card>
         <div className="p-4 border-b border-zinc-200">
           <p className="text-xs text-zinc-500">
             Programmatic access to Torale API via Python SDK
@@ -144,7 +144,7 @@ export const ApiKeyManagementSection: React.FC = () => {
             </p>
           </div>
         </div>
-      </BrutalistCard>
+      </Card>
     );
   }
 
@@ -152,7 +152,7 @@ export const ApiKeyManagementSection: React.FC = () => {
 
   return (
     <>
-      <BrutalistCard>
+      <Card>
         {/* Header */}
         <div className="p-4 border-b border-zinc-200">
           <p className="text-xs text-zinc-500">
@@ -255,7 +255,7 @@ export const ApiKeyManagementSection: React.FC = () => {
             </div>
           )}
         </div>
-      </BrutalistCard>
+      </Card>
 
       {/* Create API Key Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
