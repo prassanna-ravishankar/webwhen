@@ -1,0 +1,292 @@
+/* ============================================================================
+   webwhen.ai — Colors & Type
+   ----------------------------------------------------------------------------
+   Editorial, calm, confident. Linear/Vercel cadence — not Zapier/Pingdom.
+   Single restrained accent (ember). Generous neutrals.
+
+   Import in HTML with:
+     <link rel="stylesheet" href="colors_and_type.css">
+   The CSS variables and semantic classes (.ww-h1, .ww-body, etc.) are
+   the canonical surface. Stay on them; avoid hand-rolled font/colour values.
+   ========================================================================== */
+
+/* -- Fonts ----------------------------------------------------------------- */
+
+/* Display + UI: Instrument Sans (calm, slightly editorial geometric sans) */
+@font-face {
+  font-family: "Instrument Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/s/instrumentsans/v1/pxiTypc9vsFDm051Uf6KVwgkfoSbSnNPooZAN0lonRO9PGNiZA.woff2") format("woff2");
+}
+
+/* Editorial display: Instrument Serif — used SPARINGLY for headlines */
+@font-face {
+  font-family: "Instrument Serif";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/s/instrumentserif/v4/jizDREVItHgc8qDIbSTKq4XIRfevTI9b.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Instrument Serif";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/s/instrumentserif/v4/jizGREVItHgc8qDIbSTKq4XIRfetlSpW7q9w.woff2") format("woff2");
+}
+
+/* Mono (carried over from Torale). Self-hosted. */
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("./fonts/jetbrains-mono-latin.woff2") format("woff2");
+}
+
+/* Inter — kept as a system fallback for charts/tables where Instrument Sans
+   metrics aren't ideal. Self-hosted. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("./fonts/inter-latin.woff2") format("woff2");
+}
+
+/* ========================================================================== */
+/* TOKENS                                                                      */
+/* ========================================================================== */
+
+:root {
+  /* -- Type families ------------------------------------------------------- */
+  --ww-font-sans:    "Instrument Sans", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ww-font-serif:   "Instrument Serif", "Iowan Old Style", "Apple Garamond", Baskerville, "Times New Roman", serif;
+  --ww-font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* -- Type scale (editorial; generous) ------------------------------------ */
+  --ww-fs-display:  4.5rem;   /* 72px — hero serif */
+  --ww-fs-h1:       3rem;     /* 48px */
+  --ww-fs-h2:       2.25rem;  /* 36px */
+  --ww-fs-h3:       1.5rem;   /* 24px */
+  --ww-fs-h4:       1.125rem; /* 18px */
+  --ww-fs-body:     1rem;     /* 16px */
+  --ww-fs-small:    0.875rem; /* 14px */
+  --ww-fs-xs:       0.75rem;  /* 12px — labels, monos, microcopy */
+
+  --ww-lh-tight:    1.05;
+  --ww-lh-snug:     1.2;
+  --ww-lh-normal:   1.5;
+  --ww-lh-loose:    1.65;
+
+  --ww-tracking-tight:  -0.02em;
+  --ww-tracking-snug:   -0.01em;
+  --ww-tracking-normal: 0;
+  --ww-tracking-wide:   0.08em;  /* eyebrow labels */
+  --ww-tracking-mono:   -0.01em;
+
+  /* -- Neutrals (warm-cool balanced; tested against a #FAFAF7 canvas) ------ */
+  --ww-ink-0:    #0B0B0C; /* near-black, primary text */
+  --ww-ink-1:    #1C1C1E; /* surfaces-dark, footer */
+  --ww-ink-2:    #3A3A3D; /* heading on light */
+  --ww-ink-3:    #6B6B70; /* secondary text */
+  --ww-ink-4:    #9A9AA0; /* tertiary, disabled */
+  --ww-ink-5:    #C7C7CC; /* dividers, faint borders */
+  --ww-ink-6:    #E5E5E2; /* card borders on canvas */
+  --ww-ink-7:    #EFEEEA; /* subtle fills */
+  --ww-ink-8:    #F5F4F0; /* secondary surface */
+  --ww-canvas:   #FAFAF7; /* page background — warm off-white (≈ paper) */
+  --ww-paper:    #FFFFFF; /* card surface */
+
+  /* -- Accent: Ember --------------------------------------------------------
+     A patient, confident terracotta. Not a notification red, not a CTA orange.
+     Used for: a single moment of emphasis (cursor, dot, key pull-quote, the
+     trigger event). Use < 5% of any composition. */
+  --ww-ember:        #C9582A;
+  --ww-ember-hover:  #B14B22;
+  --ww-ember-soft:   #F4E4DA;  /* tinted backgrounds, sparingly */
+  --ww-ember-ink:    #6B2A12;  /* text on ember-soft */
+
+  /* -- Semantic ------------------------------------------------------------- */
+  --ww-success:      #2F7D5C;
+  --ww-success-soft: #E5EFE9;
+  --ww-warn:         #B57F1A;
+  --ww-warn-soft:    #F5EDD8;
+  --ww-danger:       #B23A2A;
+  --ww-danger-soft:  #F4DCD7;
+  --ww-info:         #3A5F8C;   /* used as "watching" status */
+  --ww-info-soft:    #E2E8EF;
+
+  /* -- Radii (subtle; never pill except indicators) ----------------------- */
+  --ww-radius-xs:  3px;
+  --ww-radius-sm:  6px;
+  --ww-radius-md:  10px;
+  --ww-radius-lg:  14px;
+  --ww-radius-xl:  20px;
+  --ww-radius-pill: 999px;
+
+  /* -- Shadows (soft, low-contrast — no brutalist offset shadows) --------- */
+  --ww-shadow-xs: 0 1px 0 rgba(11,11,12,0.04);
+  --ww-shadow-sm: 0 1px 2px rgba(11,11,12,0.05), 0 1px 1px rgba(11,11,12,0.03);
+  --ww-shadow-md: 0 4px 12px -2px rgba(11,11,12,0.06), 0 2px 4px -1px rgba(11,11,12,0.04);
+  --ww-shadow-lg: 0 16px 40px -12px rgba(11,11,12,0.12), 0 4px 8px -2px rgba(11,11,12,0.04);
+  --ww-shadow-focus: 0 0 0 3px rgba(201, 88, 42, 0.18);
+  --ww-shadow-inset: inset 0 1px 0 rgba(255,255,255,0.6);
+
+  /* -- Spacing scale (4px base; intentional — not Tailwind's full set) ----- */
+  --ww-space-1:  4px;
+  --ww-space-2:  8px;
+  --ww-space-3:  12px;
+  --ww-space-4:  16px;
+  --ww-space-5:  20px;
+  --ww-space-6:  24px;
+  --ww-space-8:  32px;
+  --ww-space-10: 40px;
+  --ww-space-12: 48px;
+  --ww-space-16: 64px;
+  --ww-space-24: 96px;
+  --ww-space-32: 128px;
+
+  /* -- Borders ------------------------------------------------------------- */
+  --ww-border-hairline: 1px solid var(--ww-ink-6);
+  --ww-border-soft:     1px solid var(--ww-ink-5);
+  --ww-border-strong:   1px solid var(--ww-ink-2);
+
+  /* -- Motion -------------------------------------------------------------- */
+  --ww-ease-out:    cubic-bezier(0.22, 1, 0.36, 1);   /* settled, no bounce */
+  --ww-ease-inout:  cubic-bezier(0.65, 0, 0.35, 1);
+  --ww-dur-fast:    120ms;
+  --ww-dur-normal:  220ms;
+  --ww-dur-slow:    420ms;
+}
+
+/* ========================================================================== */
+/* SEMANTIC TYPE CLASSES                                                       */
+/* ========================================================================== */
+
+.ww-display {
+  font-family: var(--ww-font-serif);
+  font-weight: 400;
+  font-size: var(--ww-fs-display);
+  line-height: var(--ww-lh-tight);
+  letter-spacing: var(--ww-tracking-tight);
+  color: var(--ww-ink-0);
+  text-wrap: balance;
+}
+
+.ww-h1 {
+  font-family: var(--ww-font-sans);
+  font-weight: 500;
+  font-size: var(--ww-fs-h1);
+  line-height: var(--ww-lh-tight);
+  letter-spacing: var(--ww-tracking-tight);
+  color: var(--ww-ink-0);
+  text-wrap: balance;
+}
+
+.ww-h2 {
+  font-family: var(--ww-font-sans);
+  font-weight: 500;
+  font-size: var(--ww-fs-h2);
+  line-height: var(--ww-lh-snug);
+  letter-spacing: var(--ww-tracking-snug);
+  color: var(--ww-ink-0);
+  text-wrap: balance;
+}
+
+.ww-h3 {
+  font-family: var(--ww-font-sans);
+  font-weight: 500;
+  font-size: var(--ww-fs-h3);
+  line-height: var(--ww-lh-snug);
+  letter-spacing: var(--ww-tracking-snug);
+  color: var(--ww-ink-0);
+}
+
+.ww-h4 {
+  font-family: var(--ww-font-sans);
+  font-weight: 600;
+  font-size: var(--ww-fs-h4);
+  line-height: var(--ww-lh-snug);
+  color: var(--ww-ink-0);
+}
+
+.ww-body {
+  font-family: var(--ww-font-sans);
+  font-weight: 400;
+  font-size: var(--ww-fs-body);
+  line-height: var(--ww-lh-loose);
+  color: var(--ww-ink-2);
+  text-wrap: pretty;
+}
+
+.ww-body-lg {
+  font-family: var(--ww-font-sans);
+  font-weight: 400;
+  font-size: 1.125rem;
+  line-height: var(--ww-lh-loose);
+  color: var(--ww-ink-3);
+  text-wrap: pretty;
+}
+
+.ww-small {
+  font-family: var(--ww-font-sans);
+  font-weight: 400;
+  font-size: var(--ww-fs-small);
+  line-height: var(--ww-lh-normal);
+  color: var(--ww-ink-3);
+}
+
+.ww-eyebrow {
+  font-family: var(--ww-font-mono);
+  font-weight: 500;
+  font-size: 0.6875rem; /* 11px */
+  letter-spacing: var(--ww-tracking-wide);
+  text-transform: uppercase;
+  color: var(--ww-ink-4);
+}
+
+.ww-mono {
+  font-family: var(--ww-font-mono);
+  font-weight: 400;
+  font-size: var(--ww-fs-small);
+  letter-spacing: var(--ww-tracking-mono);
+  color: var(--ww-ink-2);
+}
+
+.ww-quote {
+  font-family: var(--ww-font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1.4;
+  color: var(--ww-ink-1);
+  text-wrap: pretty;
+}
+
+/* Special: the EMBER moment — a single span that catches the eye. */
+.ww-ember {
+  color: var(--ww-ember);
+}
+
+/* ========================================================================== */
+/* RESETS / BASE                                                               */
+/* ========================================================================== */
+
+.ww-base {
+  background: var(--ww-canvas);
+  color: var(--ww-ink-1);
+  font-family: var(--ww-font-sans);
+  font-size: var(--ww-fs-body);
+  line-height: var(--ww-lh-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--ww-ember);
+  color: #fff;
+}

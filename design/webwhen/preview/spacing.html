@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>webwhen · Spacing</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 24px; background: var(--ww-canvas); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { background: var(--ww-paper); border: 1px solid var(--ww-ink-6); border-radius: var(--ww-radius-md); padding: 20px 22px; }
+  h4.ww-eyebrow { margin: 0 0 14px; }
+  .row { display: flex; align-items: center; gap: 14px; padding: 6px 0; }
+  .label { font-family: var(--ww-font-mono); font-size: 11px; color: var(--ww-ink-3); width: 80px; flex-shrink: 0; }
+  .bar { background: var(--ww-ember-soft); height: 14px; border-radius: 2px; }
+  .px { font-family: var(--ww-font-mono); font-size: 11px; color: var(--ww-ink-4); margin-left: auto; }
+</style>
+</head>
+<body class="ww-base">
+<div class="grid">
+  <div class="panel">
+    <h4 class="ww-eyebrow">spacing scale · 4px base</h4>
+    <div class="row"><span class="label">space-1</span><span class="bar" style="width:4px;"></span><span class="px">4</span></div>
+    <div class="row"><span class="label">space-2</span><span class="bar" style="width:8px;"></span><span class="px">8</span></div>
+    <div class="row"><span class="label">space-3</span><span class="bar" style="width:12px;"></span><span class="px">12</span></div>
+    <div class="row"><span class="label">space-4</span><span class="bar" style="width:16px;"></span><span class="px">16</span></div>
+    <div class="row"><span class="label">space-6</span><span class="bar" style="width:24px;"></span><span class="px">24</span></div>
+    <div class="row"><span class="label">space-8</span><span class="bar" style="width:32px;"></span><span class="px">32</span></div>
+    <div class="row"><span class="label">space-12</span><span class="bar" style="width:48px;"></span><span class="px">48</span></div>
+    <div class="row"><span class="label">space-16</span><span class="bar" style="width:64px;"></span><span class="px">64</span></div>
+    <div class="row"><span class="label">space-24</span><span class="bar" style="width:96px;"></span><span class="px">96</span></div>
+  </div>
+  <div class="panel">
+    <h4 class="ww-eyebrow">radii</h4>
+    <div class="row"><span class="label">xs · 3</span><div style="width: 56px; height: 32px; background: var(--ww-ink-7); border: 1px solid var(--ww-ink-6); border-radius: var(--ww-radius-xs);"></div></div>
+    <div class="row"><span class="label">sm · 6</span><div style="width: 56px; height: 32px; background: var(--ww-ink-7); border: 1px solid var(--ww-ink-6); border-radius: var(--ww-radius-sm);"></div></div>
+    <div class="row"><span class="label">md · 10</span><div style="width: 56px; height: 32px; background: var(--ww-ink-7); border: 1px solid var(--ww-ink-6); border-radius: var(--ww-radius-md);"></div></div>
+    <div class="row"><span class="label">lg · 14</span><div style="width: 56px; height: 32px; background: var(--ww-ink-7); border: 1px solid var(--ww-ink-6); border-radius: var(--ww-radius-lg);"></div></div>
+    <div class="row"><span class="label">pill</span><div style="width: 56px; height: 28px; background: var(--ww-ink-7); border: 1px solid var(--ww-ink-6); border-radius: var(--ww-radius-pill);"></div></div>
+  </div>
+</div>
+</body>
+</html>

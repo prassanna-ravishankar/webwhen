@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>webwhen · Buttons</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 28px; background: var(--ww-canvas); }
+  .row { display: flex; gap: 14px; margin-bottom: 16px; align-items: center; }
+  .row:last-child { margin-bottom: 0; }
+  .label { font-family: var(--ww-font-mono); font-size: 10px; letter-spacing: 0.04em; color: var(--ww-ink-4); text-transform: uppercase; min-width: 90px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--ww-font-sans); font-weight: 500; font-size: 14px;
+    padding: 10px 18px; border-radius: var(--ww-radius-sm);
+    border: 1px solid transparent; cursor: pointer;
+    transition: all var(--ww-dur-fast) var(--ww-ease-out);
+    line-height: 1;
+  }
+  .btn-primary { background: var(--ww-ink-0); color: white; }
+  .btn-primary:hover { background: var(--ww-ink-1); }
+  .btn-secondary { background: var(--ww-paper); color: var(--ww-ink-0); border-color: var(--ww-ink-6); box-shadow: var(--ww-shadow-xs); }
+  .btn-secondary:hover { border-color: var(--ww-ink-5); }
+  .btn-ghost { background: transparent; color: var(--ww-ink-2); }
+  .btn-ghost:hover { color: var(--ww-ink-0); background: var(--ww-ink-7); }
+  .btn-ember { background: var(--ww-ember); color: white; }
+  .btn-ember:hover { background: var(--ww-ember-hover); }
+  .btn.sm { font-size: 12.5px; padding: 7px 12px; }
+  .btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+  .arrow { font-family: var(--ww-font-mono); }
+</style>
+</head>
+<body class="ww-base">
+  <div class="row">
+    <span class="label">primary</span>
+    <button class="btn btn-primary">Start watching <span class="arrow">→</span></button>
+    <button class="btn btn-primary sm">Save</button>
+    <button class="btn btn-primary" disabled>Disabled</button>
+  </div>
+  <div class="row">
+    <span class="label">secondary</span>
+    <button class="btn btn-secondary">Documentation</button>
+    <button class="btn btn-secondary sm">Cancel</button>
+  </div>
+  <div class="row">
+    <span class="label">ghost</span>
+    <button class="btn btn-ghost">Sign in</button>
+    <button class="btn btn-ghost sm">Skip</button>
+  </div>
+  <div class="row">
+    <span class="label">ember</span>
+    <button class="btn btn-ember">Trigger now <span class="arrow">→</span></button>
+    <span class="ww-small" style="color:var(--ww-ink-4);">— reserved for the trigger moment</span>
+  </div>
+</body>
+</html>

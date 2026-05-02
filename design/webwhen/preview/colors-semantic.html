@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>webwhen · Color · Semantic</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 24px; background: var(--ww-canvas); }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .pair { background: var(--ww-paper); border: 1px solid var(--ww-ink-6); border-radius: var(--ww-radius-md); overflow: hidden; }
+  .top { padding: 16px 18px; color: white; display: flex; justify-content: space-between; align-items: baseline; }
+  .top .name { font-family: var(--ww-font-mono); font-size: 11px; letter-spacing: 0.04em; }
+  .top .hex { font-family: var(--ww-font-mono); font-size: 10px; opacity: 0.8; }
+  .bottom { padding: 14px 18px; display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid var(--ww-ink-6); }
+  .bottom .name { font-family: var(--ww-font-mono); font-size: 11px; }
+  .bottom .hex { font-family: var(--ww-font-mono); font-size: 10px; color: var(--ww-ink-4); }
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: var(--ww-radius-pill); font-family: var(--ww-font-mono); font-size: 10px; letter-spacing: 0.04em; }
+  .pill .dot { width: 6px; height: 6px; border-radius: 999px; }
+</style>
+</head>
+<body class="ww-base">
+<div class="grid">
+  <div class="pair">
+    <div class="top" style="background:var(--ww-success);"><span class="name">success</span><span class="hex">#2F7D5C</span></div>
+    <div class="bottom" style="background:var(--ww-success-soft);"><span class="pill" style="background:transparent; color:var(--ww-success);"><span class="dot" style="background:var(--ww-success);"></span>triggered</span><span class="hex">soft</span></div>
+  </div>
+  <div class="pair">
+    <div class="top" style="background:var(--ww-info);"><span class="name">info</span><span class="hex">#3A5F8C</span></div>
+    <div class="bottom" style="background:var(--ww-info-soft);"><span class="pill" style="background:transparent; color:var(--ww-info);"><span class="dot" style="background:var(--ww-info);"></span>watching</span><span class="hex">soft</span></div>
+  </div>
+  <div class="pair">
+    <div class="top" style="background:var(--ww-warn);"><span class="name">warn</span><span class="hex">#B57F1A</span></div>
+    <div class="bottom" style="background:var(--ww-warn-soft);"><span class="pill" style="background:transparent; color:var(--ww-warn);"><span class="dot" style="background:var(--ww-warn);"></span>paused</span><span class="hex">soft</span></div>
+  </div>
+  <div class="pair">
+    <div class="top" style="background:var(--ww-danger);"><span class="name">danger</span><span class="hex">#B23A2A</span></div>
+    <div class="bottom" style="background:var(--ww-danger-soft);"><span class="pill" style="background:transparent; color:var(--ww-danger);"><span class="dot" style="background:var(--ww-danger);"></span>error</span><span class="hex">soft</span></div>
+  </div>
+</div>
+</body>
+</html>

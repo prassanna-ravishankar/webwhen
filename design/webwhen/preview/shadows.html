@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>webwhen · Shadows &amp; Borders</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 36px 28px; background: var(--ww-canvas); }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .card { background: var(--ww-paper); border-radius: var(--ww-radius-md); padding: 22px 18px; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; }
+  .label { font-family: var(--ww-font-mono); font-size: 10px; letter-spacing: 0.04em; color: var(--ww-ink-3); text-transform: uppercase; }
+  .desc { font-family: var(--ww-font-mono); font-size: 10px; color: var(--ww-ink-4); }
+</style>
+</head>
+<body class="ww-base">
+<div class="grid">
+  <div class="card" style="border: 1px solid var(--ww-ink-6); box-shadow: var(--ww-shadow-xs);">
+    <span class="label">shadow-xs</span><span class="desc">hairline sit</span>
+  </div>
+  <div class="card" style="border: 1px solid var(--ww-ink-6); box-shadow: var(--ww-shadow-sm);">
+    <span class="label">shadow-sm</span><span class="desc">resting card</span>
+  </div>
+  <div class="card" style="border: 1px solid var(--ww-ink-6); box-shadow: var(--ww-shadow-md);">
+    <span class="label">shadow-md</span><span class="desc">hover lift</span>
+  </div>
+  <div class="card" style="border: 1px solid var(--ww-ink-6); box-shadow: var(--ww-shadow-lg);">
+    <span class="label">shadow-lg</span><span class="desc">modal · float</span>
+  </div>
+</div>
+</body>
+</html>

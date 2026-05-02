@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>webwhen · Color · Neutrals</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 24px; background: var(--ww-canvas); }
+  .grid { display: grid; grid-template-columns: repeat(11, 1fr); gap: 1px; background: var(--ww-ink-6); border: 1px solid var(--ww-ink-6); border-radius: var(--ww-radius-md); overflow: hidden; }
+  .swatch { padding: 18px 12px 14px; min-height: 96px; display: flex; flex-direction: column; justify-content: space-between; }
+  .name { font-family: var(--ww-font-mono); font-size: 10px; letter-spacing: 0.04em; color: var(--ww-ink-3); }
+  .hex { font-family: var(--ww-font-mono); font-size: 10px; color: var(--ww-ink-4); }
+  .swatch.dark .name, .swatch.dark .hex { color: rgba(255,255,255,0.85); }
+  .swatch.dark .hex { color: rgba(255,255,255,0.55); }
+</style>
+</head>
+<body class="ww-base">
+<div class="grid">
+  <div class="swatch dark" style="background:var(--ww-ink-0);"><span class="name">ink-0</span><span class="hex">#0B0B0C</span></div>
+  <div class="swatch dark" style="background:var(--ww-ink-1);"><span class="name">ink-1</span><span class="hex">#1C1C1E</span></div>
+  <div class="swatch dark" style="background:var(--ww-ink-2);"><span class="name">ink-2</span><span class="hex">#3A3A3D</span></div>
+  <div class="swatch dark" style="background:var(--ww-ink-3);"><span class="name">ink-3</span><span class="hex">#6B6B70</span></div>
+  <div class="swatch" style="background:var(--ww-ink-4);"><span class="name">ink-4</span><span class="hex">#9A9AA0</span></div>
+  <div class="swatch" style="background:var(--ww-ink-5);"><span class="name">ink-5</span><span class="hex">#C7C7CC</span></div>
+  <div class="swatch" style="background:var(--ww-ink-6);"><span class="name">ink-6</span><span class="hex">#E5E5E2</span></div>
+  <div class="swatch" style="background:var(--ww-ink-7);"><span class="name">ink-7</span><span class="hex">#EFEEEA</span></div>
+  <div class="swatch" style="background:var(--ww-ink-8);"><span class="name">ink-8</span><span class="hex">#F5F4F0</span></div>
+  <div class="swatch" style="background:var(--ww-canvas);"><span class="name">canvas</span><span class="hex">#FAFAF7</span></div>
+  <div class="swatch" style="background:var(--ww-paper);"><span class="name">paper</span><span class="hex">#FFFFFF</span></div>
+</div>
+</body>
+</html>
