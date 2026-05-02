@@ -1,7 +1,0 @@
-{
-  "database": "dolt",
-  "backend": "dolt",
-  "dolt_mode": "embedded",
-  "dolt_database": "torale",
-  "project_id": "7748add0-e71b-484f-8eb9-84180b2bb5bd"
-}
