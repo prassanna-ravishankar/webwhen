@@ -1,0 +1,234 @@
+/* ============================================================================
+   webwhen — settings shell
+   ----------------------------------------------------------------------------
+   Editorial single-column page chrome for /settings/* routes. The outer
+   AppShell already supplies canvas + page padding (.page in
+   AppShell.module.css) — `.column` is an INNER 720px reading constraint.
+
+   Children (Email / Webhook / API key / Recent deliveries sections) consume
+   the shared classes here: .section, .sectionHead, .sectionLabel, .field,
+   .row, .divider, .emptyHint, .actions, .btn*.
+   ========================================================================== */
+
+.column {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* === Tabs (segmented control) =========================================== */
+
+.tabs {
+  display: inline-flex;
+  background: var(--ww-paper);
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-sm);
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.tab {
+  font-family: var(--ww-font-sans);
+  font-size: 12.5px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 0;
+  border-right: 1px solid var(--ww-ink-6);
+  color: var(--ww-ink-3);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--ww-dur-fast) var(--ww-ease-out),
+              background var(--ww-dur-fast) var(--ww-ease-out);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tab:last-child {
+  border-right: 0;
+}
+
+.tab:hover {
+  color: var(--ww-ink-1);
+}
+
+.tabActive {
+  background: var(--ww-ink-7);
+  color: var(--ww-ink-0);
+}
+
+.tabActive:hover {
+  color: var(--ww-ink-0);
+}
+
+/* === Section ============================================================ */
+
+.section {
+  margin-top: 36px;
+}
+
+.section:first-of-type {
+  margin-top: 0;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.sectionHeadIcon {
+  width: 14px;
+  height: 14px;
+  color: var(--ww-ink-3);
+  flex-shrink: 0;
+}
+
+.sectionLabel {
+  font-family: var(--ww-font-mono);
+  font-size: var(--ww-fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ww-ink-4);
+  white-space: nowrap;
+}
+
+.sectionRule {
+  flex: 1;
+  height: 1px;
+  background: var(--ww-ink-6);
+}
+
+/* === Field (kit's mono-label + canvas-bg input) ========================= */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-family: var(--ww-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--ww-ink-4);
+  text-transform: uppercase;
+}
+
+.field input,
+.field select,
+.field textarea {
+  background: var(--ww-canvas);
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-sm);
+  padding: 8px 12px;
+  font-family: var(--ww-font-sans);
+  font-size: 13.5px;
+  color: var(--ww-ink-0);
+  outline: 0;
+  transition: border-color var(--ww-dur-fast) var(--ww-ease-out);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--ww-ink-3);
+}
+
+/* === Layout helpers ===================================================== */
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px dashed var(--ww-ink-6);
+  margin: 24px 0;
+}
+
+.emptyHint {
+  background: var(--ww-paper);
+  border: 1px dashed var(--ww-ink-6);
+  border-radius: var(--ww-radius-sm);
+  padding: 14px 16px;
+  font-family: var(--ww-font-mono);
+  font-size: var(--ww-fs-xs);
+  color: var(--ww-ink-4);
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* === Buttons (kit btn family) =========================================== */
+
+.btnPrimary,
+.btnSecondary,
+.btnGhost,
+.btnDanger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--ww-font-sans);
+  font-weight: 500;
+  font-size: 13px;
+  padding: 7px 13px;
+  border-radius: var(--ww-radius-sm);
+  border: 1px solid transparent;
+  line-height: 1;
+  cursor: pointer;
+  transition: all var(--ww-dur-fast) var(--ww-ease-out);
+}
+
+.btnPrimary {
+  background: var(--ww-ink-0);
+  color: #fff;
+}
+
+.btnPrimary:hover {
+  background: var(--ww-ink-1);
+}
+
+.btnSecondary {
+  background: var(--ww-paper);
+  color: var(--ww-ink-0);
+  border-color: var(--ww-ink-6);
+}
+
+.btnSecondary:hover {
+  border-color: var(--ww-ink-5);
+}
+
+.btnGhost {
+  background: transparent;
+  color: var(--ww-ink-3);
+}
+
+.btnGhost:hover {
+  color: var(--ww-ink-0);
+  background: var(--ww-ink-7);
+}
+
+.btnDanger {
+  background: var(--ww-danger);
+  color: #fff;
+}
+
+.btnDanger:hover {
+  background: #9d3325;
+}
+
+.btnPrimary:disabled,
+.btnSecondary:disabled,
+.btnGhost:disabled,
+.btnDanger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
