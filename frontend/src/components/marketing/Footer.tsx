@@ -11,7 +11,7 @@ export const Footer: React.FC = () => {
         <div>
           <Link to="/" className={styles.brand}>
             <img
-              src="/brand/webwhen-mark.svg"
+              src="/brand/webwhen-mark-dark.svg"
               alt="webwhen"
               width={26}
               height={26}
