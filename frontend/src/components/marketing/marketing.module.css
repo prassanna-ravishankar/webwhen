@@ -113,7 +113,6 @@
 
 .articleHeading {
   font-family: var(--ww-font-serif);
-  font-style: italic;
   font-weight: 400;
   font-size: clamp(2.5rem, 5vw, 3.75rem);
   line-height: 1.05;

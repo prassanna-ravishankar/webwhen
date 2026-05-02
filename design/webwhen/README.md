@@ -118,15 +118,17 @@ See `colors_and_type.css` for the full token set.
 
 ### Typography
 
+> **Italic restraint.** Italic for *named things* (the wordmark, watch titles, page-context titles in the topbar) and short accent flourishes. Upright for *sentences* (hero copy, body copy, display headings, composer inputs). The hero "Get notified when it matters" is a sentence: upright.
+
 A three-family stack, used with restraint:
 
-1. **Instrument Serif** — display only. One headline per screen, maximum. Italic by default for hero. Carries the editorial gravity.
+1. **Instrument Serif** — display only. One headline per screen, maximum. Upright by default; italic only for named things and short accents. Carries the editorial gravity.
 2. **Instrument Sans** — everything else: headings, body, UI. Calm geometric sans, slightly softer than Inter. Weights 400/500/600.
 3. **JetBrains Mono** — technical specimens: timestamps, code, conditions, eyebrow labels. Always smaller than the surrounding text.
 
 **Never** use the serif for paragraphs of body copy. **Never** use mono for headings. The three faces have specific jobs.
 
-Type scale is intentionally generous. Body is 16px with `line-height: 1.65`. Hero is 72px serif italic.
+Type scale is intentionally generous. Body is 16px with `line-height: 1.65`. Hero is 72px serif, upright.
 
 ### Spacing
 

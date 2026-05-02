@@ -48,7 +48,6 @@
 
 .heading {
   font-family: var(--ww-font-serif);
-  font-style: italic;
   font-weight: 400;
   font-size: clamp(2.5rem, 5vw, 3.5rem);
   line-height: var(--ww-lh-tight);

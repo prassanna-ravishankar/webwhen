@@ -120,7 +120,6 @@
 }
 .heroTitle {
   font-family: var(--ww-font-serif);
-  font-style: italic;
   font-weight: 400;
   font-size: clamp(56px, 7.5vw, 88px);
   line-height: 1.02;
@@ -198,7 +197,6 @@
 }
 .composerPrompt {
   font-family: var(--ww-font-serif);
-  font-style: italic;
   font-size: 22px;
   line-height: 1.4;
   color: var(--ww-ink-0);
@@ -454,7 +452,6 @@
 }
 .manifestoQuote {
   font-family: var(--ww-font-serif);
-  font-style: italic;
   font-size: 36px;
   line-height: 1.2;
   letter-spacing: -0.01em;
@@ -479,7 +476,6 @@
 }
 .ctaHeading {
   font-family: var(--ww-font-serif);
-  font-style: italic;
   font-size: 64px;
   line-height: 1.05;
   letter-spacing: -0.02em;
