@@ -136,6 +136,33 @@
   text-wrap: pretty;
 }
 
+/* Legacy-execution markdown: paragraphs, lists, emphasis at body scale.
+   The wrapper above carries the editorial register; children inherit. */
+.momentAnswerP {
+  margin: 0 0 12px 0;
+}
+
+.momentAnswerP:last-child {
+  margin-bottom: 0;
+}
+
+.momentList {
+  margin: 0 0 12px 0;
+  padding-left: 1.4em;
+}
+
+.momentList:last-child {
+  margin-bottom: 0;
+}
+
+.momentListItem {
+  margin-bottom: 4px;
+}
+
+.momentAnswer em {
+  font-style: italic;
+}
+
 .momentSources {
   display: flex;
   flex-direction: column;
