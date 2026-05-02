@@ -118,7 +118,7 @@ See `colors_and_type.css` for the full token set.
 
 ### Typography
 
-> **Italic restraint.** Italic for *named things* (the wordmark, watch titles, page-context titles in the topbar) and short accent flourishes. Upright for *sentences* (hero copy, body copy, display headings, composer inputs). The hero "Get notified when it matters" is a sentence: upright.
+> **Italic restraint.** Italic for *named things in flowing copy* (watch titles, page-context titles in the topbar) and short accent flourishes. Upright for *sentences* (hero copy, body copy, display headings, composer inputs) AND for *the wordmark itself* (the logo lockup is upright Instrument Serif — its serif family + ember-bearing mark already carry the editorial voice; an italic cut on top reads as ornament). The hero "Get notified when it matters" is a sentence: upright.
 
 A three-family stack, used with restraint:
 
