@@ -234,9 +234,8 @@ export default function App() {
         <Route
           path="/tasks/:taskId"
           element={
-            <AppLayout crumbs={[{ label: 'Watches', href: '/dashboard' }, { label: 'Detail' }]}>
-              <TaskDetailRoute onBack={handleBackToDashboard} onDeleted={handleBackToDashboard} />
-            </AppLayout>
+            // TaskDetail owns its AppShell (renders watch-specific crumbs + actions).
+            <TaskDetailRoute onBack={handleBackToDashboard} onDeleted={handleBackToDashboard} />
           }
         />
         <Route

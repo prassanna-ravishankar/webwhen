@@ -64,7 +64,7 @@ export const TaskConfiguration: React.FC<TaskConfigurationProps> = ({
       <div className="flex items-start gap-3">
         <Search className="h-4 w-4 text-zinc-500 mt-0.5 shrink-0" />
         <div className="flex-1 min-w-0">
-          <div className="text-xs font-mono text-zinc-500 uppercase tracking-wider mb-1">Monitoring</div>
+          <div className="text-xs font-mono text-zinc-500 uppercase tracking-wider mb-1">Watching</div>
           <p className="text-sm text-zinc-900 leading-relaxed">{task.search_query}</p>
         </div>
       </div>

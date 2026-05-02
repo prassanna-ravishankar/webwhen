@@ -300,7 +300,7 @@ export function UsersTable() {
                 <th className="text-left p-3"><SectionLabel>Role</SectionLabel></th>
                 <th className="text-left p-3"><SectionLabel>Status</SectionLabel></th>
                 <th className="text-left p-3"><SectionLabel>Joined</SectionLabel></th>
-                <th className="text-left p-3"><SectionLabel icon={ListChecks}>Tasks</SectionLabel></th>
+                <th className="text-left p-3"><SectionLabel icon={ListChecks}>Watches</SectionLabel></th>
                 <th className="text-left p-3"><SectionLabel icon={Activity}>Runs</SectionLabel></th>
                 <th className="text-left p-3"><SectionLabel icon={Zap}>Notifications</SectionLabel></th>
                 <th className="text-left p-3"><SectionLabel>Actions</SectionLabel></th>

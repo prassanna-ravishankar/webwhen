@@ -79,7 +79,7 @@ export function TaskDetailPanel({ task, onTaskUpdate }: TaskDetailPanelProps) {
     try {
       const newState = task.state === 'active' ? 'paused' : 'active'
       await api.adminUpdateTaskState(task.id, newState)
-      toast.success(newState === 'active' ? 'Task resumed' : 'Task paused')
+      toast.success(newState === 'active' ? 'Watch resumed' : 'Watch paused')
 
       // Refresh parent and local state
       try {
@@ -89,18 +89,18 @@ export function TaskDetailPanel({ task, onTaskUpdate }: TaskDetailPanelProps) {
       }
       setRetryCount((c) => c + 1)
     } catch (err) {
-      const errorMessage = getErrorMessage(err, 'Failed to update task state')
+      const errorMessage = getErrorMessage(err, "Couldn't update the watch")
 
       // Provide specific guidance based on error type
       if (errorMessage.includes('Invalid state transition')) {
-        toast.error('Cannot change task state from current status. Refresh and try again.')
+        toast.error('Cannot change watch state from current status. Refresh and try again.')
       } else if (errorMessage.includes('not found')) {
-        toast.error('Task no longer exists. Refreshing...')
+        toast.error('Watch no longer exists. Refreshing...')
         onTaskUpdate?.()
       } else if (errorMessage.includes('inconsistent state')) {
-        toast.error('Task state update failed. Contact support if issue persists.')
+        toast.error('Watch state update failed. Contact support if issue persists.')
       } else {
-        toast.error(`Failed to update task: ${errorMessage}`)
+        toast.error(`Couldn't update the watch: ${errorMessage}`)
       }
     } finally {
       setIsPauseResuming(false)
@@ -121,7 +121,7 @@ export function TaskDetailPanel({ task, onTaskUpdate }: TaskDetailPanelProps) {
 
       // Step 2: Execute task (false = enable notifications)
       await api.adminExecuteTask(task.id, false)
-      toast.success('Task re-executed successfully')
+      toast.success('Watch re-executed successfully')
 
       onTaskUpdate?.()
       setRetryCount((c) => c + 1)
@@ -132,7 +132,7 @@ export function TaskDetailPanel({ task, onTaskUpdate }: TaskDetailPanelProps) {
       if (resetSucceeded) {
         // Partial success: reset worked but execution failed
         toast.error(
-          `Reset succeeded but execution failed: ${errorMsg}. Click "Run Now" to manually start the task.`,
+          `Reset succeeded but execution failed: ${errorMsg}. Click "Run Now" to manually start the watch.`,
           { duration: 8000 }
         )
       } else {
@@ -286,7 +286,7 @@ export function TaskDetailPanel({ task, onTaskUpdate }: TaskDetailPanelProps) {
       <AlertDialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Reset & Run Task</AlertDialogTitle>
+            <AlertDialogTitle>Reset & Run Watch</AlertDialogTitle>
             <AlertDialogDescription>
               This will permanently delete the last 1 day of execution history and re-run the task fresh.
               This action cannot be undone.

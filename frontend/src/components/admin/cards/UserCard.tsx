@@ -55,7 +55,7 @@ export function UserCard({ user, currentUserClerkId, onDeactivate, onEditRole }:
 
         <div className="grid grid-cols-3 gap-2 text-[10px] font-mono">
           <div className="p-2 bg-zinc-50 border border-zinc-200 text-center">
-            <p className="text-zinc-400 uppercase tracking-wider">Tasks</p>
+            <p className="text-zinc-400 uppercase tracking-wider">Watches</p>
             <p className="text-zinc-900 font-bold text-sm mt-0.5">{user.task_count}</p>
           </div>
           <div className="p-2 bg-zinc-50 border border-zinc-200 text-center">

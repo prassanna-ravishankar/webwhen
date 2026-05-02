@@ -138,7 +138,7 @@ export function ErrorsList() {
                   {/* Task ID */}
                   <div className="pt-2 border-t border-red-200">
                     <p className="text-[10px] font-mono text-red-400 truncate" title={errorExec.task_id}>
-                      Task ID: {errorExec.task_id}
+                      Watch ID: {errorExec.task_id}
                     </p>
                   </div>
                 </div>

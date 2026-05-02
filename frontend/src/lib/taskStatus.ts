@@ -34,9 +34,9 @@ export function getTaskStatus(state: TaskState): TaskStatusInfo {
     active: {
       activityState: TaskActivityState.ACTIVE,
       iconName: 'Activity',
-      label: 'Monitoring',
+      label: 'Watching',
       color: 'green',
-      description: 'Actively monitoring',
+      description: 'Actively watching',
     },
     completed: {
       activityState: TaskActivityState.COMPLETED,

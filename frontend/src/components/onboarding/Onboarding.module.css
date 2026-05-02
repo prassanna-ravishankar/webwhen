@@ -1,0 +1,115 @@
+/* ============================================================================
+   First-time experience overlay — webwhen brand voice.
+   Calm 3-step flow on canvas with subtle dot pattern.
+   ========================================================================== */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--ww-canvas);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow: hidden;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.eyebrow {
+  font-family: var(--ww-font-mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: var(--ww-tracking-wide);
+  text-transform: uppercase;
+  color: var(--ww-ink-4);
+}
+
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fadeIn 240ms var(--ww-ease-out);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.heading {
+  font-family: var(--ww-font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  line-height: var(--ww-lh-tight);
+  letter-spacing: var(--ww-tracking-tight);
+  color: var(--ww-ink-0);
+  text-wrap: balance;
+  margin: 0;
+}
+
+.emphasis {
+  color: var(--ww-ember);
+}
+
+.body {
+  font-family: var(--ww-font-sans);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: var(--ww-lh-loose);
+  color: var(--ww-ink-3);
+  max-width: 50ch;
+  text-wrap: pretty;
+  margin: 0;
+}
+
+.example {
+  display: inline-flex;
+  align-self: flex-start;
+  font-family: var(--ww-font-mono);
+  font-size: 13px;
+  letter-spacing: var(--ww-tracking-mono);
+  color: var(--ww-ink-2);
+  background: var(--ww-paper);
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-sm);
+  padding: 10px 14px;
+  margin-top: 4px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.skip {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 2;
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  letter-spacing: var(--ww-tracking-wide);
+  text-transform: uppercase;
+  color: var(--ww-ink-4);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  transition: color var(--ww-dur-fast) var(--ww-ease-out);
+}
+.skip:hover {
+  color: var(--ww-ink-0);
+}

@@ -92,7 +92,7 @@ export const TaskPreviewModal: React.FC<TaskPreviewModalProps> = ({
       } catch (err) {
         if (cancelledRef.current) return;
         console.error('Failed to execute task:', err);
-        const message = getErrorMessage(err, 'Failed to run task');
+        const message = getErrorMessage(err, "Couldn't run the watch");
         setError(message);
         toast.error(message);
         setIsLoading(false);

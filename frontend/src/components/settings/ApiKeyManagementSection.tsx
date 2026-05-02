@@ -132,7 +132,7 @@ export const ApiKeyManagementSection: React.FC = () => {
       <Card>
         <div className="p-4 border-b border-zinc-200">
           <p className="text-xs text-zinc-500">
-            Programmatic access to Torale API via Python SDK
+            Programmatic access to the webwhen API via Python SDK
           </p>
         </div>
         <div className="p-6 flex items-start gap-3 bg-amber-50 border-t-2 border-amber-200">
@@ -263,7 +263,7 @@ export const ApiKeyManagementSection: React.FC = () => {
           <DialogHeader>
             <DialogTitle className="">Generate API Key</DialogTitle>
             <DialogDescription className="text-zinc-600">
-              Create a new API key for programmatic access to your Torale account.
+              Create a new API key for programmatic access to your webwhen account.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 py-4">

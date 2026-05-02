@@ -1,0 +1,233 @@
+/* Composer modal — webwhen rebrand
+ * Ported from design/webwhen/ui_kits/app/app.css (.scrim/.modal/.body etc.)
+ * shadcn Dialog provides its own portal + overlay; we override its DialogContent
+ * defaults via these styles passed as className.
+ */
+
+/* === Modal shell (replaces shadcn DialogContent defaults) ============== */
+.modal {
+  /* override shadcn DialogContent's default padding/gap/border/max-width */
+  width: min(640px, 100%) !important;
+  max-width: min(640px, calc(100% - 2rem)) !important;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+  gap: 0 !important;
+  background: var(--ww-paper);
+  border-radius: var(--ww-radius-lg);
+  border: 0 !important;
+  box-shadow: var(--ww-shadow-lg);
+  overflow: hidden;
+}
+
+/* === Head ============================================================== */
+.head {
+  padding: 14px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--ww-ink-7);
+  flex-shrink: 0;
+}
+
+.headTitle {
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ww-ink-4);
+  text-transform: uppercase;
+}
+
+.headClose {
+  background: transparent;
+  border: 0;
+  color: var(--ww-ink-4);
+  font-size: 18px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.headClose:hover {
+  color: var(--ww-ink-0);
+  background: var(--ww-ink-7);
+}
+
+/* === Body ============================================================== */
+.body {
+  padding: 28px 24px 22px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.conditionLabel {
+  font-family: var(--ww-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--ww-ink-4);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.conditionInput {
+  width: 100%;
+  min-height: 96px;
+  resize: vertical;
+  font-family: var(--ww-font-serif);
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ww-ink-0);
+  background: transparent;
+  border: 0;
+  outline: 0;
+  padding: 0;
+}
+
+.conditionInput::placeholder {
+  color: var(--ww-ink-5);
+}
+
+/* === Optional row of two fields (edit dialog) ========================== */
+.row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--ww-ink-6);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-family: var(--ww-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--ww-ink-4);
+  text-transform: uppercase;
+}
+
+.field input,
+.field select {
+  background: var(--ww-canvas);
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-sm);
+  padding: 8px 12px;
+  font-size: 13.5px;
+  color: var(--ww-ink-0);
+  outline: 0;
+  font-family: inherit;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: var(--ww-ink-3);
+}
+
+/* Toggle row variant — single line with switch on the right */
+.toggleField {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.toggleField label {
+  font-family: var(--ww-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--ww-ink-4);
+  text-transform: uppercase;
+}
+
+/* Mono note for share link / stats below the public toggle */
+.shareInfo {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  color: var(--ww-ink-4);
+}
+
+.shareLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ww-ink-2);
+  word-break: break-all;
+}
+
+.shareLinkBtn {
+  background: transparent;
+  border: 0;
+  color: var(--ww-ink-4);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.shareLinkBtn:hover {
+  color: var(--ww-ink-0);
+  background: var(--ww-ink-7);
+}
+
+.shareStats {
+  display: flex;
+  gap: 16px;
+}
+
+/* === Connector picker wrapper ========================================== */
+.connectorBlock {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--ww-ink-6);
+}
+
+/* === Foot ============================================================== */
+.foot {
+  padding: 14px 22px;
+  border-top: 1px solid var(--ww-ink-7);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--ww-canvas);
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.footHint {
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  color: var(--ww-ink-4);
+}
+
+.footActions {
+  display: flex;
+  gap: 10px;
+}
+
+/* === Error block ======================================================= */
+.error {
+  margin-top: 16px;
+  padding: 10px 12px;
+  border: 1px solid #d99;
+  background: #fdf3f3;
+  border-radius: var(--ww-radius-sm);
+  font-family: var(--ww-font-mono);
+  font-size: 12px;
+  color: #944;
+}
+
+/* === Hide shadcn's built-in close X (we provide our own in .head) ====== */
+.modal :global([data-slot="dialog-close"]) {
+  display: none;
+}

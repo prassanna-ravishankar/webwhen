@@ -112,7 +112,7 @@ export function OverviewStats() {
         {/* Active Tasks */}
         <Card className="p-4">
           <div className="flex items-center justify-between mb-3">
-            <SectionLabel>Active Tasks</SectionLabel>
+            <SectionLabel>Active Watches</SectionLabel>
             <div className="bg-zinc-100 w-8 h-8 flex items-center justify-center">
               <ListChecks className="h-4 w-4 text-zinc-600" />
             </div>
@@ -211,7 +211,7 @@ export function OverviewStats() {
                     </p>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-[10px] font-mono text-zinc-500">
-                        {query.count} {query.count === 1 ? 'task' : 'tasks'}
+                        {query.count} {query.count === 1 ? 'watch' : 'watches'}
                       </span>
                       <span className="text-zinc-300">|</span>
                       <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-600">

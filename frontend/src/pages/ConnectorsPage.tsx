@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Loader2, Plug } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
@@ -151,29 +150,6 @@ export const ConnectorsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-zinc-50">
       <main className="p-4 md:p-8 max-w-6xl mx-auto">
-        <header className="mb-6">
-          <div className="flex items-center gap-2 text-zinc-400 text-xs font-mono mb-2">
-            <Link to="/dashboard" className="hover:text-zinc-900 transition-colors">
-              Dashboard
-            </Link>
-            <span>/</span>
-            <span className="text-zinc-900">Settings</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="bg-zinc-900 text-white w-10 h-10 flex items-center justify-center">
-              <Plug className="h-5 w-5" />
-            </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-                Connectors
-              </h1>
-              <p className="text-sm text-zinc-500 font-mono">
-                Let the agent reach into your tools
-              </p>
-            </div>
-          </div>
-        </header>
-
         <SettingsTabs />
 
         <p className="text-xs text-zinc-400 font-mono mb-6">

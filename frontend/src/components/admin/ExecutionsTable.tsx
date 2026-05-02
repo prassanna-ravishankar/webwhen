@@ -82,7 +82,7 @@ export function ExecutionsTable({ onTaskClick }: ExecutionsTableProps = {}) {
           <div>
             <h3 className="text-sm font-bold">Execution History</h3>
             <p className="text-[10px] font-mono text-zinc-400">
-              View all task executions across users
+              View all watch executions across users
             </p>
           </div>
         </div>

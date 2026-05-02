@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Settings, Mail, Webhook, Key, History } from 'lucide-react';
+import { Mail, Webhook, Key, History } from 'lucide-react';
 import { EmailManagementSection } from '@/components/settings/EmailManagementSection';
 import { WebhookConfigSection } from '@/components/settings/WebhookConfigSection';
 import { NotificationHistorySection } from '@/components/settings/NotificationHistorySection';
@@ -8,31 +7,12 @@ import { ApiKeyManagementSection } from '@/components/settings/ApiKeyManagementS
 import { SettingsTabs } from '@/components/settings/SettingsTabs';
 
 /**
- * NotificationSettingsPage - Brutalist settings panel
- * Mission Control for notification configuration
+ * NotificationSettingsPage - settings panel for notification configuration
  */
 export const NotificationSettingsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-zinc-50">
       <main className="p-4 md:p-8">
-        {/* Header */}
-        <header className="mb-8">
-          <div className="flex items-center gap-2 text-zinc-400 text-xs font-mono mb-2">
-            <Link to="/dashboard" className="hover:text-zinc-900 transition-colors">Dashboard</Link>
-            <span>/</span>
-            <span className="text-zinc-900">Settings</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="bg-zinc-900 text-white w-10 h-10 flex items-center justify-center">
-              <Settings className="h-5 w-5" />
-            </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Settings</h1>
-              <p className="text-sm text-zinc-500 font-mono">Configure notifications and API access</p>
-            </div>
-          </div>
-        </header>
-
         <SettingsTabs />
 
         {/* Settings Grid */}

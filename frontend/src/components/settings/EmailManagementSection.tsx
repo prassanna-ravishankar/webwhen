@@ -78,7 +78,7 @@ export const EmailManagementSection: React.FC = () => {
         {/* Header */}
         <div className="p-4 border-b border-zinc-200">
           <p className="text-xs text-zinc-500">
-            Manage email addresses for task notifications. Your account email is always verified.
+            Manage email addresses for watch notifications. Your account email is always verified.
           </p>
         </div>
 
@@ -179,7 +179,7 @@ export const EmailManagementSection: React.FC = () => {
           <AlertDialogHeader>
             <AlertDialogTitle className="">Remove Email Address?</AlertDialogTitle>
             <AlertDialogDescription className="text-zinc-600">
-              Are you sure you want to remove <strong className="font-mono">{emailToDelete}</strong>? Tasks configured to
+              Are you sure you want to remove <strong className="font-mono">{emailToDelete}</strong>? Watches configured to
               use this email will fall back to your account email.
             </AlertDialogDescription>
           </AlertDialogHeader>

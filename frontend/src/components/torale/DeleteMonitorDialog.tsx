@@ -28,7 +28,7 @@ export const DeleteMonitorDialog: React.FC<DeleteMonitorDialogProps> = ({
   <AlertDialog open={open} onOpenChange={onOpenChange}>
     <AlertDialogContent className="border border-zinc-900 shadow-ww-md">
       <AlertDialogHeader className="border-b-2 border-zinc-100 pb-4">
-        <AlertDialogTitle className="">Delete Monitor</AlertDialogTitle>
+        <AlertDialogTitle className="">Delete watch?</AlertDialogTitle>
         <AlertDialogDescription className="text-zinc-500">
           Are you sure you want to delete "{taskName}"? This action cannot be undone.{extraDescription ? ` ${extraDescription}` : ''}
         </AlertDialogDescription>

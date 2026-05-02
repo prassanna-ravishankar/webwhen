@@ -26,7 +26,7 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
       setTasks(data.queries ?? [])
       setError(null)
     } catch (err) {
-      setError(getErrorMessage(err, 'Failed to load tasks'))
+      setError(getErrorMessage(err, "Couldn't load your watches"))
     } finally {
       setLoading(false)
     }
@@ -73,9 +73,9 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
             <Search className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold">All Tasks</h3>
+            <h3 className="text-sm font-bold">All Watches</h3>
             <p className="text-[10px] font-mono text-zinc-400">
-              Click a row to view task details and execution history
+              Click a row to view watch details and execution history
             </p>
           </div>
         </div>
@@ -118,7 +118,7 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
               <tr>
                 <td colSpan={7} className="p-8 text-center">
                   <Search className="h-5 w-5 text-zinc-400 mx-auto mb-2" />
-                  <p className="text-xs text-zinc-500 font-mono">No tasks found</p>
+                  <p className="text-xs text-zinc-500 font-mono">No watches found</p>
                 </td>
               </tr>
             ) : (
@@ -174,7 +174,7 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
         {tasks.length === 0 ? (
           <div className="p-4 bg-zinc-50 border border-dashed border-zinc-300 text-center">
             <Search className="h-5 w-5 text-zinc-400 mx-auto mb-2" />
-            <p className="text-xs text-zinc-500 font-mono">No tasks found</p>
+            <p className="text-xs text-zinc-500 font-mono">No watches found</p>
           </div>
         ) : (
           tasks.map((task) => (

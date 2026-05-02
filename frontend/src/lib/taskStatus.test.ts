@@ -23,7 +23,7 @@ function testTaskStatusActive(): boolean {
   const status = getTaskStatus('active');
   assert(status.activityState === TaskActivityState.ACTIVE, 'Active task state incorrect');
   assert(status.iconName === 'Activity', 'Active task icon incorrect');
-  assert(status.label === 'Monitoring', 'Active task label incorrect');
+  assert(status.label === 'Watching', 'Active task label incorrect');
   assert(status.color === 'green', 'Active task color incorrect');
   console.log(`${GREEN}✓ Active task status correct${RESET}`);
 
