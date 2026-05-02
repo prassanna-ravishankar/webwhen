@@ -45,8 +45,7 @@ export const Hero: React.FC = () => {
             </div>
             <div className={styles.composerFoot}>
               <div>
-                <span className={styles.chip}>self-scheduling</span>
-                <span className={styles.chip}>notify once</span>
+                <span className={styles.chip}>nothing to tune</span>
               </div>
               <button
                 className={cn(styles.btn, styles.btnPrimary)}

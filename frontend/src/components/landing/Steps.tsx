@@ -32,12 +32,12 @@ export const Steps: React.FC = () => {
           </div>
           <div className={styles.step}>
             <div className={styles.stepNum}>03 / the moment</div>
-            <h3 className={styles.stepHeading}>You hear from it once.</h3>
+            <h3 className={styles.stepHeading}>You hear from it when it has something to say.</h3>
             <p className={styles.stepBody}>
-              When the condition is met, you get one message with the answer and the sources. No false positives, no daily digest noise.
+              The agent decides when to speak. The condition is met, you get the answer and the sources. No false positives, no daily digest you'll learn to ignore.
             </p>
             <div className={styles.stepHint}>
-              notifies <span className={styles.stepHintEm}>once</span> · the agent decides cadence
+              the agent <span className={styles.stepHintEm}>decides</span> · you just listen
             </div>
           </div>
         </div>

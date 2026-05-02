@@ -18,7 +18,7 @@ export const Manifesto: React.FC = () => {
             Most monitoring tools are alarms. They buzz when a pixel changes, when a status code flips, when anything happens. We think that's the wrong job.
           </p>
           <p className={styles.manifestoBody}>
-            webwhen is patient. It waits for a specific answer to a specific question, and it stays quiet until that answer arrives. The agent reads the web the way a careful human would — checks a few sources, weighs them, decides whether the question has been answered. When it has, you hear about it once.
+            webwhen is patient. It waits for a specific answer to a specific question, and it stays quiet until that answer arrives. The agent reads the web the way a careful human would — checks a few sources, weighs them, decides whether the question has been answered. When it has, it tells you.
           </p>
           <p className={styles.manifestoBody}>
             That's the whole product. No dashboards to keep open. No pixel-diff noise. No daily digest you'll learn to ignore.
