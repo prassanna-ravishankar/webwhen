@@ -136,24 +136,10 @@
   font-weight: 600;
 }
 
-.entryBody code {
-  font-family: var(--ww-font-mono);
-  font-style: normal;
-  font-size: 0.85em;
-  background: var(--ww-ink-7);
-  padding: 1px 5px;
-  border-radius: var(--ww-radius-xs);
-  color: var(--ww-ink-1);
-}
-
-.entryBody a {
-  color: var(--ww-ember);
-  text-decoration: none;
-}
-
-.entryBody a:hover {
-  text-decoration: underline;
-}
+/* Note: `.entryBody code` and `.entryBody a` rules removed — the
+ * markdownCompact allowlist now renders `<code>` as plain `<span>` and `<a>`
+ * as inert text per the design-system Content rendering rule. Editorial
+ * register stays clean; sources row owns linking. */
 
 .entryClipped {
   max-height: 480px;
