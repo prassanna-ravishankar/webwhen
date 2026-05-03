@@ -3,6 +3,20 @@
 domains:
   frontend: torale.ai
   api: api.torale.ai
+  # webwhen.ai cutover (T-0, 2026-05-03):
+  # webwhen routes now ship with the production chart (no soak overlay).
+  # noindex flag is OFF (httproute.noindex: false) so webwhen.ai is
+  # crawlable. The torale routes are flipped to 301 RequestRedirect via
+  # the chart template's $isCutover branch.
+  webwhen:
+    frontend: webwhen.ai
+    www: www.webwhen.ai
+    api: api.webwhen.ai
+    docs: docs.webwhen.ai
+
+httproute:
+  noindex: false  # cutover-day: webwhen routes are indexable
+  cutover: true   # T-0: torale.ai routes serve 301 RequestRedirect to webwhen.ai
 
 # Clerk authentication
 # Rotated 2026-05-03 from torale.ai-primary key to webwhen.ai-primary key per
