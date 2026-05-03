@@ -24,16 +24,16 @@ export function generateChangelogStructuredData(entries: ChangelogEntry[]) {
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": "Torale Changelog",
-    "description": "Product updates and feature releases for Torale AI-powered web monitoring platform",
-    "url": "https://torale.ai/changelog",
+    "name": "webwhen Changelog",
+    "description": "Product updates and releases for webwhen — the AI agent that watches the open web and tells you when something matters.",
+    "url": "https://webwhen.ai/changelog",
     "publisher": {
       "@type": "Organization",
-      "name": "Torale",
-      "url": "https://torale.ai",
+      "name": "webwhen",
+      "url": "https://webwhen.ai",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://torale.ai/logo.svg",
+        "url": "https://webwhen.ai/brand/webwhen-mark.svg",
         "width": 512,
         "height": 512
       },
@@ -56,11 +56,11 @@ export function generateChangelogStructuredData(entries: ChangelogEntry[]) {
           "description": entry.description,
           "author": {
             "@type": "Organization",
-            "name": "Torale"
+            "name": "webwhen"
           },
           "publisher": {
             "@type": "Organization",
-            "name": "Torale"
+            "name": "webwhen"
           }
         }
       }))
@@ -72,13 +72,13 @@ export function generateChangelogStructuredData(entries: ChangelogEntry[]) {
           "@type": "ListItem",
           "position": 1,
           "name": "Home",
-          "item": "https://torale.ai"
+          "item": "https://webwhen.ai"
         },
         {
           "@type": "ListItem",
           "position": 2,
           "name": "Changelog",
-          "item": "https://torale.ai/changelog"
+          "item": "https://webwhen.ai/changelog"
         }
       ]
     }
