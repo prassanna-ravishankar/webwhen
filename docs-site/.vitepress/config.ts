@@ -1,12 +1,14 @@
 import { defineConfig, type PageData } from 'vitepress'
 import { withMermaid } from 'vitepress-plugin-mermaid'
 
+// SITE_ORIGIN stays on docs.torale.ai for now. Clusterkit's HTTPRoutes flip the
+// hostname at the gateway during cutover; the build doesn't hardcode webwhen.ai.
 const SITE_ORIGIN = 'https://docs.torale.ai'
-const SITE_DESCRIPTION = 'Torale developer documentation — API reference and Python SDK'
+const SITE_DESCRIPTION = 'webwhen developer documentation — REST API and Python SDK for the agent that watches the open web.'
 
 export default withMermaid(
   defineConfig({
-  title: 'Torale Docs',
+  title: 'webwhen docs',
   description: SITE_DESCRIPTION,
   base: '/',
   lang: 'en-US',
@@ -30,9 +32,9 @@ export default withMermaid(
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
     ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/logo-32.png' }],
     ['link', { rel: 'icon', type: 'image/png', sizes: '64x64', href: '/logo-64.png' }],
-    ['meta', { name: 'theme-color', content: '#18181b' }],
+    ['meta', { name: 'theme-color', content: '#0B0B0C' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:site_name', content: 'Torale Docs' }],
+    ['meta', { property: 'og:site_name', content: 'webwhen docs' }],
     ['meta', { property: 'og:image', content: `${SITE_ORIGIN}/og-image.png` }],
     ['meta', { property: 'og:image:width', content: '1200' }],
     ['meta', { property: 'og:image:height', content: '630' }],
@@ -41,15 +43,15 @@ export default withMermaid(
   ],
 
   // Per-page meta has to land in static HTML — VitePress sets it client-side
-  // otherwise, and Googlebot sees only the global <title>Torale Docs</title>.
+  // otherwise, and Googlebot sees only the global <title>webwhen docs</title>.
   transformPageData(pageData: PageData) {
     const rel = pageData.relativePath
       .replace(/\.md$/, '')
       .replace(/(^|\/)index$/, '')
     const canonical = rel ? `${SITE_ORIGIN}/${rel}` : `${SITE_ORIGIN}/`
-    const pageTitle = pageData.title || pageData.frontmatter.title || 'Torale Docs'
+    const pageTitle = pageData.title || pageData.frontmatter.title || 'webwhen docs'
     const pageDescription = pageData.frontmatter.description || SITE_DESCRIPTION
-    const fullTitle = pageTitle === 'Torale Docs' ? pageTitle : `${pageTitle} | Torale Docs`
+    const fullTitle = pageTitle === 'webwhen docs' ? pageTitle : `${pageTitle} | webwhen docs`
 
     pageData.frontmatter.head ??= []
     const head = pageData.frontmatter.head as Array<[string, Record<string, string>]>
@@ -80,6 +82,7 @@ export default withMermaid(
       { text: 'Architecture', link: '/architecture/self-scheduling-agents', activeMatch: '/architecture/' },
       { text: 'API', link: '/api/overview', activeMatch: '/api/' },
       { text: 'SDK', link: '/sdk/quickstart', activeMatch: '/sdk/' },
+      // App URL flips to webwhen.ai at cutover (gateway-level).
       { text: 'App', link: 'https://torale.ai' }
     ],
 
@@ -100,7 +103,7 @@ export default withMermaid(
           items: [
             { text: 'Self-Scheduling Agents', link: '/architecture/self-scheduling-agents' },
             { text: 'Grounded Search', link: '/architecture/grounded-search' },
-            { text: 'Task State Machine', link: '/architecture/task-state-machine' },
+            { text: 'Watch State Machine', link: '/architecture/task-state-machine' },
             { text: 'Connector Trust Model', link: '/architecture/connectors-trust' }
           ]
         }
@@ -114,7 +117,7 @@ export default withMermaid(
             { text: 'Quickstart', link: '/sdk/quickstart' },
             { text: 'Installation', link: '/sdk/installation' },
             { text: 'Authentication', link: '/sdk/authentication' },
-            { text: 'Tasks', link: '/sdk/tasks' },
+            { text: 'Watches', link: '/sdk/tasks' },
             { text: 'Async Client', link: '/sdk/async' },
             { text: 'Error Handling', link: '/sdk/errors' },
             { text: 'Examples', link: '/sdk/examples' }
@@ -128,7 +131,7 @@ export default withMermaid(
           items: [
             { text: 'Overview', link: '/api/overview' },
             { text: 'Authentication', link: '/api/authentication' },
-            { text: 'Tasks', link: '/api/tasks' },
+            { text: 'Watches', link: '/api/tasks' },
             { text: 'Executions', link: '/api/executions' },
             { text: 'Notifications', link: '/api/notifications' },
             { text: 'Errors', link: '/api/errors' }
@@ -138,8 +141,9 @@ export default withMermaid(
 
     },
 
+    // Repo rename to webwhen is deferred per CLAUDE.md — keep torale URL.
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/torale-ai/torale' }
+      { icon: 'github', link: 'https://github.com/prassanna-ravishankar/torale' }
     ],
 
     search: {
@@ -150,13 +154,13 @@ export default withMermaid(
     },
 
     editLink: {
-      pattern: 'https://github.com/torale-ai/torale/edit/main/docs-site/:path',
+      pattern: 'https://github.com/prassanna-ravishankar/torale/edit/main/docs-site/:path',
       text: 'Edit this page on GitHub'
     },
 
     footer: {
       message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2025 Torale'
+      copyright: 'Copyright © 2026 webwhen'
     }
   },
 
@@ -171,39 +175,39 @@ export default withMermaid(
   mermaid: {
     theme: 'base',
     themeVariables: {
-      // Neo-brutalist theme - zinc grays + brand red accents
-      primaryColor: '#fafafa',           // zinc-50
-      primaryTextColor: '#18181b',       // zinc-900
-      primaryBorderColor: '#18181b',     // zinc-900
+      // webwhen palette: warm canvas, near-black ink, single ember accent.
+      primaryColor: '#FAFAF7',           // canvas
+      primaryTextColor: '#0B0B0C',       // ink-1
+      primaryBorderColor: '#0B0B0C',     // ink-1
 
-      secondaryColor: '#ffffff',         // white
-      secondaryTextColor: '#18181b',     // zinc-900
-      secondaryBorderColor: '#e4e4e7',   // zinc-200
+      secondaryColor: '#FFFFFF',         // paper
+      secondaryTextColor: '#0B0B0C',     // ink-1
+      secondaryBorderColor: '#E6E6E0',   // ink-6 hairline
 
-      tertiaryColor: '#f4f4f5',          // zinc-100
-      tertiaryTextColor: '#71717a',      // zinc-500
-      tertiaryBorderColor: '#e4e4e7',    // zinc-200
+      tertiaryColor: '#F4F2EC',          // canvas-soft
+      tertiaryTextColor: '#5C5C60',      // ink-3
+      tertiaryBorderColor: '#E6E6E0',    // ink-6 hairline
 
-      // General styling - technical aesthetic
-      background: '#ffffff',
-      mainBkg: '#fafafa',
-      lineColor: '#18181b',
-      textColor: '#18181b',
-      fontFamily: 'Inter, system-ui, sans-serif',
+      // General styling — editorial, calm.
+      background: '#FFFFFF',
+      mainBkg: '#FAFAF7',
+      lineColor: '#0B0B0C',
+      textColor: '#0B0B0C',
+      fontFamily: 'Instrument Sans, Inter, system-ui, sans-serif',
       fontSize: '16px',
 
-      // Flowchart - brutalist black lines
-      nodeBorder: '#18181b',
-      clusterBkg: '#f4f4f5',
-      clusterBorder: '#18181b',
-      defaultLinkColor: '#18181b',
+      // Flowchart — hairline borders, ink lines.
+      nodeBorder: '#0B0B0C',
+      clusterBkg: '#F4F2EC',
+      clusterBorder: '#0B0B0C',
+      defaultLinkColor: '#0B0B0C',
 
       // Node colors
-      nodeTextColor: '#18181b',
+      nodeTextColor: '#0B0B0C',
 
-      // Accent color (brand red for emphasis)
-      accentColor: 'hsl(10, 90%, 55%)',
-      accentTextColor: '#ffffff'
+      // Single ember accent — terracotta, used sparingly for emphasis.
+      accentColor: '#C9582A',
+      accentTextColor: '#FFFFFF'
     }
   }
 })

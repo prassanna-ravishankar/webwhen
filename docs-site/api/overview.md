@@ -1,10 +1,14 @@
 ---
-description: Torale REST API overview. HTTP endpoints, authentication, request/response formats, and API usage patterns for programmatic access.
+description: webwhen REST API overview. HTTP endpoints, authentication, request and response formats, and API usage patterns.
 ---
 
 # API Overview
 
-Torale provides a REST API for programmatic access to all platform functionality.
+webwhen exposes a REST API for programmatic access to every platform feature.
+
+::: tip Naming during the transition
+The host is still `api.torale.ai` and watches are addressed as `tasks` in URLs (`/api/v1/tasks`). The rename to `webwhen` is a later phase — endpoint paths below reflect the current shipping API.
+:::
 
 ## Base URL
 
@@ -12,20 +16,20 @@ Torale provides a REST API for programmatic access to all platform functionality
 https://api.torale.ai
 ```
 
-## Interactive API Documentation
+## Interactive API documentation
 
-For interactive API exploration with detailed request/response schemas:
+For interactive API exploration with detailed request and response schemas:
 
-- [OpenAPI Documentation (ReDoc)](https://api.torale.ai/redoc) - Full API reference with schemas
-- [OpenAPI Specification (JSON)](https://api.torale.ai/openapi.json) - Machine-readable API spec
+- [OpenAPI Documentation (ReDoc)](https://api.torale.ai/redoc) — full API reference with schemas
+- [OpenAPI Specification (JSON)](https://api.torale.ai/openapi.json) — machine-readable spec
 
-::: tip Try It Out
+::: tip Try it out
 The ReDoc interface provides detailed examples and schema information for every endpoint.
 :::
 
 ## Authentication
 
-All authenticated requests require an API key or Clerk JWT in the Authorization header:
+All authenticated requests need an API key or Clerk JWT in the `Authorization` header:
 
 ```bash
 curl -H "Authorization: Bearer sk_..." \
@@ -34,22 +38,22 @@ curl -H "Authorization: Bearer sk_..." \
 
 Generate API keys at [torale.ai/settings/api-keys](https://torale.ai/settings/api-keys).
 
-## Core Endpoints
+## Core endpoints
 
-### Tasks
+### Watches
 
 ```
-POST   /api/v1/tasks                       # Create task
-GET    /api/v1/tasks                       # List user's tasks
-GET    /api/v1/tasks/{id}                  # Get task (public or owned)
-PUT    /api/v1/tasks/{id}                  # Update task
-DELETE /api/v1/tasks/{id}                  # Delete task
+POST   /api/v1/tasks                       # Create a watch
+GET    /api/v1/tasks                       # List your watches
+GET    /api/v1/tasks/{id}                  # Get a watch (public or owned)
+PUT    /api/v1/tasks/{id}                  # Update a watch
+DELETE /api/v1/tasks/{id}                  # Delete a watch
 PATCH  /api/v1/tasks/{id}/visibility       # Toggle public/private
 POST   /api/v1/tasks/{id}/execute          # Execute immediately
-POST   /api/v1/tasks/{id}/fork             # Fork a public task
+POST   /api/v1/tasks/{id}/fork             # Fork a public watch
 ```
 
-### Executions & Notifications
+### Executions and triggers
 
 ```
 GET    /api/v1/tasks/{id}/executions       # Execution history
@@ -57,14 +61,14 @@ GET    /api/v1/tasks/{id}/notifications    # Filtered: condition met only
 GET    /api/v1/notifications/sends         # Notification send history
 ```
 
-### Public Tasks (no auth required)
+### Public watches (no auth required)
 
 ```
-GET    /api/v1/public/tasks                        # Discover public tasks
-GET    /api/v1/public/tasks/id/{task_id}            # Get public task by UUID
+GET    /api/v1/public/tasks                        # Discover public watches
+GET    /api/v1/public/tasks/id/{task_id}           # Get a public watch by UUID
 ```
 
-### Authentication & User Management
+### Authentication and user management
 
 ```
 POST   /auth/sync-user                     # Sync Clerk user to DB
@@ -82,13 +86,13 @@ GET    /api/v1/users/username/available     # Check username availability
 PATCH  /api/v1/users/me/username            # Set username
 ```
 
-### Email Verification
+### Email verification
 
 ```
-POST   /api/v1/email-verification/send           # Send verification code
-POST   /api/v1/email-verification/verify          # Verify email with code
-GET    /api/v1/email-verification/verified-emails  # List verified emails
-DELETE /api/v1/email-verification/verified-emails/{email}  # Remove verified email
+POST   /api/v1/email-verification/send                          # Send verification code
+POST   /api/v1/email-verification/verify                        # Verify email with code
+GET    /api/v1/email-verification/verified-emails               # List verified emails
+DELETE /api/v1/email-verification/verified-emails/{email}       # Remove verified email
 ```
 
 ### Waitlist (public)
@@ -97,7 +101,7 @@ DELETE /api/v1/email-verification/verified-emails/{email}  # Remove verified ema
 POST   /public/waitlist                    # Join waitlist (no auth)
 ```
 
-## Response Format
+## Response format
 
 Responses use JSON. Most endpoints return the resource directly:
 
@@ -113,23 +117,23 @@ List endpoints like `GET /api/v1/tasks` return a bare JSON array:
 
 ```json
 [
-  { "id": "uuid-1", "name": "Task 1", ... },
-  { "id": "uuid-2", "name": "Task 2", ... }
+  { "id": "uuid-1", "name": "Watch 1" },
+  { "id": "uuid-2", "name": "Watch 2" }
 ]
 ```
 
-Some public task endpoints wrap results with metadata:
+Some public-watch endpoints wrap results with metadata:
 
 ```json
 {
-  "tasks": [...],
+  "tasks": [],
   "total": 100,
   "offset": 0,
   "limit": 20
 }
 ```
 
-## Error Handling
+## Error handling
 
 Errors follow standard HTTP status codes with detail messages:
 
@@ -153,16 +157,16 @@ Validation errors (422) include field-level details:
 }
 ```
 
-## Rate Limits
+## Rate limits
 
 Public endpoints have per-IP rate limits:
 
-- Public tasks: 10 requests/minute
+- Public watches: 10 requests/minute
 - Vanity URL lookups: 20 requests/minute
 - Waitlist join: 5 requests/minute
 
-## Next Steps
+## Next steps
 
-- Read [Authentication](/api/authentication) for API key setup
-- View [Tasks API](/api/tasks) for task management endpoints
+- Read [Authentication](/api/authentication) for API-key setup
+- See the [Watches API](/api/tasks) for watch-management endpoints
 - Check [Error Handling](/api/errors) for error codes

@@ -1,31 +1,35 @@
 ---
-description: API authentication with API keys and bearer tokens. Generate keys, secure credential storage, and authentication best practices.
+description: API authentication with API keys and bearer tokens. Generate keys, store credentials securely, and follow authentication best practices.
 ---
 
 # Authentication
 
-Torale supports two authentication methods: Clerk OAuth for web applications and API keys for programmatic access.
+webwhen supports two authentication methods: Clerk OAuth for the web dashboard and API keys for programmatic access.
 
-## Authentication Methods
+::: tip Naming during the transition
+Endpoint paths and environment variable names still use `torale`. The rename to `webwhen` is a later phase.
+:::
 
-### 1. Clerk OAuth (Web Dashboard)
+## Authentication methods
+
+### 1. Clerk OAuth (web dashboard)
 
 Used for browser-based authentication in the web dashboard.
 
 **Supported providers:**
 - Google OAuth
 - GitHub OAuth
-- Email/Password
+- Email + password
 
 **How it works:**
 1. User logs in via Clerk at torale.ai
-2. Clerk issues JWT token
-3. Frontend includes token in API requests
-4. Backend verifies token with Clerk
+2. Clerk issues a JWT
+3. The frontend includes the token in API requests
+4. The backend verifies the token with Clerk
 
-**No manual setup required** - handled automatically by the web dashboard.
+**No manual setup required** — handled automatically by the web dashboard.
 
-### 2. API Keys (SDK)
+### 2. API keys (SDK)
 
 Used for programmatic access via the Python SDK.
 
@@ -37,46 +41,46 @@ Example: sk_abc123def456ghi789jkl012mno345pq
 
 **Security:**
 - Keys are bcrypt hashed before storage
-- Only shown once during creation
-- Can be revoked anytime
-- One active key per user (revoke before creating new)
+- Shown once during creation
+- Revocable at any time
+- One active key per user (revoke before creating a new one)
 
-**Requires developer role:** API key creation requires `"role": "developer"` or `"role": "admin"` in Clerk `publicMetadata`.
+**Requires developer role:** API-key creation requires `"role": "developer"` or `"role": "admin"` in Clerk `publicMetadata`.
 
-## Getting an API Key
+## Getting an API key
 
-### Web Dashboard
+### Web dashboard
 
 1. **Log in** to [torale.ai](https://torale.ai)
-2. **Navigate** to Settings -> API Keys
+2. **Navigate** to Settings → API Keys
 3. **Click** "Generate New Key"
-4. **Enter** key name (e.g., "My API Key", "Production Script")
-5. **Copy** key immediately (shown only once)
-6. **Save** securely
+4. **Enter** a key name (for example, "My API Key", "Production Script")
+5. **Copy** the key immediately (shown only once)
+6. **Save** it securely
 
-### Key Management
+### Key management
 
 **List keys:**
-- View all your API keys in dashboard
-- See last used timestamp
+- View all your API keys in the dashboard
+- See last-used timestamps
 - Identify keys by name and prefix
 
-**Revoke key:**
-- Click "Revoke" next to key
-- Immediate revocation
+**Revoke a key:**
+- Click "Revoke" next to the key
+- Revocation is immediate
 - Cannot be undone
 
-## Using API Keys
+## Using API keys
 
-### HTTP Requests
+### HTTP requests
 
-**Include in Authorization header:**
+**Include in the `Authorization` header:**
 ```bash
 curl -X GET https://api.torale.ai/api/v1/tasks \
   -H "Authorization: Bearer sk_..."
 ```
 
-**Example with cURL:**
+**Example with curl:**
 ```bash
 API_KEY="sk_..."
 
@@ -84,17 +88,17 @@ curl -X POST https://api.torale.ai/api/v1/tasks \
   -H "Authorization: Bearer $API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "iPhone Release Monitor",
+    "name": "iPhone Release Watch",
     "search_query": "When is the next iPhone release?",
     "condition_description": "A specific date has been announced"
   }'
 ```
 
-## Authentication Endpoints
+## Authentication endpoints
 
-### Sync User (Web Dashboard Only)
+### Sync user (web dashboard only)
 
-Create or update user record after Clerk authentication. Called automatically by frontend on login.
+Create or update a user record after Clerk authentication. Called automatically by the frontend on login.
 
 **Endpoint:** `POST /auth/sync-user`
 
@@ -120,7 +124,7 @@ Authorization: Bearer {clerk_jwt_token}
 }
 ```
 
-### Get Current User
+### Get current user
 
 **Endpoint:** `GET /auth/me`
 
@@ -138,7 +142,7 @@ Authorization: Bearer {clerk_jwt_token}
 }
 ```
 
-### Mark Welcome Seen
+### Mark welcome seen
 
 Mark that the user has completed the welcome flow.
 
@@ -151,9 +155,9 @@ Mark that the user has completed the welcome flow.
 }
 ```
 
-### Generate API Key
+### Generate API key
 
-Create a new API key. Requires developer role.
+Create a new API key. Requires the developer role.
 
 **Endpoint:** `POST /auth/api-keys`
 
@@ -181,10 +185,10 @@ Create a new API key. Requires developer role.
 ```
 
 **Errors:**
-- `400` if user already has an active key (revoke first)
-- `404` if user not synced yet
+- `400` if the user already has an active key (revoke first)
+- `404` if the user is not synced yet
 
-### List API Keys
+### List API keys
 
 **Endpoint:** `GET /auth/api-keys`
 
@@ -203,7 +207,7 @@ Create a new API key. Requires developer role.
 ]
 ```
 
-### Revoke API Key
+### Revoke API key
 
 **Endpoint:** `DELETE /auth/api-keys/{id}`
 
@@ -214,32 +218,32 @@ Create a new API key. Requires developer role.
 }
 ```
 
-Returns `404` if key not found or doesn't belong to user.
+Returns `404` if the key isn't found or doesn't belong to the user.
 
-## Security Best Practices
+## Security best practices
 
-### Protecting API Keys
+### Protecting API keys
 
 **Do:**
 - Store keys in environment variables
-- Use secret management services (AWS Secrets Manager, 1Password, etc.)
+- Use a secret manager (AWS Secrets Manager, 1Password, etc.)
 - Rotate keys periodically
 - Revoke unused keys
 
 **Don't:**
 - Commit keys to version control
 - Share keys via email or chat
-- Hardcode keys in source code
-- Store keys in plain text files
+- Hard-code keys in source files
+- Store keys in plain-text files
 
-### Environment Variables
+### Environment variables
 
 ```bash
-# .env (add to .gitignore!)
+# .env (add to .gitignore)
 TORALE_API_KEY=sk_...
 ```
 
-## Development Mode (No Auth)
+## Development mode (no auth)
 
 For local development without authentication:
 
@@ -247,11 +251,11 @@ For local development without authentication:
 export TORALE_NOAUTH=1
 ```
 
-Only works with local development API (`localhost:8000`). The backend uses a test user for all requests.
+Only works against the local development API (`localhost:8000`). The backend uses a test user for every request.
 
-## Error Responses
+## Error responses
 
-### Invalid API Key
+### Invalid API key
 
 **Status:** `401 Unauthorized`
 ```json
@@ -260,7 +264,7 @@ Only works with local development API (`localhost:8000`). The backend uses a tes
 }
 ```
 
-### Missing Authorization
+### Missing authorization
 
 **Status:** `401 Unauthorized`
 ```json
@@ -269,7 +273,7 @@ Only works with local development API (`localhost:8000`). The backend uses a tes
 }
 ```
 
-### Expired Token (Clerk)
+### Expired token (Clerk)
 
 **Status:** `401 Unauthorized`
 ```json
@@ -278,8 +282,8 @@ Only works with local development API (`localhost:8000`). The backend uses a tes
 }
 ```
 
-## Next Steps
+## Next steps
 
-- Create tasks using [Tasks API](/api/tasks)
-- View execution history with [Executions API](/api/executions)
-- Check [Error Handling](/api/errors) guide
+- Create watches via the [Watches API](/api/tasks)
+- See execution history with the [Executions API](/api/executions)
+- Check the [Error Handling](/api/errors) guide

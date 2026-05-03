@@ -1,22 +1,26 @@
 ---
-description: Executions API reference. View task execution history, check status, retrieve results, and query execution details via REST API.
+description: Executions API reference. View watch execution history, check status, retrieve results, and query execution details via REST API.
 ---
 
 # Executions API
 
-View task execution history and results.
+View execution history and results for a watch.
+
+::: tip Naming during the transition
+URLs still address watches as `tasks` (`/api/v1/tasks/{task_id}/executions`). The rename to `webwhen` is a later phase.
+:::
 
 ## Overview
 
 Base URL: `https://api.torale.ai/api/v1/tasks/{task_id}/executions`
 
-Supports both authenticated and unauthenticated access (for public tasks).
+Supports both authenticated and unauthenticated access (for public watches).
 
 ## Endpoints
 
-### Get Execution History
+### Get execution history
 
-Get all executions for a specific task. Returns a bare JSON array (no pagination wrapper).
+Get every execution for a specific watch. Returns a bare JSON array (no pagination wrapper).
 
 **Endpoint:** `GET /api/v1/tasks/{task_id}/executions`
 
@@ -66,53 +70,53 @@ curl -X GET "https://api.torale.ai/api/v1/tasks/550e8400.../executions?limit=10"
 ```
 
 **Access control:**
-- Task owner: full access
-- Public task: anyone can view executions (no auth required)
-- Private task, non-owner: 404
+- Watch owner: full access
+- Public watch: anyone can view executions (no auth required)
+- Private watch, non-owner: 404
 
-## Execution Object Schema
+## Execution object schema
 
 ### Fields
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `id` | UUID | Unique execution identifier |
-| `task_id` | UUID | Parent task ID |
+| `task_id` | UUID | Parent watch ID |
 | `status` | enum | `pending`, `running`, `success`, `retrying`, `failed`, `cancelled` |
 | `started_at` | timestamp | When execution started |
 | `completed_at` | timestamp/null | When execution completed (null if still running) |
 | `result` | object/null | Agent result with evidence, confidence, sources |
-| `notification` | string/null | User-facing notification message (null if condition not met) |
+| `notification` | string/null | User-facing trigger message (null if condition not met) |
 | `grounding_sources` | array/null | Source URLs backing the evidence |
 | `error_message` | string/null | Error details if status is `failed` |
 | `created_at` | timestamp | Execution creation time |
 
 ### Key difference: `notification` vs `result`
 
-- `notification`: User-facing markdown message, only present when the condition was met. This is what gets sent to the user via email/webhook.
-- `result`: Internal agent result with evidence and confidence. Present on all completed executions regardless of whether the condition was met.
+- `notification`: user-facing message, present only when the condition was met. This is what gets delivered via email or webhook.
+- `result`: internal agent result with evidence and confidence. Present on every completed execution, whether the condition was met or not.
 
-## Execution Statuses
+## Execution statuses
 
 ### pending
 Initial state before execution starts.
 
 ### running
-Execution in progress (searching, evaluating condition).
+Execution in progress (searching, evaluating the condition).
 
 ### success
-Execution completed successfully. Check `notification` field to see if condition was met.
+Execution completed successfully. Check the `notification` field to see if the condition was met.
 
 ### retrying
-Transient failure, will be retried automatically.
+Transient failure — retried automatically.
 
 ### failed
 Persistent or user-actionable failure. Check `error_message` for details.
 
 ### cancelled
-Execution was cancelled (e.g., by a manual "Run Now" that overrode a stuck execution).
+Execution was cancelled (for example, by a manual "Run now" that overrode a stuck execution).
 
-## Task-Scoped Notifications
+## Per-watch trigger feed
 
 Filter executions to only those where the condition was met.
 
@@ -126,7 +130,7 @@ Filter executions to only those where the condition was met.
 
 **Response:** `200 OK`
 
-Returns the same execution object array, but filtered to only executions where `notification IS NOT NULL`.
+Returns the same execution object array, filtered to only executions where `notification IS NOT NULL`.
 
 ```json
 [
@@ -135,21 +139,21 @@ Returns the same execution object array, but filtered to only executions where `
     "task_id": "550e8400-e29b-41d4-a716-446655440000",
     "status": "success",
     "notification": "Apple has officially announced the iPhone 16 release date...",
-    "grounding_sources": [...],
+    "grounding_sources": [],
     "started_at": "2025-01-15T09:00:00Z",
     "completed_at": "2025-01-15T09:00:05Z",
-    "result": {...},
+    "result": {},
     "error_message": null,
     "created_at": "2025-01-15T09:00:00Z"
   }
 ]
 ```
 
-Same access control rules as the executions endpoint.
+Same access-control rules as the executions endpoint.
 
-## Error Responses
+## Error responses
 
-### Not Found
+### Not found
 
 **Status:** `404 Not Found`
 ```json
@@ -158,10 +162,10 @@ Same access control rules as the executions endpoint.
 }
 ```
 
-Returned when the task doesn't exist, or is private and the requester is not the owner.
+Returned when the watch doesn't exist, or is private and the requester isn't the owner.
 
-## Next Steps
+## Next steps
 
-- View [Notifications API](/api/notifications) for notification send history
-- Check [Tasks API](/api/tasks) for task management
-- Read [Error Handling](/api/errors) guide
+- See the [Notifications API](/api/notifications) for notification send history
+- Check the [Watches API](/api/tasks) for watch management
+- Read the [Error Handling](/api/errors) guide

@@ -1,10 +1,14 @@
 ---
-description: Install Torale Python SDK via pip. Requirements, virtual environment setup, and dependency management for programmatic task monitoring.
+description: Install the webwhen Python SDK via pip. Requirements, virtual environment setup, and dependency management.
 ---
 
 # Installation
 
-Install the Torale Python SDK.
+Install the webwhen Python SDK.
+
+::: tip Naming during the transition
+The PyPI package is still `torale` and the import is still `from torale import Torale`. The rename to `webwhen` is a later phase.
+:::
 
 ## Requirements
 
@@ -25,36 +29,36 @@ pip install torale
 uv add torale
 ```
 
-### From Source
+### From source
 
 ```bash
-git clone https://github.com/torale-ai/torale
+git clone https://github.com/prassanna-ravishankar/torale
 cd torale/backend
 uv sync
 ```
 
-## Verify Installation
+## Verify the install
 
 ```bash
 python -c "import torale; print(torale.__version__)"
 ```
 
-## Quick Test
+## Quick test
 
 ```python
 from torale import Torale
 
-# Initialize client
+# Initialize the client
 client = Torale(api_key="sk_...")
 
-# Test connection by listing tasks
+# Test the connection by listing watches
 tasks = client.tasks.list()
-print(f"Connected. Found {len(tasks)} tasks.")
+print(f"Connected. Found {len(tasks)} watches.")
 ```
 
-## Next Steps
+## Next steps
 
-- Get started with [Quickstart Guide](/sdk/quickstart)
-- Learn about [Async Client](/sdk/async)
-- View [Examples](/sdk/examples)
+- Walk through the [Quickstart Guide](/sdk/quickstart)
+- Learn about the [Async Client](/sdk/async)
+- See [Examples](/sdk/examples)
 - Handle [Errors](/sdk/errors)

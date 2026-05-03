@@ -1,34 +1,38 @@
 ---
-description: Integrate Torale with OpenClaw to add web monitoring to your AI assistant. Watch for conditions and trigger actions when they're met.
+description: Integrate webwhen with OpenClaw to add web watching to your AI assistant. Watch for conditions and trigger actions when they're met.
 ---
 
 # OpenClaw Integration
 
-Use Torale as a web monitoring backend for [OpenClaw](https://openclaw.ai). Torale watches for conditions on the web; OpenClaw acts when they're met.
+Use webwhen as a web-watching backend for [OpenClaw](https://openclaw.ai). webwhen watches for conditions on the web; OpenClaw acts when they're met.
 
-## How It Works
+::: tip Naming during the transition
+The API host is still `api.torale.ai` and watches are still addressed as `tasks` in URLs. The rename to `webwhen` is a later phase — endpoint paths below reflect the current shipping API.
+:::
+
+## How it works
 
 ```
-You (via chat) → OpenClaw → Torale API (create monitor)
+You (via chat) → OpenClaw → webwhen API (create watch)
                                   ↓
-                    Torale checks periodically
+                    webwhen checks periodically
                                   ↓
                     Condition met → webhook → OpenClaw acts
 ```
 
 1. You tell OpenClaw to watch for something
-2. OpenClaw creates a Torale task via API
-3. Torale monitors the web on a schedule
-4. When the condition is met, Torale sends a webhook to OpenClaw
-5. OpenClaw receives the notification and takes action
+2. OpenClaw creates a webwhen watch via the API
+3. webwhen checks the web on a schedule
+4. When the condition is met, webwhen sends a webhook to OpenClaw
+5. OpenClaw receives the trigger and takes action
 
 ## Setup
 
-### 1. Get a Torale API Key
+### 1. Get a webwhen API key
 
 Sign up at [torale.ai](https://torale.ai) and create an API key in Settings.
 
-### 2. Install the Skill
+### 2. Install the skill
 
 For Claude Code:
 ```bash
@@ -41,13 +45,13 @@ For OpenClaw:
 openclaw skills install torale
 ```
 
-### 3. Configure the API Key
+### 3. Configure the API key
 
 ```bash
 openclaw config set skills.entries.torale.apiKey "sk_your_key_here"
 ```
 
-### 4. Enable Webhooks in OpenClaw
+### 4. Enable webhooks in OpenClaw
 
 Make sure hooks are enabled in your `~/.openclaw/openclaw.json`:
 
@@ -66,16 +70,16 @@ Make sure hooks are enabled in your `~/.openclaw/openclaw.json`:
 Once configured, tell OpenClaw what to watch for:
 
 - "Watch for when Apple announces iPhone 17"
-- "Monitor when Bitcoin crosses $100k and alert me"
-- "Let me know when the Next.js 15 release notes are published, then summarize the changelog"
+- "Watch when Bitcoin crosses $100k and let me know"
+- "Tell me when the Next.js 15 release notes are published, then summarize the changelog"
 
-OpenClaw creates the monitor and Torale handles the rest.
+OpenClaw creates the watch and webwhen handles the rest.
 
-## API Reference
+## API reference
 
 All requests go to `https://api.torale.ai/api/v1` with `Authorization: Bearer sk_...`.
 
-### Create a Monitor
+### Create a watch
 
 ```bash
 curl -X POST https://api.torale.ai/api/v1/tasks \
@@ -97,23 +101,23 @@ curl -X POST https://api.torale.ai/api/v1/tasks \
   }'
 ```
 
-### List Monitors
+### List watches
 
 ```bash
 curl https://api.torale.ai/api/v1/tasks \
   -H "Authorization: Bearer sk_..."
 ```
 
-### Delete a Monitor
+### Delete a watch
 
 ```bash
 curl -X DELETE https://api.torale.ai/api/v1/tasks/{task_id} \
   -H "Authorization: Bearer sk_..."
 ```
 
-## Webhook Payload
+## Webhook payload
 
-When the condition is met, Torale POSTs to your OpenClaw webhook:
+When the condition is met, webwhen POSTs to your OpenClaw webhook:
 
 ```json
 {
@@ -142,17 +146,17 @@ When the condition is met, Torale POSTs to your OpenClaw webhook:
 }
 ```
 
-The `context` object is passed through from task creation, so OpenClaw knows what action to take.
+The `context` object is passed through from watch creation, so OpenClaw knows what action to take.
 
-## HTTPS Requirement
+## HTTPS requirement
 
-Torale requires webhook URLs to use HTTPS. If your OpenClaw instance runs locally on HTTP, expose it via [Tailscale](https://docs.openclaw.ai/gateway/tailscale) or a reverse proxy with TLS.
+webwhen requires webhook URLs to use HTTPS. If your OpenClaw instance runs locally on HTTP, expose it via [Tailscale](https://docs.openclaw.ai/gateway/tailscale) or a reverse proxy with TLS.
 
 ## Authentication
 
-Torale uses HMAC-SHA256 signing (Stripe-compatible) on all webhook deliveries. The signature is in the `X-Torale-Signature` header. OpenClaw authenticates via the `Authorization: Bearer` header you configure in the notification.
+webwhen uses HMAC-SHA256 signing (Stripe-compatible) on every webhook delivery. The signature is in the `X-Torale-Signature` header (header name preserved during the transition). OpenClaw authenticates via the `Authorization: Bearer` header you configure in the notification.
 
-## Rate Limits
+## Rate limits
 
-- Task creation: 10 per minute
-- Maximum active tasks: 50 per user
+- Watch creation: 10 per minute
+- Maximum active watches: 50 per user

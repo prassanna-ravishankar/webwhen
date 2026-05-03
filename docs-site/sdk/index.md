@@ -1,29 +1,33 @@
 ---
-description: Torale Python SDK documentation. Install the SDK, authenticate, and create monitoring tasks programmatically with Python.
+description: webwhen Python SDK documentation. Install the SDK, authenticate, and create watches programmatically with Python.
 ---
 
 # Python SDK
 
-Integrate Torale monitoring into your Python applications.
+Integrate webwhen into your Python applications.
 
-## Quick Start
+::: tip Naming during the transition
+The package on PyPI is still `torale` and the client classes are still `Torale` / `ToraleAsync`. The rename to `webwhen` is a later phase — code samples below use the current shipping names.
+:::
 
-**[Quickstart Guide](./quickstart)** - Install, authenticate, and create your first task in 5 minutes
+## Quick start
 
-**[Installation](./installation)** - Requirements, pip installation, and virtual environment setup
+**[Quickstart Guide](./quickstart)** — install, authenticate, and create your first watch in five minutes.
 
-**[Authentication](./authentication)** - API key setup and client initialization
+**[Installation](./installation)** — requirements, pip install, and virtual environment setup.
 
-## SDK Features
+**[Authentication](./authentication)** — API key setup and client initialization.
 
-**[Task Management](./tasks)** - Create, list, update, and delete tasks programmatically
+## SDK features
 
-**[Async Support](./async)** - Use async/await patterns for concurrent operations
+**[Watch management](./tasks)** — create, list, update, and delete watches programmatically.
 
-**[Code Examples](./examples)** - Real-world integration examples and patterns
+**[Async support](./async)** — async/await patterns for concurrent operations.
 
-**[Error Handling](./errors)** - Exception types and retry logic
+**[Code examples](./examples)** — real-world integration examples and patterns.
 
-## Getting Started
+**[Error handling](./errors)** — exception types and retry logic.
 
-Start with the [Quickstart Guide](./quickstart) for a 5-minute introduction, or jump to [Code Examples](./examples) for real-world integration patterns.
+## Getting started
+
+Start with the [Quickstart Guide](./quickstart) for a five-minute introduction, or jump straight to [Code examples](./examples) for real-world integration patterns.

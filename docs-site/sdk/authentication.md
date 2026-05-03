@@ -1,19 +1,23 @@
 ---
-description: Authenticate with Torale API using Python SDK. Initialize client with API keys, manage credentials, and handle authentication errors.
+description: Authenticate with the webwhen API using the Python SDK. Initialize the client with API keys, manage credentials, and handle authentication errors.
 ---
 
 # Authentication
 
 Authenticate the SDK with your API key.
 
-## Get API Key
+::: tip Naming during the transition
+Environment variable names and the client class still use `torale` (`TORALE_API_KEY`, `Torale`). The rename to `webwhen` is a later phase.
+:::
+
+## Get an API key
 
 1. Log in to [torale.ai](https://torale.ai)
-2. Navigate to Settings -> API Keys
-3. Generate new key
-4. Copy and save securely
+2. Navigate to Settings → API Keys
+3. Generate a new key
+4. Copy and save it securely
 
-## Initialize Client
+## Initialize the client
 
 ```python
 from torale import Torale
@@ -21,7 +25,7 @@ from torale import Torale
 client = Torale(api_key="sk_...")
 ```
 
-## API Key Resolution Order
+## API key resolution order
 
 The client resolves the API key in this order:
 
@@ -29,9 +33,9 @@ The client resolves the API key in this order:
 2. `TORALE_API_KEY` environment variable
 3. `~/.torale/config.json` file
 
-If no key is found and `TORALE_NOAUTH` is not set, an `AuthenticationError` is raised.
+If no key is found and `TORALE_NOAUTH` isn't set, an `AuthenticationError` is raised.
 
-## Environment Variables
+## Environment variables
 
 Store your API key in an environment variable:
 
@@ -39,7 +43,7 @@ Store your API key in an environment variable:
 export TORALE_API_KEY=sk_...
 ```
 
-The client reads automatically from the environment:
+The client reads it automatically:
 
 ```python
 from torale import Torale
@@ -47,7 +51,7 @@ from torale import Torale
 client = Torale()  # Reads from TORALE_API_KEY
 ```
 
-## Using .env Files
+## Using .env files
 
 ```python
 from dotenv import load_dotenv
@@ -57,7 +61,7 @@ load_dotenv()
 client = Torale()
 ```
 
-## Config File
+## Config file
 
 The SDK reads from `~/.torale/config.json` if it exists:
 
@@ -68,7 +72,7 @@ The SDK reads from `~/.torale/config.json` if it exists:
 }
 ```
 
-## Local Development
+## Local development
 
 For local development without authentication:
 
@@ -90,7 +94,7 @@ from torale import Torale
 client = Torale(api_key="sk_...")  # Connects to http://localhost:8000
 ```
 
-## API URL Resolution
+## API URL resolution
 
 The base URL is resolved in this order:
 
@@ -100,7 +104,7 @@ The base URL is resolved in this order:
 4. `api_url` from `~/.torale/config.json`
 5. `https://api.torale.ai` (default)
 
-## Error Handling
+## Error handling
 
 ```python
 from torale import Torale
@@ -113,8 +117,8 @@ except AuthenticationError:
     print("Invalid API key")
 ```
 
-## Next Steps
+## Next steps
 
-- Create tasks with [Tasks API](/sdk/tasks)
+- Create watches with the [Watches API](/sdk/tasks)
 - Use the [Async Client](/sdk/async)
-- Read [Quickstart Guide](/sdk/quickstart)
+- Read the [Quickstart Guide](/sdk/quickstart)

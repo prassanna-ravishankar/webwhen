@@ -1,12 +1,16 @@
 ---
-description: API error responses and status codes. HTTP error codes, error message formats, common errors, and troubleshooting guide.
+description: API error responses and status codes. HTTP error codes, error formats, common errors, and troubleshooting.
 ---
 
 # Error Handling
 
-Understanding and handling errors in Torale API.
+Understand and handle errors returned by the webwhen API.
 
-## HTTP Status Codes
+::: tip Naming during the transition
+Endpoint paths and JSON shapes still use `tasks`. The rename to `webwhen` is a later phase.
+:::
+
+## HTTP status codes
 
 | Code | Status | Meaning |
 |------|--------|---------|
@@ -14,14 +18,14 @@ Understanding and handling errors in Torale API.
 | 204 | No Content | Successful deletion |
 | 400 | Bad Request | Invalid request (bad state transition, invalid notification, etc.) |
 | 401 | Unauthorized | Missing or invalid authentication |
-| 404 | Not Found | Resource doesn't exist or not accessible |
-| 409 | Conflict | Resource conflict (task already running, duplicate entry, etc.) |
-| 422 | Unprocessable Entity | Validation error (missing/invalid fields) |
+| 404 | Not Found | Resource doesn't exist or isn't accessible |
+| 409 | Conflict | Resource conflict (watch already running, duplicate entry, etc.) |
+| 422 | Unprocessable Entity | Validation error (missing or invalid fields) |
 | 429 | Too Many Requests | Rate limit exceeded |
 | 500 | Internal Server Error | Server error |
-| 503 | Service Unavailable | Dependency unavailable (e.g., Clerk client) |
+| 503 | Service Unavailable | Dependency unavailable (for example, Clerk client) |
 
-## Error Response Format
+## Error response format
 
 All errors use FastAPI's standard format:
 
@@ -46,11 +50,11 @@ For validation errors (422), FastAPI returns field-level details:
 }
 ```
 
-## Common Errors
+## Common errors
 
-### Authentication Errors
+### Authentication errors
 
-#### Invalid API Key
+#### Invalid API key
 
 **Status:** `401 Unauthorized`
 
@@ -60,9 +64,9 @@ For validation errors (422), FastAPI returns field-level details:
 }
 ```
 
-**Causes:** Key doesn't exist, was revoked, or format is incorrect.
+**Causes:** the key doesn't exist, was revoked, or is malformed.
 
-#### Missing Authorization
+#### Missing authorization
 
 **Status:** `401 Unauthorized`
 
@@ -72,11 +76,11 @@ For validation errors (422), FastAPI returns field-level details:
 }
 ```
 
-**Fix:** Include `Authorization: Bearer {key}` header.
+**Fix:** include the `Authorization: Bearer {key}` header.
 
-### Resource Errors
+### Resource errors
 
-#### Not Found
+#### Not found
 
 **Status:** `404 Not Found`
 
@@ -86,7 +90,7 @@ For validation errors (422), FastAPI returns field-level details:
 }
 ```
 
-Returned when a resource doesn't exist or when a non-owner tries to access a private task. Torale returns 404 (not 403) for private resources to avoid leaking existence information.
+Returned when a resource doesn't exist or when a non-owner tries to access a private watch. webwhen returns 404 (not 403) for private resources to avoid leaking existence.
 
 #### Conflict
 
@@ -98,11 +102,11 @@ Returned when a resource doesn't exist or when a non-owner tries to access a pri
 }
 ```
 
-Returned when trying to execute a task that already has a running/pending execution, or when a waitlist email already exists.
+Returned when trying to execute a watch that already has a running or pending execution, or when a waitlist email already exists.
 
-### Validation Errors
+### Validation errors
 
-#### Missing Required Fields
+#### Missing required fields
 
 **Status:** `422 Unprocessable Entity`
 
@@ -119,9 +123,9 @@ Returned when trying to execute a task that already has a running/pending execut
 }
 ```
 
-Required fields for task creation: `search_query`.
+Required fields for watch creation: `search_query`.
 
-#### Invalid Field Values
+#### Invalid field values
 
 **Status:** `422 Unprocessable Entity`
 
@@ -138,9 +142,9 @@ Required fields for task creation: `search_query`.
 }
 ```
 
-### Business Logic Errors
+### Business logic errors
 
-#### Invalid State Transition
+#### Invalid state transition
 
 **Status:** `400 Bad Request`
 
@@ -151,11 +155,11 @@ Required fields for task creation: `search_query`.
 ```
 
 Valid state transitions:
-- `active` <-> `paused`
-- `active` -> `completed`
-- `completed` -> `active`
+- `active` ↔ `paused`
+- `active` → `completed`
+- `completed` → `active`
 
-#### Invalid Notification Configuration
+#### Invalid notification configuration
 
 **Status:** `400 Bad Request`
 
@@ -165,7 +169,7 @@ Valid state transitions:
 }
 ```
 
-#### Duplicate Notification Types
+#### Duplicate notification types
 
 **Status:** `400 Bad Request`
 
@@ -175,7 +179,7 @@ Valid state transitions:
 }
 ```
 
-#### Username Already Set
+#### Username already set
 
 **Status:** `400 Bad Request`
 
@@ -185,7 +189,7 @@ Valid state transitions:
 }
 ```
 
-#### Missing Username for Public Tasks
+#### Missing username for public watches
 
 **Status:** `400 Bad Request`
 
@@ -195,19 +199,19 @@ Valid state transitions:
 }
 ```
 
-### Rate Limit Errors
+### Rate limit errors
 
 **Status:** `429 Too Many Requests`
 
 Rate limits are applied per-IP on public endpoints:
-- Public tasks listing: 10/minute
-- Public task by ID: 20/minute
-- Task RSS feed: 10/minute
+- Public watches listing: 10/minute
+- Public watch by ID: 20/minute
+- Watch RSS feed: 10/minute
 - Waitlist join: 5/minute
 
-### Server Errors
+### Server errors
 
-#### Internal Server Error
+#### Internal server error
 
 **Status:** `500 Internal Server Error`
 
@@ -219,7 +223,7 @@ Rate limits are applied per-IP on public endpoints:
 
 When a state transition fails after other fields were updated, the entire update is rolled back and the error is returned.
 
-#### Service Unavailable
+#### Service unavailable
 
 **Status:** `503 Service Unavailable`
 
@@ -229,11 +233,11 @@ When a state transition fails after other fields were updated, the entire update
 }
 ```
 
-Returned when an external dependency (like Clerk) is unavailable.
+Returned when an external dependency (such as Clerk) is unavailable.
 
 ## Debugging
 
-### Check Response Status
+### Check the response status
 
 ```bash
 # Verbose curl output shows status code and headers
@@ -241,15 +245,15 @@ curl -v -X GET https://api.torale.ai/api/v1/tasks \
   -H "Authorization: Bearer sk_..."
 ```
 
-### Common Mistakes
+### Common mistakes
 
-1. **Sending `schedule` in create/update** - Schedule is not user-settable, it's determined by the agent
-2. **Expecting pagination wrapper on list endpoints** - `GET /api/v1/tasks` and executions return bare arrays
-3. **Using `GET /api/v1/notifications`** - This endpoint doesn't exist. Use `/api/v1/notifications/sends` for send history or `/api/v1/tasks/{id}/notifications` for task-scoped condition matches
-4. **Trying to access private tasks without auth** - Returns 404, not 403
+1. **Sending `schedule` in create or update.** Schedule isn't user-settable; the agent decides cadence.
+2. **Expecting a pagination wrapper on list endpoints.** `GET /api/v1/tasks` and the executions endpoint return bare arrays.
+3. **Using `GET /api/v1/notifications`.** This endpoint doesn't exist. Use `/api/v1/notifications/sends` for send history or `/api/v1/tasks/{id}/notifications` for per-watch trigger feed.
+4. **Trying to access private watches without auth.** Returns 404, not 403.
 
-## Next Steps
+## Next steps
 
 - Review [Authentication](/api/authentication) for auth setup
-- Check [Tasks API](/api/tasks) for endpoint details
-- View [API Overview](/api/overview) for complete endpoint listing
+- See the [Watches API](/api/tasks) for endpoint details
+- Read the [API Overview](/api/overview) for the full endpoint listing

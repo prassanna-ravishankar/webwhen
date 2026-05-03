@@ -1,12 +1,16 @@
 ---
-description: Handle errors in Torale Python SDK. Exception types, error responses, retry logic, and best practices for robust error handling.
+description: Handle errors in the webwhen Python SDK. Exception types, error responses, retry logic, and best practices for robust error handling.
 ---
 
 # Error Handling
 
-Handle errors gracefully in the Torale Python SDK.
+Handle errors gracefully in the webwhen Python SDK.
 
-## Exception Hierarchy
+::: tip Naming during the transition
+Exception class names still use `Torale` (`ToraleError`). The rename to `webwhen` is a later phase.
+:::
+
+## Exception hierarchy
 
 ```
 ToraleError (base)
@@ -19,9 +23,9 @@ ToraleError (base)
     └── response: dict | None
 ```
 
-All exceptions are in `torale.sdk.exceptions`.
+All exceptions live in `torale.sdk.exceptions`.
 
-## Basic Error Handling
+## Basic error handling
 
 ```python
 from torale import Torale
@@ -31,7 +35,7 @@ client = Torale(api_key="sk_...")
 
 try:
     task = client.tasks.create(
-        name="My Monitor",
+        name="My Watch",
         search_query="...",
         condition_description="...",
     )
@@ -39,7 +43,7 @@ except ToraleError as e:
     print(f"API error: {e}")
 ```
 
-## Specific Exceptions
+## Specific exceptions
 
 ### AuthenticationError
 
@@ -82,7 +86,7 @@ from torale.sdk.exceptions import NotFoundError
 try:
     task = client.tasks.get("non-existent-id")
 except NotFoundError:
-    print("Task not found")
+    print("Watch not found")
 ```
 
 ### RateLimitError
@@ -113,9 +117,9 @@ except APIError as e:
         print(f"Response body: {e.response}")
 ```
 
-## Retry Logic
+## Retry logic
 
-### Simple Retry
+### Simple retry
 
 ```python
 import time
@@ -138,7 +142,7 @@ def create_task_with_retry(client, max_retries=3, **kwargs):
 
 task = create_task_with_retry(
     client,
-    name="My Monitor",
+    name="My Watch",
     search_query="...",
     condition_description="...",
 )
@@ -164,7 +168,7 @@ def create_task(client, **kwargs):
     return client.tasks.create(**kwargs)
 ```
 
-## Async Error Handling
+## Async error handling
 
 ```python
 import asyncio
@@ -190,7 +194,7 @@ async def main():
     async with ToraleAsync(api_key="sk_...") as client:
         task = await safe_create_task(
             client,
-            name="My Monitor",
+            name="My Watch",
             search_query="...",
             condition_description="...",
         )
@@ -198,7 +202,7 @@ async def main():
 asyncio.run(main())
 ```
 
-## Logging Errors
+## Logging errors
 
 ```python
 import logging
@@ -212,17 +216,17 @@ client = Torale(api_key="sk_...")
 
 try:
     task = client.tasks.create(
-        name="My Monitor",
+        name="My Watch",
         search_query="...",
         condition_description="...",
     )
-    logger.info(f"Created task: {task.id}")
+    logger.info(f"Created watch: {task.id}")
 except ToraleError as e:
-    logger.error(f"Task creation failed: {e}")
+    logger.error(f"Watch creation failed: {e}")
     raise
 ```
 
-## Best Practices
+## Best practices
 
 **Catch specific exceptions first.** Handle each error type differently:
 
@@ -258,8 +262,8 @@ except APIError as e:
 
 **Use exponential backoff** for retries to avoid overwhelming the server.
 
-## Next Steps
+## Next steps
 
-- View [Examples](/sdk/examples)
-- Read [API Reference](/api/errors)
-- Learn about [Async Client](/sdk/async)
+- See [Examples](/sdk/examples)
+- Read the [API Reference](/api/errors)
+- Learn about the [Async Client](/sdk/async)
