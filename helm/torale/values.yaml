@@ -242,6 +242,35 @@ novu:
 httproute:
   enabled: true
   gatewayName: clusterkit-gateway
+  # Inject `X-Robots-Tag: noindex, nofollow` on every webwhen route.
+  # Used during the rebrand soak window (T-2d → T-0). Cutover-day diff =
+  # remove the values-webwhen-soak.yaml overlay (or set this to false).
+  # Has no effect when domains.webwhen is unset (no webwhen routes render).
+  noindex: false
+
+# webwhen.ai parallel routing (rebrand cutover).
+#
+# When unset (default), the chart renders only the torale.ai routes. To
+# enable webwhen routes, set domains.webwhen via an overlay
+# (values-webwhen-soak.yaml during soak; bake into values-production.yaml /
+# values-staging.yaml at cutover). The cert webwhen-ai-origin-cert covers
+# all hostnames listed below; it's pre-attached to clusterkit-gateway.
+#
+# Production overlay shape:
+#   domains:
+#     webwhen:
+#       frontend: webwhen.ai
+#       www: www.webwhen.ai
+#       api: api.webwhen.ai
+#       docs: docs.webwhen.ai
+#
+# Staging overlay shape (no www, no docs):
+#   domains:
+#     webwhen:
+#       frontend: staging.webwhen.ai
+#       api: api-staging.webwhen.ai
+#
+# domains.webwhen: {}  # leave commented; overlays set this
 
 # ConfigMap for non-sensitive configuration
 config:
