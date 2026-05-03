@@ -143,6 +143,14 @@ app = FastAPI(
 
 _CORS_ORIGINS = [
     settings.frontend_url,
+    # webwhen.ai rebrand soak window: API allows requests from the new domain
+    # variants while both torale.ai and webwhen.ai resolve to the same backend.
+    # Cutover-day diff strips the torale.ai entries from settings.frontend_url
+    # (or flips it to https://webwhen.ai); these explicit entries can stay or
+    # be culled in the same commit. See #246.
+    "https://webwhen.ai",
+    "https://www.webwhen.ai",
+    "https://staging.webwhen.ai",
     "http://localhost:5173",
     "http://localhost:3000",
 ]
