@@ -148,4 +148,285 @@ spec:
       port: {{ .Values.docs.service.port }}
       weight: 1
 {{- end }}
+
+# ============================================================================
+# webwhen.ai parallel routes (rebrand cutover)
+# ----------------------------------------------------------------------------
+# These render only when .Values.domains.webwhen is set (soak overlay or
+# cutover values). Until then the chart deploys the torale.ai routes only.
+#
+# During the soak window (T-2d → T-0): set .Values.httproute.noindex=true to
+# inject `X-Robots-Tag: noindex, nofollow` on every rule via
+# ResponseHeaderModifier. SERP keeps treating webwhen.ai as new while the
+# soak runs; cutover-day diff is removing the soak overlay (or flipping
+# httproute.noindex to false) — no other changes to these routes.
+#
+# Cert: all webwhen hostnames share `webwhen-ai-origin-cert` (Cloudflare
+# Origin CA wildcard, 15-yr) attached to clusterkit-gateway via pre-shared
+# certs annotation. No per-route cert reference needed; the gateway listener
+# owns it.
+#
+# Hostnames covered (production release):
+#   webwhen.ai           → frontend catchall + 4 SEO routes to api
+#   www.webwhen.ai       → 301 redirect to apex (RequestRedirect filter)
+#   api.webwhen.ai       → backend api catchall
+#   docs.webwhen.ai      → docs catchall (gated on .Values.docs.enabled)
+#
+# Hostnames covered (staging release):
+#   staging.webwhen.ai     → frontend + SEO split
+#   api-staging.webwhen.ai → backend api catchall
+#
+# The www-redirect renders only on production (no www-staging hostname).
+#
+# OPERATOR GOTCHAS (validated on clusterkit PR #3):
+#
+# 1. ExternalDNS runs `policy: upsert-only`. Records are CREATED on
+#    HTTPRoute apply but NEVER DELETED on HTTPRoute remove. Any time you
+#    delete/rename a webwhen route — mid-validation, after the soak,
+#    during torale.ai sunset — orphan A/TXT records remain in Cloudflare.
+#    You MUST clean them manually via the Cloudflare API. dnsctl helper
+#    in clusterkit/scripts wraps this; see clusterkit/docs for the
+#    recipe.
+#
+# 2. `dig +short hostname @1.1.1.1` is UNRELIABLE for verifying record
+#    absence on Cloudflare-proxied zones. CF nameservers return edge IPs
+#    (188.114.96.0 / 188.114.97.0) for any name in a proxied zone, even
+#    when no record exists. Verify cleanup via Cloudflare API
+#    (`count=0` on the records endpoint), never via dig.
+# ============================================================================
+{{- if .Values.domains.webwhen }}
+---
+# webwhen frontend HTTPRoute
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: webwhen-{{ $envPrefix }}main
+  namespace: clusterkit
+  labels:
+    {{- include "torale.labels" . | nindent 4 }}
+    app.kubernetes.io/component: routing
+  annotations:
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: {{ .Values.httproute.gatewayName }}
+    namespace: clusterkit
+  hostnames:
+  - {{ .Values.domains.webwhen.frontend | quote }}
+  rules:
+  - matches:
+    - path:
+        type: Exact
+        value: /sitemap.xml
+    {{- if .Values.httproute.noindex }}
+    filters:
+    - type: ResponseHeaderModifier
+      responseHeaderModifier:
+        set:
+        - name: X-Robots-Tag
+          value: "noindex, nofollow"
+    {{- end }}
+    backendRefs:
+    - group: ""
+      kind: Service
+      name: {{ $fullName }}-api
+      namespace: {{ $serviceNamespace }}
+      port: {{ .Values.api.service.port }}
+      weight: 1
+  - matches:
+    - path:
+        type: Exact
+        value: /sitemap-dynamic.xml
+    {{- if .Values.httproute.noindex }}
+    filters:
+    - type: ResponseHeaderModifier
+      responseHeaderModifier:
+        set:
+        - name: X-Robots-Tag
+          value: "noindex, nofollow"
+    {{- end }}
+    backendRefs:
+    - group: ""
+      kind: Service
+      name: {{ $fullName }}-api
+      namespace: {{ $serviceNamespace }}
+      port: {{ .Values.api.service.port }}
+      weight: 1
+  - matches:
+    - path:
+        type: Exact
+        value: /changelog.xml
+    {{- if .Values.httproute.noindex }}
+    filters:
+    - type: ResponseHeaderModifier
+      responseHeaderModifier:
+        set:
+        - name: X-Robots-Tag
+          value: "noindex, nofollow"
+    {{- end }}
+    backendRefs:
+    - group: ""
+      kind: Service
+      name: {{ $fullName }}-api
+      namespace: {{ $serviceNamespace }}
+      port: {{ .Values.api.service.port }}
+      weight: 1
+  - matches:
+    - path:
+        type: Exact
+        value: /robots.txt
+    {{- if .Values.httproute.noindex }}
+    filters:
+    - type: ResponseHeaderModifier
+      responseHeaderModifier:
+        set:
+        - name: X-Robots-Tag
+          value: "noindex, nofollow"
+    {{- end }}
+    backendRefs:
+    - group: ""
+      kind: Service
+      name: {{ $fullName }}-api
+      namespace: {{ $serviceNamespace }}
+      port: {{ .Values.api.service.port }}
+      weight: 1
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    {{- if .Values.httproute.noindex }}
+    filters:
+    - type: ResponseHeaderModifier
+      responseHeaderModifier:
+        set:
+        - name: X-Robots-Tag
+          value: "noindex, nofollow"
+    {{- end }}
+    backendRefs:
+    - group: ""
+      kind: Service
+      name: {{ $fullName }}-frontend
+      namespace: {{ $serviceNamespace }}
+      port: {{ .Values.frontend.service.port }}
+      weight: 1
+---
+# webwhen API HTTPRoute
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: webwhen-{{ $envPrefix }}api
+  namespace: clusterkit
+  labels:
+    {{- include "torale.labels" . | nindent 4 }}
+    app.kubernetes.io/component: routing
+  annotations:
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: {{ .Values.httproute.gatewayName }}
+    namespace: clusterkit
+  hostnames:
+  - {{ .Values.domains.webwhen.api | quote }}
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    {{- if .Values.httproute.noindex }}
+    filters:
+    - type: ResponseHeaderModifier
+      responseHeaderModifier:
+        set:
+        - name: X-Robots-Tag
+          value: "noindex, nofollow"
+    {{- end }}
+    backendRefs:
+    - group: ""
+      kind: Service
+      name: {{ $fullName }}-api
+      namespace: {{ $serviceNamespace }}
+      port: {{ .Values.api.service.port }}
+      weight: 1
+{{- if and .Values.docs.enabled .Values.domains.webwhen.docs }}
+---
+# webwhen Docs HTTPRoute
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: webwhen-{{ $envPrefix }}docs
+  namespace: clusterkit
+  labels:
+    {{- include "torale.labels" . | nindent 4 }}
+    app.kubernetes.io/component: routing
+  annotations:
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: {{ .Values.httproute.gatewayName }}
+    namespace: clusterkit
+  hostnames:
+  - {{ .Values.domains.webwhen.docs | quote }}
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    {{- if .Values.httproute.noindex }}
+    filters:
+    - type: ResponseHeaderModifier
+      responseHeaderModifier:
+        set:
+        - name: X-Robots-Tag
+          value: "noindex, nofollow"
+    {{- end }}
+    backendRefs:
+    - group: ""
+      kind: Service
+      name: {{ $fullName }}-docs
+      namespace: {{ $serviceNamespace }}
+      port: {{ .Values.docs.service.port }}
+      weight: 1
+{{- end }}
+{{- if and (not $isStagingRelease) .Values.domains.webwhen.www }}
+---
+# www.webwhen.ai → apex 301 redirect
+# Production-only (no www-staging hostname). Redirect-only HTTPRoute carries
+# no backendRefs; gateway-api spec allows RequestRedirect-only rules.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: webwhen-www-redirect
+  namespace: clusterkit
+  labels:
+    {{- include "torale.labels" . | nindent 4 }}
+    app.kubernetes.io/component: routing
+  annotations:
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: {{ .Values.httproute.gatewayName }}
+    namespace: clusterkit
+  hostnames:
+  - {{ .Values.domains.webwhen.www | quote }}
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    filters:
+    - type: RequestRedirect
+      requestRedirect:
+        scheme: https
+        hostname: {{ .Values.domains.webwhen.frontend | quote }}
+        statusCode: 301
+{{- end }}
+{{- end }}
 {{- end }}
