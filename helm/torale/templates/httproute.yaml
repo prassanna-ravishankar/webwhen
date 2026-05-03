@@ -3,6 +3,13 @@
 {{- $isStagingRelease := eq .Release.Namespace "torale-staging" -}}
 {{- $serviceNamespace := ternary "torale-staging" "torale" $isStagingRelease -}}
 {{- $envPrefix := ternary "staging-" "" $isStagingRelease -}}
+{{/*
+  $isCutover: when true, the torale.ai HTTPRoutes serve 301 RequestRedirect
+  filters pointing to the webwhen.ai equivalents (path preserved). Set when
+  .Values.httproute.cutover is true. This is the T-0 cutover state.
+  Pre-cutover (during the soak window), the torale routes serve normally.
+*/}}
+{{- $isCutover := eq (.Values.httproute.cutover | toString) "true" -}}
 ---
 # Frontend HTTPRoute
 apiVersion: gateway.networking.k8s.io/v1
@@ -25,6 +32,19 @@ spec:
   hostnames:
   - {{ .Values.domains.frontend | quote }}
   rules:
+  {{- if $isCutover }}
+  # T-0 cutover: 301 redirect torale.ai/* → webwhen.ai/* (path preserved)
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    filters:
+    - type: RequestRedirect
+      requestRedirect:
+        scheme: https
+        hostname: {{ .Values.domains.webwhen.frontend | quote }}
+        statusCode: 301
+  {{- else }}
   # SEO endpoints served by backend API (must be before frontend catchall)
   - matches:
     - path:
@@ -82,6 +102,7 @@ spec:
       namespace: {{ $serviceNamespace }}  # Cross-namespace reference to service
       port: {{ .Values.frontend.service.port }}
       weight: 1
+  {{- end }}
 ---
 # API HTTPRoute
 apiVersion: gateway.networking.k8s.io/v1
@@ -103,6 +124,19 @@ spec:
   hostnames:
   - {{ .Values.domains.api | quote }}
   rules:
+  {{- if $isCutover }}
+  # T-0 cutover: 301 redirect api.torale.ai/* → api.webwhen.ai/* (path preserved)
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    filters:
+    - type: RequestRedirect
+      requestRedirect:
+        scheme: https
+        hostname: {{ .Values.domains.webwhen.api | quote }}
+        statusCode: 301
+  {{- else }}
   - matches:
     - path:
         type: PathPrefix
@@ -114,6 +148,7 @@ spec:
       namespace: {{ $serviceNamespace }}
       port: {{ .Values.api.service.port }}
       weight: 1
+  {{- end }}
 {{- if .Values.docs.enabled }}
 ---
 # Docs HTTPRoute
@@ -136,6 +171,19 @@ spec:
   hostnames:
   - {{ .Values.domains.docs | quote }}
   rules:
+  {{- if $isCutover }}
+  # T-0 cutover: 301 redirect docs.torale.ai/* → docs.webwhen.ai/* (path preserved)
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    filters:
+    - type: RequestRedirect
+      requestRedirect:
+        scheme: https
+        hostname: {{ .Values.domains.webwhen.docs | quote }}
+        statusCode: 301
+  {{- else }}
   - matches:
     - path:
         type: PathPrefix
@@ -147,6 +195,7 @@ spec:
       namespace: {{ $serviceNamespace }}
       port: {{ .Values.docs.service.port }}
       weight: 1
+  {{- end }}
 {{- end }}
 
 # ============================================================================
