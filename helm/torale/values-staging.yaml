@@ -7,8 +7,9 @@ domains:
   docs: docs-staging.torale.ai
 
 # Clerk authentication (uses production Clerk app - same as production)
+# Rotated 2026-05-03 alongside production for the webwhen.ai rebrand cutover.
 clerk:
-  publishableKey: pk_live_Y2xlcmsudG9yYWxlLmFpJA
+  publishableKey: pk_live_Y2xlcmsud2Vid2hlbi5haSQ
 
 # PostHog analytics (staging project)
 posthog:
