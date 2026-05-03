@@ -54,10 +54,10 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
 
   const triggerStyles = {
     default:
-      'flex items-center gap-2 text-sm font-mono text-zinc-500 hover:text-zinc-900 transition-colors w-full justify-between p-3 bg-white border-2 border-zinc-200',
-    dark: 'flex items-center gap-2 text-sm font-mono text-zinc-500 hover:text-zinc-900 transition-colors w-full justify-between p-3 bg-zinc-900 border border-zinc-800',
+      'flex items-center gap-2 text-sm font-mono text-[var(--ww-ink-3)] hover:text-[var(--ww-ink-0)] transition-colors w-full justify-between p-3 bg-[var(--ww-paper)] border border-[var(--ww-ink-6)]',
+    dark: 'flex items-center gap-2 text-sm font-mono text-[var(--ww-ink-3)] hover:text-[var(--ww-ink-0)] transition-colors w-full justify-between p-3 bg-[var(--ww-ink-1)] border border-[var(--ww-ink-2)]',
     mobile:
-      'flex items-center gap-2 text-sm font-mono text-zinc-500 hover:text-zinc-900 transition-colors w-full justify-between p-3 bg-white border-2 border-zinc-200 lg:hidden',
+      'flex items-center gap-2 text-sm font-mono text-[var(--ww-ink-3)] hover:text-[var(--ww-ink-0)] transition-colors w-full justify-between p-3 bg-[var(--ww-paper)] border border-[var(--ww-ink-6)] lg:hidden',
   };
 
   return (
@@ -69,13 +69,13 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
       <CollapsibleTrigger
         className={cn(triggerStyles[variant], triggerClassName)}
       >
-        <SectionLabel className="text-zinc-500">
+        <SectionLabel className="text-[var(--ww-ink-3)]">
           {title}
         </SectionLabel>
         {expanded ? (
-          <ChevronUp className="w-4 h-4 text-zinc-500" />
+          <ChevronUp className="w-4 h-4 text-[var(--ww-ink-3)]" />
         ) : (
-          <ChevronDown className="w-4 h-4 text-zinc-500" />
+          <ChevronDown className="w-4 h-4 text-[var(--ww-ink-3)]" />
         )}
       </CollapsibleTrigger>
       <AnimatePresence initial={false}>

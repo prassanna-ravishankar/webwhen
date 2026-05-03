@@ -5,8 +5,11 @@ domains:
   api: api.torale.ai
 
 # Clerk authentication
+# Rotated 2026-05-03 from torale.ai-primary key to webwhen.ai-primary key per
+# the rebrand cutover (Clerk dashboard primary domain flipped). Old sessions
+# invalidated; users re-authenticate post-rotation. See #246.
 clerk:
-  publishableKey: pk_live_Y2xlcmsudG9yYWxlLmFpJA
+  publishableKey: pk_live_Y2xlcmsud2Vid2hlbi5haSQ
 
 # PostHog analytics (production project)
 posthog:

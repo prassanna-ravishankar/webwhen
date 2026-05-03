@@ -1,0 +1,225 @@
+/* ============================================================================
+   webwhen marketing — shared styles for non-Landing pages
+   ----------------------------------------------------------------------------
+   Article patterns the kit's marketing.css doesn't ship: long-form prose,
+   article hero (smaller than Landing's), changelog log entries.
+
+   Tokens (--ww-*) live in frontend/src/index.css. Layout primitives
+   (.container, .section, .eyebrow, btn variants) live in
+   frontend/src/components/landing/Landing.module.css and are reused here via
+   import composition where needed.
+   ========================================================================== */
+
+/* -- Reading column (long-form prose) -------------------------------------- */
+
+.reading {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.reading h2 {
+  font-family: var(--ww-font-sans);
+  font-weight: 500;
+  font-size: var(--ww-fs-h3);
+  line-height: var(--ww-lh-snug);
+  letter-spacing: var(--ww-tracking-snug);
+  color: var(--ww-ink-0);
+  margin-top: 48px;
+  margin-bottom: 16px;
+}
+
+.reading h3 {
+  font-family: var(--ww-font-sans);
+  font-weight: 600;
+  font-size: var(--ww-fs-h4);
+  line-height: var(--ww-lh-snug);
+  color: var(--ww-ink-0);
+  margin-top: 32px;
+  margin-bottom: 12px;
+}
+
+.reading p {
+  font-family: var(--ww-font-sans);
+  font-weight: 400;
+  font-size: var(--ww-fs-body);
+  line-height: var(--ww-lh-loose);
+  color: var(--ww-ink-2);
+  margin: 0 0 16px;
+  text-wrap: pretty;
+}
+
+.reading a {
+  color: var(--ww-ink-0);
+  text-decoration: underline;
+  text-decoration-color: var(--ww-ink-5);
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--ww-dur-fast) var(--ww-ease-out);
+}
+
+.reading a:hover {
+  text-decoration-color: var(--ww-ember);
+}
+
+.reading ul,
+.reading ol {
+  font-family: var(--ww-font-sans);
+  font-weight: 400;
+  font-size: var(--ww-fs-body);
+  line-height: var(--ww-lh-loose);
+  color: var(--ww-ink-2);
+  padding-left: 24px;
+  margin: 0 0 16px;
+}
+
+.reading li {
+  margin-bottom: 8px;
+}
+
+.reading code {
+  font-family: var(--ww-font-mono);
+  font-size: 0.9em;
+  background: var(--ww-ink-7);
+  padding: 1px 6px;
+  border-radius: var(--ww-radius-xs);
+  color: var(--ww-ink-1);
+}
+
+.reading blockquote {
+  font-family: var(--ww-font-serif);
+  font-style: italic;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  color: var(--ww-ink-1);
+  border-left: 1px solid var(--ww-ink-6);
+  padding-left: 24px;
+  margin: 24px 0;
+}
+
+/* -- Article hero (smaller than Landing's hero) --------------------------- */
+
+.articleHero {
+  padding: 96px 0 48px;
+}
+
+.articleHeroEyebrow {
+  font-family: var(--ww-font-mono);
+  font-weight: 500;
+  font-size: 0.6875rem;
+  letter-spacing: var(--ww-tracking-wide);
+  text-transform: uppercase;
+  color: var(--ww-ink-4);
+  margin-bottom: 16px;
+}
+
+.articleHeading {
+  font-family: var(--ww-font-serif);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 5vw, 3.75rem);
+  line-height: 1.05;
+  letter-spacing: var(--ww-tracking-tight);
+  color: var(--ww-ink-0);
+  margin: 0 0 24px;
+  text-wrap: balance;
+  max-width: 16ch;
+}
+
+.articleLede {
+  font-family: var(--ww-font-sans);
+  font-weight: 400;
+  font-size: 1.125rem;
+  line-height: var(--ww-lh-loose);
+  color: var(--ww-ink-3);
+  max-width: 60ch;
+  margin: 0;
+}
+
+.articleHeroEmber {
+  color: var(--ww-ember);
+  font-style: italic;
+}
+
+/* -- Last-updated stamp (Privacy, Terms, Changelog header) ---------------- */
+
+.stamp {
+  font-family: var(--ww-font-mono);
+  font-size: 0.75rem;
+  color: var(--ww-ink-4);
+  margin-top: 32px;
+}
+
+/* -- Changelog log entries (extends kit's .log pattern as a feed) --------- */
+
+.feed {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--ww-ink-6);
+}
+
+.feedEntry {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 32px;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--ww-ink-6);
+}
+
+.feedEntryDate {
+  font-family: var(--ww-font-mono);
+  font-size: 0.8125rem;
+  color: var(--ww-ink-3);
+  letter-spacing: var(--ww-tracking-mono);
+}
+
+.feedEntryBody h2 {
+  font-family: var(--ww-font-sans);
+  font-weight: 500;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: var(--ww-tracking-snug);
+  color: var(--ww-ink-0);
+  margin: 0 0 12px;
+}
+
+.feedEntryBody p {
+  font-family: var(--ww-font-sans);
+  font-size: var(--ww-fs-body);
+  line-height: var(--ww-lh-loose);
+  color: var(--ww-ink-2);
+  margin: 0 0 12px;
+}
+
+.feedEntryBody ul {
+  font-family: var(--ww-font-sans);
+  font-size: var(--ww-fs-small);
+  line-height: var(--ww-lh-loose);
+  color: var(--ww-ink-3);
+  padding-left: 20px;
+  margin: 0 0 8px;
+}
+
+.feedEntryTag {
+  display: inline-block;
+  font-family: var(--ww-font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: var(--ww-tracking-wide);
+  text-transform: uppercase;
+  color: var(--ww-ink-4);
+  margin-bottom: 8px;
+}
+
+.feedEntryTagEmber {
+  color: var(--ww-ember);
+}
+
+/* -- Mobile -------------------------------------------------------------- */
+
+@media (max-width: 720px) {
+  .feedEntry {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .articleHeading {
+    font-size: 2.25rem;
+  }
+}

@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>webwhen · Logo</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html, body { margin: 0; padding: 0; background: var(--ww-canvas); }
+  body { font-family: var(--ww-font-sans); padding: 18px; }
+
+  /* === Top: lockups in three contexts ============================== */
+  .lockups {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px;
+    background: var(--ww-ink-6);
+    border: 1px solid var(--ww-ink-6);
+    border-radius: var(--ww-radius-md);
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .lock {
+    padding: 30px 24px 22px;
+    background: var(--ww-paper);
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 96px;
+  }
+  .lock.dark { background: var(--ww-ink-1); }
+  .lock.canvas { background: var(--ww-canvas); }
+  .lock .label, .row .label {
+    position: absolute; bottom: 8px; left: 12px;
+    font-family: var(--ww-font-mono); font-size: 10px;
+    letter-spacing: 0.06em; color: var(--ww-ink-4); text-transform: uppercase;
+  }
+  .lockup { display: inline-flex; align-items: center; gap: 10px; }
+  .lockup .m { width: 28px; height: 28px; }
+  .lockup .word {
+    font-family: var(--ww-font-serif); font-style: italic;
+    font-size: 26px; letter-spacing: -0.01em; color: var(--ww-ink-0); line-height: 1;
+  }
+  .lock.dark .lockup .word { color: var(--ww-paper); }
+
+  /* === Middle: sizes (canonical + favicon swap) ==================== */
+  .sizes-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--ww-ink-6);
+    border: 1px solid var(--ww-ink-6);
+    border-radius: var(--ww-radius-md);
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .row { background: var(--ww-paper); padding: 22px 22px 24px; position: relative; }
+  .row .stack { display: flex; align-items: flex-end; gap: 24px; }
+  .size { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .size .px { font-family: var(--ww-font-mono); font-size: 10px; color: var(--ww-ink-4); }
+
+  /* === Bottom: motion ============================================== */
+  .motion-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px;
+    background: var(--ww-ink-6);
+    border: 1px solid var(--ww-ink-6);
+    border-radius: var(--ww-radius-md);
+    overflow: hidden;
+  }
+  .motion {
+    background: var(--ww-paper);
+    padding: 22px 22px 24px;
+    position: relative;
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    min-height: 130px;
+  }
+  .motion .stage { width: 64px; height: 64px; display: grid; place-items: center; }
+  .motion .stage svg { width: 56px; height: 56px; }
+  .motion .name {
+    font-family: var(--ww-font-mono); font-size: 10px;
+    letter-spacing: 0.08em; color: var(--ww-ink-3); text-transform: uppercase;
+  }
+  .motion .desc {
+    font-family: var(--ww-font-serif); font-style: italic;
+    font-size: 13px; line-height: 1.4; color: var(--ww-ink-2);
+    text-align: center; margin-top: -4px; max-width: 22ch;
+    text-wrap: balance;
+  }
+
+  /* ── animation: watch-starting (sand falling) ── */
+  /* The sand pile starts empty and grows; the ember falls on a timed loop while sand drains. */
+  .anim-start .top-sand   { transform-origin: 16px 5px; animation: ws-top 2400ms cubic-bezier(0.4,0,0.6,1) infinite; }
+  .anim-start .pile       { transform-origin: 16px 27px; animation: ws-pile 2400ms cubic-bezier(0.4,0,0.6,1) infinite; }
+  .anim-start .ember      { animation: ws-ember 2400ms cubic-bezier(0.55, 0, 0.55, 1) infinite; }
+  .anim-start .stream     { animation: ws-stream 2400ms cubic-bezier(0.4,0,0.6,1) infinite; }
+
+  @keyframes ws-top { 0% { transform: scaleY(1); } 95%, 100% { transform: scaleY(0.05); } }
+  @keyframes ws-pile { 0% { transform: scaleY(0.1); } 95%, 100% { transform: scaleY(1); } }
+  @keyframes ws-stream {
+    0% { opacity: 0; transform: scaleY(0); }
+    8%, 92% { opacity: 0.55; transform: scaleY(1); }
+    100% { opacity: 0; transform: scaleY(0); }
+  }
+  @keyframes ws-ember {
+    0% { transform: translate(0, -6px); opacity: 0; }
+    10% { opacity: 1; }
+    50% { transform: translate(0, 0px); opacity: 1; }
+    62% { transform: translate(0, 4px); opacity: 0; }
+    100% { transform: translate(0, 4px); opacity: 0; }
+  }
+
+  /* ── animation: triggered (ember pulse) ── */
+  .anim-trig .ember { animation: tr-pulse 1600ms ease-in-out infinite; transform-origin: 16px 19px; }
+  .anim-trig .glow  { animation: tr-glow  1600ms ease-in-out infinite; transform-origin: 16px 19px; }
+  @keyframes tr-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.6); }
+  }
+  @keyframes tr-glow {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(2.4); }
+  }
+
+  /* respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .anim-start *, .anim-trig * { animation: none !important; }
+  }
+</style>
+</head>
+<body class="ww-base">
+
+  <!-- Lockups in 3 contexts -->
+  <div class="lockups">
+    <div class="lock">
+      <div class="lockup">
+        <img class="m" src="../assets/webwhen-mark.svg" alt="">
+        <span class="word">webwhen</span>
+      </div>
+      <span class="label">paper</span>
+    </div>
+    <div class="lock dark">
+      <div class="lockup">
+        <img class="m" src="../assets/webwhen-mark.svg" alt="" style="filter: invert(1);">
+        <span class="word">webwhen</span>
+      </div>
+      <span class="label">ink-1</span>
+    </div>
+    <div class="lock canvas">
+      <div class="lockup">
+        <img class="m" src="../assets/webwhen-mark.svg" alt="">
+        <span class="word">webwhen</span>
+      </div>
+      <span class="label">canvas</span>
+    </div>
+  </div>
+
+  <!-- Sizes: canonical vs favicon variant -->
+  <div class="sizes-row">
+    <div class="row">
+      <div class="stack">
+        <div class="size"><img src="../assets/webwhen-mark.svg" style="width:48px;height:48px;"><span class="px">48</span></div>
+        <div class="size"><img src="../assets/webwhen-mark.svg" style="width:32px;height:32px;"><span class="px">32</span></div>
+        <div class="size"><img src="../assets/webwhen-mark.svg" style="width:24px;height:24px;"><span class="px">24</span></div>
+        <div class="size"><img src="../assets/webwhen-mark.svg" style="width:16px;height:16px;"><span class="px">16</span></div>
+      </div>
+      <span class="label">canonical · ≥ 24px</span>
+    </div>
+    <div class="row">
+      <div class="stack">
+        <div class="size"><img src="../assets/webwhen-mark-favicon.svg" style="width:48px;height:48px;"><span class="px">48</span></div>
+        <div class="size"><img src="../assets/webwhen-mark-favicon.svg" style="width:32px;height:32px;"><span class="px">32</span></div>
+        <div class="size"><img src="../assets/webwhen-mark-favicon.svg" style="width:24px;height:24px;"><span class="px">24</span></div>
+        <div class="size"><img src="../assets/webwhen-mark-favicon.svg" style="width:16px;height:16px;"><span class="px">16</span></div>
+      </div>
+      <span class="label">favicon · ≤ 32px · ember-prominent</span>
+    </div>
+  </div>
+
+  <!-- Motion variants -->
+  <div class="motion-row">
+
+    <!-- IDLE / rest -->
+    <div class="motion">
+      <div class="stage">
+        <img src="../assets/webwhen-mark.svg" style="width:56px;height:56px;">
+      </div>
+      <span class="name">idle · rest state</span>
+      <span class="desc">The default. No motion.</span>
+    </div>
+
+    <!-- STARTING / sand falling -->
+    <div class="motion">
+      <div class="stage">
+        <svg class="anim-start" viewBox="0 0 32 32" fill="none">
+          <g stroke="#0B0B0C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <path d="M8.5 5 L23.5 5"/>
+            <path d="M8.5 27 L23.5 27"/>
+            <path d="M9.5 5.5 C 9.5 11, 16 13.5, 16 16 C 16 18.5, 9.5 21, 9.5 26.5"/>
+            <path d="M22.5 5.5 C 22.5 11, 16 13.5, 16 16 C 16 18.5, 22.5 21, 22.5 26.5"/>
+          </g>
+          <!-- top chamber sand: shrinks toward the pinch -->
+          <path class="top-sand" d="M10.4 7 L21.6 7 C 20.4 10.5, 17.4 12.5, 16 13.5 C 14.6 12.5, 11.6 10.5, 10.4 7 Z" fill="#0B0B0C" opacity="0.5"/>
+          <!-- thin falling stream through the pinch -->
+          <line class="stream" x1="16" y1="15.5" x2="16" y2="21" stroke="#0B0B0C" stroke-width="0.8" opacity="0.5"/>
+          <!-- bottom pile: grows -->
+          <path class="pile" d="M11.6 25.4 C 12.8 23, 14.3 22, 16 22 C 17.7 22, 19.2 23, 20.4 25.4 Z" fill="#0B0B0C" opacity="0.62"/>
+          <!-- ember mid-fall -->
+          <circle class="ember" cx="16" cy="19" r="1.35" fill="#C9582A"/>
+        </svg>
+      </div>
+      <span class="name">starting · plays once</span>
+      <span class="desc">When a watch begins. Sand drains; ember falls.</span>
+    </div>
+
+    <!-- TRIGGERED / pulse -->
+    <div class="motion">
+      <div class="stage">
+        <svg class="anim-trig" viewBox="0 0 32 32" fill="none">
+          <g stroke="#0B0B0C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <path d="M8.5 5 L23.5 5"/>
+            <path d="M8.5 27 L23.5 27"/>
+            <path d="M9.5 5.5 C 9.5 11, 16 13.5, 16 16 C 16 18.5, 9.5 21, 9.5 26.5"/>
+            <path d="M22.5 5.5 C 22.5 11, 16 13.5, 16 16 C 16 18.5, 22.5 21, 22.5 26.5"/>
+          </g>
+          <path d="M11.6 25.4 C 12.8 23, 14.3 22, 16 22 C 17.7 22, 19.2 23, 20.4 25.4 Z" fill="#0B0B0C" opacity="0.62"/>
+          <!-- soft halo behind ember -->
+          <circle class="glow" cx="16" cy="19" r="1.35" fill="#C9582A"/>
+          <!-- ember itself, scales -->
+          <circle class="ember" cx="16" cy="19" r="1.35" fill="#C9582A"/>
+        </svg>
+      </div>
+      <span class="name">triggered · loops</span>
+      <span class="desc">When a condition is met. Quiet pulse, ~1.6s.</span>
+    </div>
+
+  </div>
+
+</body>
+</html>

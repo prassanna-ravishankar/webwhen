@@ -1,0 +1,166 @@
+/* ============================================================================
+   webwhen — connectors page
+   ----------------------------------------------------------------------------
+   Paper-on-canvas card grid for /settings/connectors. Buttons reuse
+   Settings.module.css's btn family; classes here cover card chrome only.
+   ========================================================================== */
+
+.helper {
+  font-family: var(--ww-font-mono);
+  font-size: var(--ww-fs-xs);
+  color: var(--ww-ink-4);
+  margin: 0 0 28px;
+  line-height: 1.5;
+}
+
+.helperLink {
+  color: var(--ww-ink-3);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--ww-dur-fast) var(--ww-ease-out);
+}
+
+.helperLink:hover {
+  color: var(--ww-ink-0);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 64px 0;
+  color: var(--ww-ink-4);
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+}
+
+.grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1280px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* === Card =============================================================== */
+
+.card {
+  background: var(--ww-paper);
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-md);
+  box-shadow: var(--ww-shadow-sm);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: box-shadow var(--ww-dur-fast) var(--ww-ease-out),
+              border-color var(--ww-dur-fast) var(--ww-ease-out);
+}
+
+.card:hover {
+  box-shadow: var(--ww-shadow-md);
+  border-color: var(--ww-ink-5);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.headBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-family: var(--ww-font-sans);
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--ww-ink-0);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.slug {
+  font-family: var(--ww-font-mono);
+  font-size: var(--ww-fs-xs);
+  color: var(--ww-ink-4);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.description {
+  font-family: var(--ww-font-sans);
+  font-size: var(--ww-fs-small);
+  color: var(--ww-ink-3);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.metaTime {
+  font-family: var(--ww-font-mono);
+  font-size: var(--ww-fs-xs);
+  color: var(--ww-ink-4);
+}
+
+.metaInline {
+  font-family: var(--ww-font-mono);
+  font-size: var(--ww-fs-xs);
+  color: var(--ww-ink-4);
+}
+
+.reason {
+  font-family: var(--ww-font-mono);
+  font-size: var(--ww-fs-xs);
+  color: var(--ww-warn);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.foot {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.footFull {
+  justify-content: stretch;
+}
+
+.footFull > button {
+  flex: 1;
+  justify-content: center;
+}
+
+.connectingNote {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ww-font-mono);
+  font-size: var(--ww-fs-xs);
+  color: var(--ww-ink-4);
+  margin-right: auto;
+}

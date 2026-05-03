@@ -1,0 +1,82 @@
+/* ============================================================================
+   webwhen — animated mark
+   ----------------------------------------------------------------------------
+   Three states for the hourglass mark, applied as classes on the inline SVG:
+
+     .ww-mark--starting   one-shot 2.4s cycle: sand falls, ember mid-fall.
+                          Use at watch creation. Loops by default — set
+                          animation-iteration-count: 1 if you want it once.
+
+     .ww-mark--triggered  looping 1.6s pulse on the ember + soft halo.
+                          Use while a watch is in 'triggered' status.
+
+     (no class)           idle / rest state.
+
+   Required SVG structure:
+     <svg class="ww-mark--starting"> or <svg class="ww-mark--triggered">
+       <g> ... static frame paths ... </g>
+       <path class="ww-mark__top-sand"  d="..." />     [starting only]
+       <line class="ww-mark__stream"    x1=… y1=… />   [starting only]
+       <path class="ww-mark__pile"      d="..." />
+       <circle class="ww-mark__glow"    cx=16 cy=19 r=1.35 />   [triggered only]
+       <circle class="ww-mark__ember"   cx=16 cy=19 r=1.35 />
+     </svg>
+
+   Honors prefers-reduced-motion automatically.
+   ========================================================================== */
+
+/* --- starting -------------------------------------------------------- */
+.ww-mark--starting .ww-mark__top-sand {
+  transform-origin: 16px 5px;
+  animation: ww-start-top 2400ms cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.ww-mark--starting .ww-mark__pile {
+  transform-origin: 16px 27px;
+  animation: ww-start-pile 2400ms cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.ww-mark--starting .ww-mark__stream {
+  animation: ww-start-stream 2400ms cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.ww-mark--starting .ww-mark__ember {
+  animation: ww-start-ember 2400ms cubic-bezier(0.55, 0, 0.55, 1) infinite;
+}
+
+@keyframes ww-start-top  { 0% { transform: scaleY(1); }     95%, 100% { transform: scaleY(0.05); } }
+@keyframes ww-start-pile { 0% { transform: scaleY(0.1); }   95%, 100% { transform: scaleY(1); } }
+@keyframes ww-start-stream {
+  0%        { opacity: 0; transform: scaleY(0); }
+  8%, 92%   { opacity: 0.55; transform: scaleY(1); }
+  100%      { opacity: 0; transform: scaleY(0); }
+}
+@keyframes ww-start-ember {
+  0%   { transform: translate(0, -6px); opacity: 0; }
+  10%  { opacity: 1; }
+  50%  { transform: translate(0, 0px); opacity: 1; }
+  62%  { transform: translate(0, 4px); opacity: 0; }
+  100% { transform: translate(0, 4px); opacity: 0; }
+}
+
+/* --- triggered ------------------------------------------------------- */
+.ww-mark--triggered .ww-mark__ember {
+  transform-origin: 16px 19px;
+  animation: ww-trig-pulse 1600ms ease-in-out infinite;
+}
+.ww-mark--triggered .ww-mark__glow {
+  transform-origin: 16px 19px;
+  animation: ww-trig-glow 1600ms ease-in-out infinite;
+}
+
+@keyframes ww-trig-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.6); }
+}
+@keyframes ww-trig-glow {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  50%      { opacity: 0.35; transform: scale(2.4); }
+}
+
+/* --- a11y ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .ww-mark--starting *,
+  .ww-mark--triggered * { animation: none !important; }
+}

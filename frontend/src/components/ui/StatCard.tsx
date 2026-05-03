@@ -16,7 +16,7 @@ export const StatCard = ({ label, value, trend, trendUp }: StatCardProps) => (
   <div className="bg-white p-4 border border-zinc-200 shadow-sm">
     <div className="text-[10px] font-mono uppercase text-zinc-400 mb-2">{label}</div>
     <div className="flex items-end justify-between">
-      <div className="text-2xl font-bold font-grotesk text-zinc-900">{value}</div>
+      <div className="text-2xl font-bold text-zinc-900">{value}</div>
       {trend && (
         <div className={`text-xs font-mono flex items-center gap-1 ${trendUp ? 'text-emerald-600' : 'text-red-600'}`}>
           {trend}

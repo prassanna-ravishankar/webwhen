@@ -13,17 +13,17 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Loader2, Key, Plus, Trash2, Copy, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { Loader2, Plus, Trash2, Copy, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { api } from '@/lib/api';
 import { getErrorMessage } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import type { ApiKey } from '@/types';
-import { SectionLabel, BrutalistCard, StatusBadge } from '@/components/torale';
+import { StatusBadge } from '@/components/torale';
+import styles from './Settings.module.css';
+import modalStyles from '@/components/ui/modal/Modal.module.css';
 
 export const ApiKeyManagementSection: React.FC = () => {
   const { user } = useAuth();
@@ -129,235 +129,239 @@ export const ApiKeyManagementSection: React.FC = () => {
 
   if (!isDeveloper) {
     return (
-      <BrutalistCard>
-        <div className="p-4 border-b border-zinc-200">
-          <p className="text-xs text-zinc-500">
-            Programmatic access to Torale API via Python SDK
-          </p>
+      <div className={styles.emptyHint} style={{ textAlign: 'left' }}>
+        <div className="flex items-start gap-2">
+          <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" style={{ color: 'var(--ww-warn)' }} />
+          <span>
+            API keys are a developer feature. Contact support to request developer access for
+            programmatic SDK use.
+          </span>
         </div>
-        <div className="p-6 flex items-start gap-3 bg-amber-50 border-t-2 border-amber-200">
-          <ShieldAlert className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-mono text-amber-900">Developer Access Required</p>
-            <p className="text-xs text-amber-700 mt-1">
-              API keys allow programmatic access via the Python SDK. Contact support to request developer access.
-            </p>
-          </div>
-        </div>
-      </BrutalistCard>
+      </div>
     );
   }
 
-  const activeKey = apiKeys.find((k) => k.is_active);
+  const activeKeys = apiKeys.filter((k) => k.is_active);
+  const revokedKeys = apiKeys.filter((k) => !k.is_active);
 
   return (
     <>
-      <BrutalistCard>
-        {/* Header */}
-        <div className="p-4 border-b border-zinc-200">
-          <p className="text-xs text-zinc-500">
-            Manage API keys for programmatic access via the Python SDK.
-          </p>
+      {isLoading ? (
+        <div className={styles.loadingRow}>
+          <Loader2 className="h-4 w-4 animate-spin" />
+          loading…
         </div>
+      ) : (
+        <>
+          <div className={styles.actions} style={{ marginBottom: 12 }}>
+            <button
+              type="button"
+              onClick={handleCreateClick}
+              disabled={isCreating}
+              className={styles.btnPrimary}
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Create API key
+            </button>
+          </div>
 
-        {/* Content */}
-        <div className="p-4">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
+          {activeKeys.length === 0 && revokedKeys.length === 0 ? (
+            <div className={styles.emptyHint}>
+              No API keys yet. Create one for programmatic access.
             </div>
           ) : (
-            <div className="space-y-3">
-              {/* Active API Key */}
-              {activeKey ? (
-                <>
-                  <div className="p-3 bg-zinc-50 border border-zinc-200">
-                    <div className="flex items-start gap-3">
-                      <div className="bg-zinc-900 text-white w-8 h-8 flex items-center justify-center shrink-0">
-                        <Key className="h-4 w-4" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0">
-                            <code className="text-xs sm:text-sm font-mono text-zinc-900 break-all">{activeKey.key_prefix}</code>
-                            <p className="text-[10px] font-mono text-zinc-500 mt-0.5">
-                              {activeKey.name} • Created {formatDate(activeKey.created_at)}
-                            </p>
-                          </div>
-                          <button
-                            onClick={() => handleRevokeClick(activeKey)}
-                            disabled={!!isRevoking}
-                            className="p-1.5 text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 shrink-0"
-                          >
-                            {isRevoking === activeKey.id ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Trash2 className="h-4 w-4" />
-                            )}
-                          </button>
-                        </div>
-                        <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                          <StatusBadge variant="active" size="sm" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* SDK Install Hint */}
-                  <div className="p-3 bg-zinc-900 text-zinc-300 font-mono text-xs">
-                    <span className="text-zinc-500">$</span> pip install torale
-                  </div>
-                </>
-              ) : (
-                <div className="text-center py-6">
-                  <div className="bg-zinc-100 w-12 h-12 flex items-center justify-center mx-auto mb-3">
-                    <Key className="h-6 w-6 text-zinc-400" />
-                  </div>
-                  <p className="text-xs text-zinc-500 font-mono mb-4">
-                    No active API key. Generate one to use the Python SDK.
-                  </p>
-                  <button
-                    onClick={handleCreateClick}
-                    disabled={isCreating}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-900 text-white text-sm font-mono hover:bg-[hsl(10,90%,55%)] transition-colors disabled:opacity-50"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Generate API Key
-                  </button>
+            <div className={styles.runs}>
+              {activeKeys.map((key) => (
+                <div key={key.id} className={styles.run}>
+                  <span className={styles.runT}>{formatDate(key.created_at)}</span>
+                  <span className={`${styles.runDot} ${styles.runDotSuccess}`} />
+                  <span className={`${styles.runB} ${styles.runBStrong}`}>
+                    {key.name}{' '}
+                    <span style={{ color: 'var(--ww-ink-4)', marginLeft: 6 }}>{key.key_prefix}</span>
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <StatusBadge variant="active" size="sm" />
+                    <button
+                      type="button"
+                      onClick={() => handleRevokeClick(key)}
+                      disabled={!!isRevoking}
+                      className={`${styles.iconBtn} ${styles.iconBtnDanger}`}
+                      aria-label={`Revoke ${key.name}`}
+                    >
+                      {isRevoking === key.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
+                    </button>
+                  </span>
                 </div>
-              )}
-
-              {/* Revoked Keys (if any) */}
-              {apiKeys.filter((k) => !k.is_active).length > 0 && (
-                <div className="space-y-2 pt-3 border-t border-zinc-200">
-                  <SectionLabel>Revoked Keys</SectionLabel>
-                  {apiKeys
-                    .filter((k) => !k.is_active)
-                    .map((key) => (
-                      <div
-                        key={key.id}
-                        className="flex items-center gap-3 p-2 border border-dashed border-zinc-200 opacity-50"
-                      >
-                        <Key className="h-4 w-4 text-zinc-400" />
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2">
-                            <code className="text-xs font-mono text-zinc-500">{key.key_prefix}</code>
-                            <span className="px-1.5 py-0.5 bg-zinc-100 text-zinc-500 text-[9px] font-mono uppercase tracking-wider">
-                              Revoked
-                            </span>
-                          </div>
-                          <p className="text-[10px] text-zinc-400">{key.name}</p>
-                        </div>
-                      </div>
-                    ))}
+              ))}
+              {revokedKeys.map((key) => (
+                <div key={key.id} className={styles.run}>
+                  <span className={styles.runT}>{formatDate(key.created_at)}</span>
+                  <span className={styles.runDot} />
+                  <span className={`${styles.runB} ${styles.runBMuted}`}>
+                    {key.name}{' '}
+                    <span style={{ marginLeft: 6 }}>{key.key_prefix}</span>
+                  </span>
+                  <StatusBadge variant="failed" label="Revoked" size="sm" />
                 </div>
-              )}
+              ))}
             </div>
           )}
-        </div>
-      </BrutalistCard>
+        </>
+      )}
 
       {/* Create API Key Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="border-2 border-zinc-900">
-          <DialogHeader>
-            <DialogTitle className="font-grotesk">Generate API Key</DialogTitle>
-            <DialogDescription className="text-zinc-600">
-              Create a new API key for programmatic access to your Torale account.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-3 py-4">
-            <label className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">
-              Key Name
-            </label>
-            <input
-              placeholder="e.g., Development Key"
-              value={newKeyName}
-              onChange={(e) => setNewKeyName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleCreateKey()}
-              className="w-full px-3 py-2 border-2 border-zinc-200 text-sm font-mono focus:outline-none focus:border-zinc-900"
-            />
-          </div>
-          <DialogFooter>
-            <button
-              onClick={() => setShowCreateDialog(false)}
-              disabled={isCreating}
-              className="px-4 py-2 border border-zinc-200 text-zinc-600 text-sm font-mono hover:border-zinc-400 transition-colors disabled:opacity-50"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleCreateKey}
-              disabled={isCreating || !newKeyName.trim()}
-              className="px-4 py-2 bg-zinc-900 text-white text-sm font-mono hover:bg-[hsl(10,90%,55%)] transition-colors disabled:opacity-50 flex items-center gap-2"
-            >
-              {isCreating && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isCreating ? 'Generating...' : 'Generate Key'}
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        <DialogContent className={modalStyles.modal}>
+          <DialogTitle className="sr-only">Create API key</DialogTitle>
+          <DialogDescription className="sr-only">
+            Create a new API key for programmatic access.
+          </DialogDescription>
 
-      {/* Show Created Key Dialog (One-time display) */}
-      <Dialog open={showCreatedKeyDialog} onOpenChange={setShowCreatedKeyDialog}>
-        <DialogContent className="border-2 border-zinc-900">
-          <DialogHeader>
-            <DialogTitle className="font-grotesk">API Key Created</DialogTitle>
-            <DialogDescription className="text-zinc-600">
-              Save this key securely. You won't be able to see it again!
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="p-3 bg-red-50 border-2 border-red-200 text-red-700 text-xs font-mono">
-              This is the only time you'll see this key. Copy it now and store it securely.
+          <div className={modalStyles.head}>
+            <span className={modalStyles.headTitle}>create api key</span>
+            <button
+              type="button"
+              className={modalStyles.headClose}
+              onClick={() => setShowCreateDialog(false)}
+              aria-label="Close"
+            >
+              ×
+            </button>
+          </div>
+
+          <div className={modalStyles.body}>
+            <div className={styles.field}>
+              <label htmlFor="api-key-name">Key name</label>
+              <input
+                id="api-key-name"
+                placeholder="e.g., Development key"
+                value={newKeyName}
+                onChange={(e) => setNewKeyName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleCreateKey()}
+                autoFocus
+              />
             </div>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex-1 px-3 py-2 bg-zinc-900 text-zinc-300 font-mono text-[10px] sm:text-sm border-2 border-zinc-900 break-all min-w-0">
-                {createdKey}
-              </div>
+          </div>
+
+          <div className={modalStyles.foot}>
+            <span className={modalStyles.footHint}>shown once after creation</span>
+            <div className={modalStyles.footActions}>
               <button
-                onClick={() => handleCopyKey(createdKey || '')}
-                className="p-2 border-2 border-zinc-200 text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-colors shrink-0 self-start"
+                type="button"
+                onClick={() => setShowCreateDialog(false)}
+                disabled={isCreating}
+                className={styles.btnGhost}
               >
-                {keyToCopy === createdKey ? (
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleCreateKey}
+                disabled={isCreating || !newKeyName.trim()}
+                className={styles.btnPrimary}
+              >
+                {isCreating && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                {isCreating ? 'Creating…' : 'Create'}
               </button>
             </div>
           </div>
-          <DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Created Key Dialog (one-time display) */}
+      <Dialog open={showCreatedKeyDialog} onOpenChange={setShowCreatedKeyDialog}>
+        <DialogContent className={modalStyles.modal}>
+          <DialogTitle className="sr-only">API key created</DialogTitle>
+          <DialogDescription className="sr-only">
+            Save this key securely. It will not be shown again.
+          </DialogDescription>
+
+          <div className={modalStyles.head}>
+            <span className={modalStyles.headTitle}>api key created</span>
             <button
+              type="button"
+              className={modalStyles.headClose}
               onClick={() => {
                 setShowCreatedKeyDialog(false);
                 setCreatedKey(null);
               }}
-              className="px-4 py-2 bg-zinc-900 text-white text-sm font-mono hover:bg-[hsl(10,90%,55%)] transition-colors"
+              aria-label="Close"
             >
-              Done
+              ×
             </button>
-          </DialogFooter>
+          </div>
+
+          <div className={modalStyles.body}>
+            <div className={styles.disclosure}>
+              <div className={styles.disclosureWarn}>
+                <ShieldAlert className="h-4 w-4 shrink-0" />
+                This is the only time you'll see this key. Copy it now and store it securely.
+              </div>
+              <div className="flex gap-2 items-stretch">
+                <div className={styles.secret} style={{ wordBreak: 'break-all', whiteSpace: 'normal' }}>
+                  <code style={{ whiteSpace: 'normal', overflow: 'visible' }}>{createdKey}</code>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleCopyKey(createdKey || '')}
+                  className={styles.btnSecondary}
+                  style={{ alignSelf: 'flex-start' }}
+                >
+                  {keyToCopy === createdKey ? (
+                    <>
+                      <CheckCircle2 className="h-3.5 w-3.5" style={{ color: 'var(--ww-success)' }} />
+                      Copied
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3.5 w-3.5" />
+                      Copy
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className={modalStyles.foot}>
+            <span className={modalStyles.footHint}>store securely · cannot be recovered</span>
+            <div className={modalStyles.footActions}>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowCreatedKeyDialog(false);
+                  setCreatedKey(null);
+                }}
+                className={styles.btnPrimary}
+              >
+                Done
+              </button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
 
       {/* Revoke Confirmation Dialog */}
       <AlertDialog open={!!keyToRevoke} onOpenChange={() => setKeyToRevoke(null)}>
-        <AlertDialogContent className="border-2 border-zinc-900">
+        <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-grotesk">Revoke API Key?</AlertDialogTitle>
-            <AlertDialogDescription className="text-zinc-600">
-              This will permanently revoke the API key "<strong className="font-mono">{keyToRevoke?.name}</strong>".
+            <AlertDialogTitle>Revoke API key?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently revoke "<strong className="font-mono">{keyToRevoke?.name}</strong>".
               Any applications using this key will no longer be able to access your account.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="font-mono text-sm">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className={styles.btnSecondary}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmRevoke}
-              className="bg-red-600 hover:bg-red-700 font-mono text-sm"
+              className={styles.btnDanger}
             >
-              Revoke Key
+              Revoke
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

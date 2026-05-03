@@ -26,7 +26,7 @@ export const SectionLabel: React.FC<SectionLabelProps> = ({
   return (
     <div
       className={cn(
-        'flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-zinc-400',
+        'flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-[var(--ww-ink-4)]',
         className
       )}
     >

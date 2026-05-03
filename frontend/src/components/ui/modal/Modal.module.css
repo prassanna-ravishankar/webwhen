@@ -1,0 +1,94 @@
+/* Shared modal shell — webwhen rebrand
+ * Extracted from components/composer/Composer.module.css so non-composer
+ * dialogs (EmailVerificationModal, ApiKey reveal dialog, etc.) can reuse the
+ * same paper-on-canvas chrome.
+ *
+ * shadcn Dialog provides its own portal + overlay; we override its
+ * DialogContent defaults via these styles passed as className.
+ */
+
+/* === Modal shell (replaces shadcn DialogContent defaults) ============== */
+.modal {
+  /* override shadcn DialogContent's default padding/gap/border/max-width */
+  width: min(640px, 100%) !important;
+  max-width: min(640px, calc(100% - 2rem)) !important;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+  gap: 0 !important;
+  background: var(--ww-paper);
+  border-radius: var(--ww-radius-lg);
+  border: 0 !important;
+  box-shadow: var(--ww-shadow-lg);
+  overflow: hidden;
+}
+
+/* === Head ============================================================== */
+.head {
+  padding: 14px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--ww-ink-7);
+  flex-shrink: 0;
+}
+
+.headTitle {
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ww-ink-4);
+  text-transform: uppercase;
+}
+
+.headClose {
+  background: transparent;
+  border: 0;
+  color: var(--ww-ink-4);
+  font-size: 18px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.headClose:hover {
+  color: var(--ww-ink-0);
+  background: var(--ww-ink-7);
+}
+
+/* === Body ============================================================== */
+.body {
+  padding: 28px 24px 22px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* === Foot ============================================================== */
+.foot {
+  padding: 14px 22px;
+  border-top: 1px solid var(--ww-ink-7);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--ww-canvas);
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.footHint {
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  color: var(--ww-ink-4);
+}
+
+.footActions {
+  display: flex;
+  gap: 10px;
+}
+
+/* === Hide shadcn's built-in close X (we provide our own in .head) ====== */
+.modal :global([data-slot="dialog-close"]) {
+  display: none;
+}

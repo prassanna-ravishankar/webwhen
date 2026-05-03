@@ -2,16 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Self-hosted fonts (latin subset). Variable woff2 files cover all weights we use. */
+/* ============================================================================
+   webwhen — fonts
+   ----------------------------------------------------------------------------
+   All self-hosted from /public/fonts/. Earlier gstatic CDN URLs rotated
+   versions and 404'd; self-hosting eliminates the dependency.
+   ========================================================================== */
+
 @font-face {
-  font-family: 'Space Grotesk';
+  font-family: 'Instrument Sans';
   font-style: normal;
   font-weight: 400 700;
   font-display: swap;
-  src: url('/fonts/space-grotesk-latin.woff2') format('woff2');
+  src: url('/fonts/instrument-sans-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/instrument-serif-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/instrument-serif-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Self-hosted fallbacks (latin subset). */
 @font-face {
   font-family: 'Inter';
   font-style: normal;
@@ -30,61 +55,163 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* Size-adjusted fallback to avoid CLS before Space Grotesk arrives */
-@font-face {
-  font-family: 'Space Grotesk Fallback';
-  src: local('Arial');
-  ascent-override: 98%;
-  descent-override: 25%;
-  line-gap-override: 0%;
-  size-adjust: 103%;
+/* ============================================================================
+   webwhen — canonical token surface (--ww-*)
+   ----------------------------------------------------------------------------
+   Ported from design/webwhen/colors_and_type.css. THIS is the source of truth
+   for colour, type, spacing, shadow, motion, radii. shadcn vars below derive
+   from these — do not hand-edit shadcn vars in isolation.
+   ========================================================================== */
+
+:root {
+  /* Type families */
+  --ww-font-sans:  "Instrument Sans", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ww-font-serif: "Instrument Serif", "Iowan Old Style", "Apple Garamond", Baskerville, "Times New Roman", serif;
+  --ww-font-mono:  "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Type scale (editorial; generous) */
+  --ww-fs-display: 4.5rem;
+  --ww-fs-h1:      3rem;
+  --ww-fs-h2:      2.25rem;
+  --ww-fs-h3:      1.5rem;
+  --ww-fs-h4:      1.125rem;
+  --ww-fs-body:    1rem;
+  --ww-fs-small:   0.875rem;
+  --ww-fs-xs:      0.75rem;
+
+  --ww-lh-tight:   1.05;
+  --ww-lh-snug:    1.2;
+  --ww-lh-normal:  1.5;
+  --ww-lh-loose:   1.65;
+
+  --ww-tracking-tight:  -0.02em;
+  --ww-tracking-snug:   -0.01em;
+  --ww-tracking-normal: 0;
+  --ww-tracking-wide:   0.08em;
+  --ww-tracking-mono:   -0.01em;
+
+  /* Neutrals (warm-cool balanced; tested against #FAFAF7 canvas) */
+  --ww-ink-0:  #0B0B0C;
+  --ww-ink-1:  #1C1C1E;
+  --ww-ink-2:  #3A3A3D;
+  --ww-ink-3:  #6B6B70;
+  --ww-ink-4:  #9A9AA0;
+  --ww-ink-5:  #C7C7CC;
+  --ww-ink-6:  #E5E5E2;
+  --ww-ink-7:  #EFEEEA;
+  --ww-ink-8:  #F5F4F0;
+  --ww-canvas: #FAFAF7;
+  --ww-paper:  #FFFFFF;
+
+  /* Accent: Ember — single moment of emphasis. ≤ 5% of any composition. */
+  --ww-ember:       #C9582A;
+  --ww-ember-hover: #B14B22;
+  --ww-ember-soft:  #F4E4DA;
+  --ww-ember-bg:    #F4E4DA;
+  --ww-ember-ink:   #6B2A12;
+
+  /* Semantic */
+  --ww-success:      #2F7D5C;
+  --ww-success-soft: #E5EFE9;
+  --ww-success-bg:   #E5EFE9;
+  --ww-warn:         #B57F1A;
+  --ww-warn-soft:    #F5EDD8;
+  --ww-danger:       #B23A2A;
+  --ww-danger-soft:  #F4DCD7;
+  --ww-info:         #3A5F8C;
+  --ww-info-soft:    #E2E8EF;
+
+  /* Radii */
+  --ww-radius-xs:   3px;
+  --ww-radius-sm:   6px;
+  --ww-radius-md:   10px;
+  --ww-radius-lg:   14px;
+  --ww-radius-xl:   20px;
+  --ww-radius-pill: 999px;
+
+  /* Shadows — soft, low-contrast. NO brutalist offsets. */
+  --ww-shadow-xs:    0 1px 0 rgba(11,11,12,0.04);
+  --ww-shadow-sm:    0 1px 2px rgba(11,11,12,0.05), 0 1px 1px rgba(11,11,12,0.03);
+  --ww-shadow-md:    0 4px 12px -2px rgba(11,11,12,0.06), 0 2px 4px -1px rgba(11,11,12,0.04);
+  --ww-shadow-lg:    0 16px 40px -12px rgba(11,11,12,0.12), 0 4px 8px -2px rgba(11,11,12,0.04);
+  --ww-shadow-focus: 0 0 0 3px rgba(201, 88, 42, 0.18);
+  --ww-shadow-inset: inset 0 1px 0 rgba(255,255,255,0.6);
+
+  /* Spacing (4px base; intentional subset — not Tailwind's full set) */
+  --ww-space-1:  4px;
+  --ww-space-2:  8px;
+  --ww-space-3:  12px;
+  --ww-space-4:  16px;
+  --ww-space-5:  20px;
+  --ww-space-6:  24px;
+  --ww-space-8:  32px;
+  --ww-space-10: 40px;
+  --ww-space-12: 48px;
+  --ww-space-16: 64px;
+  --ww-space-24: 96px;
+  --ww-space-32: 128px;
+
+  /* Motion */
+  --ww-ease-out:   cubic-bezier(0.22, 1, 0.36, 1);
+  --ww-ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --ww-dur-fast:   120ms;
+  --ww-dur-normal: 220ms;
+  --ww-dur-slow:   420ms;
+
+  /* ========================================================================
+     shadcn alias layer
+     ------------------------------------------------------------------------
+     shadcn primitives consume these HSL-triplet vars via tailwind.config.js.
+     Each here derives from --ww-* above. Do not redefine in isolation.
+     HSL triplets (no hsl() wrapper) so Tailwind's `hsl(var(--*))` works.
+     ======================================================================== */
+
+  /* Page background → canvas (warm off-white #FAFAF7) */
+  --background: 50 19% 97%;
+  --foreground: 240 4% 5%;          /* ink-0 #0B0B0C */
+
+  /* Cards → paper white */
+  --card:            0 0% 100%;
+  --card-foreground: 240 4% 5%;
+
+  /* Popovers */
+  --popover:            0 0% 100%;
+  --popover-foreground: 240 4% 5%;
+
+  /* Primary → ink-0 */
+  --primary:            240 4% 5%;
+  --primary-foreground: 0 0% 100%;
+
+  /* Secondary → ink-7 (subtle fill) */
+  --secondary:            48 13% 93%;
+  --secondary-foreground: 240 4% 5%;
+
+  /* Muted → ink-7 / ink-3 */
+  --muted:            48 13% 93%;
+  --muted-foreground: 240 3% 43%;
+
+  /* Accent → EMBER #C9582A */
+  --accent:            16 64% 47%;
+  --accent-foreground: 0 0% 100%;
+
+  /* Destructive → --ww-danger #B23A2A */
+  --destructive:            8 62% 43%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* Borders → --ww-ink-6 #E5E5E2 (hairline) */
+  --border: 60 6% 89%;
+  --input:  60 6% 89%;
+
+  /* Focus ring → ember (so :focus-visible reads ember per design brief) */
+  --ring: 16 64% 47%;
+
+  /* Radius — was 0.5rem, now 10px to match --ww-radius-md (cards/panels) */
+  --radius: 0.625rem;
 }
 
-@layer base {
-  :root {
-    /* Canvas background: #fafafa (zinc-50) - matches MockLandingPage */
-    --background: 0 0% 98%;
-    --foreground: 0 0% 9%;
-
-    /* Cards: white */
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 9%;
-
-    /* Popovers */
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 9%;
-
-    /* Primary: zinc-900 */
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 100%;
-
-    /* Secondary: zinc-100 */
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 9%;
-
-    /* Muted: zinc-100/zinc-500 */
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 52%;
-
-    /* Accent: The Machine red - hsl(10, 90%, 55%) */
-    --accent: 10 90% 55%;
-    --accent-foreground: 0 0% 100%;
-
-    /* Destructive: red */
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    /* Borders: zinc-200 */
-    --border: 0 0% 89.4%;
-    --input: 0 0% 89.4%;
-    --ring: 0 0% 9%;
-
-    /* Radius: keep some (mocks use rounded-lg, rounded-xl) */
-    --radius: 0.5rem;
-  }
-
-  /* Remove dark mode for now - going light only */
-}
+/* ============================================================================
+   Base
+   ========================================================================== */
 
 @layer base {
   * {
@@ -92,6 +219,115 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--ww-font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: var(--ww-ember);
+    color: #fff;
+  }
+}
+
+/* ============================================================================
+   Semantic type classes (mirror design/webwhen/colors_and_type.css)
+   ----------------------------------------------------------------------------
+   Use these for editorial surfaces. Tailwind utilities still work everywhere.
+   ========================================================================== */
+
+@layer components {
+  .ww-display {
+    font-family: var(--ww-font-serif);
+    font-weight: 400;
+    font-size: var(--ww-fs-display);
+    line-height: var(--ww-lh-tight);
+    letter-spacing: var(--ww-tracking-tight);
+    color: var(--ww-ink-0);
+    text-wrap: balance;
+  }
+  .ww-h1 {
+    font-family: var(--ww-font-sans);
+    font-weight: 500;
+    font-size: var(--ww-fs-h1);
+    line-height: var(--ww-lh-tight);
+    letter-spacing: var(--ww-tracking-tight);
+    color: var(--ww-ink-0);
+    text-wrap: balance;
+  }
+  .ww-h2 {
+    font-family: var(--ww-font-sans);
+    font-weight: 500;
+    font-size: var(--ww-fs-h2);
+    line-height: var(--ww-lh-snug);
+    letter-spacing: var(--ww-tracking-snug);
+    color: var(--ww-ink-0);
+    text-wrap: balance;
+  }
+  .ww-h3 {
+    font-family: var(--ww-font-sans);
+    font-weight: 500;
+    font-size: var(--ww-fs-h3);
+    line-height: var(--ww-lh-snug);
+    letter-spacing: var(--ww-tracking-snug);
+    color: var(--ww-ink-0);
+  }
+  .ww-h4 {
+    font-family: var(--ww-font-sans);
+    font-weight: 600;
+    font-size: var(--ww-fs-h4);
+    line-height: var(--ww-lh-snug);
+    color: var(--ww-ink-0);
+  }
+  .ww-body {
+    font-family: var(--ww-font-sans);
+    font-weight: 400;
+    font-size: var(--ww-fs-body);
+    line-height: var(--ww-lh-loose);
+    color: var(--ww-ink-2);
+    text-wrap: pretty;
+  }
+  .ww-body-lg {
+    font-family: var(--ww-font-sans);
+    font-weight: 400;
+    font-size: 1.125rem;
+    line-height: var(--ww-lh-loose);
+    color: var(--ww-ink-3);
+    text-wrap: pretty;
+  }
+  .ww-small {
+    font-family: var(--ww-font-sans);
+    font-weight: 400;
+    font-size: var(--ww-fs-small);
+    line-height: var(--ww-lh-normal);
+    color: var(--ww-ink-3);
+  }
+  .ww-eyebrow {
+    font-family: var(--ww-font-mono);
+    font-weight: 500;
+    font-size: 0.6875rem;
+    letter-spacing: var(--ww-tracking-wide);
+    text-transform: uppercase;
+    color: var(--ww-ink-4);
+  }
+  .ww-mono {
+    font-family: var(--ww-font-mono);
+    font-weight: 400;
+    font-size: var(--ww-fs-small);
+    letter-spacing: var(--ww-tracking-mono);
+    color: var(--ww-ink-2);
+  }
+  .ww-quote {
+    font-family: var(--ww-font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.5rem;
+    line-height: 1.4;
+    color: var(--ww-ink-1);
+    text-wrap: pretty;
+  }
+  .ww-ember-text {
+    color: var(--ww-ember);
   }
 }
 
@@ -103,5 +339,18 @@
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  /* Faint dotted background — half opacity vs. legacy Torale.
+     Ported from design/webwhen/ui_kits/marketing/marketing.css.
+     Lives here (not Landing.module.css) so it stays a true utility. */
+  .dot-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.18;
+    background-image: radial-gradient(#9A9AA0 1px, transparent 1px);
+    background-size: 28px 28px;
   }
 }

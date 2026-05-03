@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Loader2, RefreshCw, Unplug, X } from 'lucide-react';
-import { BrutalistCard, StatusBadge, ActionMenu, type Action } from '@/components/torale';
-import { Button } from '@/components/ui/button';
+import { Loader2, Plug, Unplug, X } from 'lucide-react';
+import { StatusBadge } from '@/components/torale';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,8 +13,9 @@ import {
 } from '@/components/ui/alert-dialog';
 // Mirror of backend ConnectionStatus StrEnum (backend/src/torale/connectors/client.py); keep in sync.
 import type { AvailableToolkit, ConnectionStatus, UserConnection } from '@/types';
-import { cn } from '@/lib/utils';
 import { ConnectorLogo } from './ConnectorLogo';
+import settingsStyles from '@/components/settings/Settings.module.css';
+import styles from './Connectors.module.css';
 
 interface ConnectorCardProps {
   toolkit: AvailableToolkit;
@@ -40,26 +40,19 @@ function formatRelative(iso: string | null): string | null {
   return `${days}d ago`;
 }
 
-function statusVariant(status: ConnectionStatus | null): {
-  variant: 'active' | 'running' | 'failed' | 'pending' | null;
-  label?: string;
-} {
+function statusBadge(status: ConnectionStatus | null): React.ReactNode {
   switch (status) {
     case 'ACTIVE':
-      return { variant: 'active', label: 'Active' };
+      return <StatusBadge variant="active" label="Active" />;
     case 'INITIATED':
     case 'INITIALIZING':
-      return { variant: 'running', label: 'Connecting' };
+      return <StatusBadge variant="running" label="Connecting" />;
     case 'EXPIRED':
-      return { variant: 'failed', label: 'Expired' };
+      return <StatusBadge variant="failed" label="Expired" />;
     case 'FAILED':
-      return { variant: 'failed', label: 'Failed' };
-    case 'INACTIVE':
-    case null:
-    case undefined:
-      return { variant: null };
+      return <StatusBadge variant="failed" label="Failed" />;
     default:
-      return { variant: null };
+      return null;
   }
 }
 
@@ -71,7 +64,6 @@ export const ConnectorCard: React.FC<ConnectorCardProps> = ({
   isWorking = false,
 }) => {
   const status = connection?.status ?? null;
-  const badge = statusVariant(status);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const isActive = status === 'ACTIVE';
@@ -79,144 +71,106 @@ export const ConnectorCard: React.FC<ConnectorCardProps> = ({
   const isFailed = status === 'FAILED';
   const isConnecting = status === 'INITIATED' || status === 'INITIALIZING';
 
-  const accentClass = cn(
-    isExpired && 'border-l-4 border-l-red-500 bg-red-50/40',
-    isFailed && 'border-l-4 border-l-amber-500 bg-amber-50/40',
-    isConnecting && 'border-l-4 border-l-amber-500'
-  );
-
   const handlePrimary = async () => {
     if (isWorking || isConnecting) return;
     await onConnect(toolkit.slug);
   };
 
-  const manageActions: Action[] = [
-    {
-      id: 'reconnect',
-      label: 'Reconnect',
-      icon: RefreshCw,
-      onClick: () => {
-        void onConnect(toolkit.slug);
-      },
-    },
-    {
-      id: 'disconnect',
-      label: 'Disconnect',
-      icon: Unplug,
-      variant: 'destructive',
-      separator: true,
-      onClick: () => setConfirmOpen(true),
-    },
-  ];
+  const lastUsed = isActive ? formatRelative(connection?.last_used_at ?? null) : null;
+  const badge = statusBadge(status);
 
   return (
     <>
-      <BrutalistCard className={cn('p-0', accentClass)} animate hoverEffect={!isConnecting}>
-        <div className="flex items-start gap-3 p-5 pb-4">
+      <div className={styles.card}>
+        <div className={styles.head}>
           <ConnectorLogo
             slug={toolkit.slug}
             displayName={toolkit.display_name}
+            size="sm"
             muted={!isActive}
-            className={cn(isConnecting && 'animate-pulse')}
           />
-          <div className="min-w-0 flex-1">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <h3 className="font-grotesk text-base font-bold tracking-tight text-zinc-900">
-                  {toolkit.display_name}
-                </h3>
-                <p className="font-mono text-[11px] text-zinc-500 truncate">
-                  {toolkit.slug}
-                </p>
-              </div>
-              {badge.variant && (
-                <StatusBadge variant={badge.variant} label={badge.label} />
-              )}
-            </div>
+          <div className={styles.headBody}>
+            <h3 className={styles.name}>{toolkit.display_name}</h3>
+            <p className={styles.slug}>{toolkit.slug}</p>
           </div>
         </div>
 
-        <div className="border-t border-zinc-200 px-5 py-4 space-y-2">
-          <p className="text-sm text-zinc-700 leading-snug">{toolkit.description}</p>
-          {isActive && (
-            <dl className="space-y-1 pt-1 font-mono text-[11px] text-zinc-500">
-              <div className="flex gap-2">
-                <dt>Last used:</dt>
-                <dd className="text-zinc-700">
-                  {formatRelative(connection?.last_used_at ?? null) ?? 'Never used'}
-                </dd>
-              </div>
-              {connection?.connected_at && (
-                <div className="flex gap-2">
-                  <dt>Connected:</dt>
-                  <dd className="text-zinc-700">
-                    {formatRelative(connection.connected_at) ?? ''}
-                  </dd>
-                </div>
-              )}
-            </dl>
-          )}
-          {isExpired && (
-            <p className="font-mono text-[11px] text-red-600">
-              Connection expired. Reconnect to resume.
-            </p>
-          )}
-          {isFailed && connection?.status_reason && (
-            <p className="font-mono text-[11px] text-amber-700">
-              Last attempt: {connection.status_reason}
-            </p>
-          )}
-        </div>
+        <p className={styles.description}>{toolkit.description}</p>
 
-        <div className="border-t border-zinc-200 px-5 py-3 flex items-center justify-between gap-2">
+        {(badge || lastUsed) && (
+          <div className={styles.meta}>
+            {badge}
+            {lastUsed && (
+              <span className={styles.metaTime}>Last used {lastUsed}</span>
+            )}
+          </div>
+        )}
+
+        {isExpired && (
+          <p className={styles.reason}>Connection expired. Reconnect to resume.</p>
+        )}
+        {isFailed && connection?.status_reason && (
+          <p className={styles.reason}>Last attempt: {connection.status_reason}</p>
+        )}
+
+        <div className={`${styles.foot} ${!isActive && !isConnecting ? styles.footFull : ''}`}>
           {isActive ? (
-            <ActionMenu
-              actions={manageActions}
-              triggerClassName="ml-auto text-zinc-500 hover:text-zinc-900 transition-colors"
-            />
+            <button
+              type="button"
+              className={settingsStyles.btnSecondary}
+              onClick={() => setConfirmOpen(true)}
+              disabled={isWorking}
+            >
+              <Unplug className="w-3.5 h-3.5" strokeWidth={1.5} />
+              Disconnect
+            </button>
           ) : isConnecting ? (
             <>
-              <span className="inline-flex items-center gap-2 font-mono text-xs text-zinc-500">
-                <Loader2 className="w-3 h-3 animate-spin" />
+              <span className={styles.connectingNote}>
+                <Loader2 className="w-3 h-3 animate-spin" strokeWidth={1.5} />
                 Waiting for {toolkit.display_name}...
               </span>
-              <Button
-                variant="ghost"
-                size="sm"
+              <button
+                type="button"
+                className={settingsStyles.btnGhost}
                 onClick={() => onDisconnect(toolkit.slug)}
                 disabled={isWorking}
               >
-                <X className="w-3 h-3 mr-1" /> Cancel
-              </Button>
+                <X className="w-3.5 h-3.5" strokeWidth={1.5} />
+                Cancel
+              </button>
             </>
-          ) : isExpired ? (
-            <Button
+          ) : isExpired || isFailed ? (
+            <button
+              type="button"
+              className={settingsStyles.btnSecondary}
               onClick={handlePrimary}
               disabled={isWorking}
-              className="w-full bg-zinc-900 hover:bg-zinc-800"
             >
-              {isWorking ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Reconnect'}
-            </Button>
-          ) : isFailed ? (
-            <Button
-              onClick={handlePrimary}
-              disabled={isWorking}
-              variant="outline"
-              className="w-full"
-            >
-              {isWorking ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Retry connection'}
-            </Button>
+              {isWorking ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.5} />
+              ) : (
+                <Plug className="w-3.5 h-3.5" strokeWidth={1.5} />
+              )}
+              Reconnect
+            </button>
           ) : (
-            <Button
+            <button
+              type="button"
+              className={settingsStyles.btnPrimary}
               onClick={handlePrimary}
               disabled={isWorking}
-              className="w-full bg-zinc-900 hover:bg-zinc-800"
             >
-              {isWorking ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Connect'}
-            </Button>
+              {isWorking ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.5} />
+              ) : (
+                <Plug className="w-3.5 h-3.5" strokeWidth={1.5} />
+              )}
+              Connect
+            </button>
           )}
         </div>
-      </BrutalistCard>
+      </div>
 
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent>
@@ -227,13 +181,13 @@ export const ConnectorCard: React.FC<ConnectorCardProps> = ({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className={settingsStyles.btnGhost}>Cancel</AlertDialogCancel>
             <AlertDialogAction
+              className={settingsStyles.btnDanger}
               onClick={() => {
                 setConfirmOpen(false);
                 void onDisconnect(toolkit.slug);
               }}
-              className="bg-red-600 hover:bg-red-700 text-white"
             >
               Disconnect
             </AlertDialogAction>

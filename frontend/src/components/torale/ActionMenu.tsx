@@ -36,7 +36,7 @@ interface ActionMenuProps {
 export const ActionMenu: React.FC<ActionMenuProps> = ({
   actions,
   triggerIcon: TriggerIcon = MoreHorizontal,
-  triggerClassName = 'text-zinc-400 hover:text-zinc-900 transition-colors',
+  triggerClassName = 'text-[var(--ww-ink-4)] hover:text-[var(--ww-ink-0)] hover:bg-[var(--ww-ink-7)] rounded-sm p-1 transition-colors',
 }) => {
   return (
     <DropdownMenu>

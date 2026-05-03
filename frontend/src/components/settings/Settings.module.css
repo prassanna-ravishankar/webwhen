@@ -1,0 +1,457 @@
+/* ============================================================================
+   webwhen — settings shell
+   ----------------------------------------------------------------------------
+   Editorial single-column page chrome for /settings/* routes. The outer
+   AppShell already supplies canvas + page padding (.page in
+   AppShell.module.css) — `.column` is an INNER 720px reading constraint.
+
+   Children (Email / Webhook / API key / Recent deliveries sections) consume
+   the shared classes here: .section, .sectionHead, .sectionLabel, .field,
+   .row, .divider, .emptyHint, .actions, .btn*.
+   ========================================================================== */
+
+.column {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* === Tabs (segmented control) =========================================== */
+
+.tabs {
+  display: inline-flex;
+  background: var(--ww-paper);
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-sm);
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.tab {
+  font-family: var(--ww-font-sans);
+  font-size: 12.5px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 0;
+  border-right: 1px solid var(--ww-ink-6);
+  color: var(--ww-ink-3);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--ww-dur-fast) var(--ww-ease-out),
+              background var(--ww-dur-fast) var(--ww-ease-out);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tab:last-child {
+  border-right: 0;
+}
+
+.tab:hover {
+  color: var(--ww-ink-1);
+}
+
+.tabActive {
+  background: var(--ww-ink-7);
+  color: var(--ww-ink-0);
+}
+
+.tabActive:hover {
+  color: var(--ww-ink-0);
+}
+
+/* === Section ============================================================ */
+
+.section {
+  margin-top: 36px;
+}
+
+.section:first-of-type {
+  margin-top: 0;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.sectionHeadIcon {
+  width: 14px;
+  height: 14px;
+  color: var(--ww-ink-3);
+  flex-shrink: 0;
+}
+
+.sectionLabel {
+  font-family: var(--ww-font-mono);
+  font-size: var(--ww-fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ww-ink-4);
+  white-space: nowrap;
+}
+
+.sectionRule {
+  flex: 1;
+  height: 1px;
+  background: var(--ww-ink-6);
+}
+
+/* === Field (kit's mono-label + canvas-bg input) ========================= */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-family: var(--ww-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--ww-ink-4);
+  text-transform: uppercase;
+}
+
+.field input,
+.field select,
+.field textarea {
+  background: var(--ww-canvas);
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-sm);
+  padding: 8px 12px;
+  font-family: var(--ww-font-sans);
+  font-size: 13.5px;
+  color: var(--ww-ink-0);
+  outline: 0;
+  transition: border-color var(--ww-dur-fast) var(--ww-ease-out);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--ww-ink-3);
+  box-shadow: var(--ww-shadow-focus);
+  outline: 0;
+}
+
+/* === Layout helpers ===================================================== */
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px dashed var(--ww-ink-6);
+  margin: 24px 0;
+}
+
+.emptyHint {
+  background: var(--ww-paper);
+  border: 1px dashed var(--ww-ink-6);
+  border-radius: var(--ww-radius-sm);
+  padding: 14px 16px;
+  font-family: var(--ww-font-mono);
+  font-size: var(--ww-fs-xs);
+  color: var(--ww-ink-4);
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* === Buttons (kit btn family) =========================================== */
+
+.btnPrimary,
+.btnSecondary,
+.btnGhost,
+.btnDanger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--ww-font-sans);
+  font-weight: 500;
+  font-size: 13px;
+  padding: 7px 13px;
+  border-radius: var(--ww-radius-sm);
+  border: 1px solid transparent;
+  line-height: 1;
+  cursor: pointer;
+  transition: all var(--ww-dur-fast) var(--ww-ease-out);
+}
+
+.btnPrimary {
+  background: var(--ww-ink-0);
+  color: #fff;
+}
+
+.btnPrimary:hover {
+  background: var(--ww-ink-1);
+}
+
+.btnSecondary {
+  background: var(--ww-paper);
+  color: var(--ww-ink-0);
+  border-color: var(--ww-ink-6);
+}
+
+.btnSecondary:hover {
+  border-color: var(--ww-ink-5);
+}
+
+.btnGhost {
+  background: transparent;
+  color: var(--ww-ink-3);
+}
+
+.btnGhost:hover {
+  color: var(--ww-ink-0);
+  background: var(--ww-ink-7);
+}
+
+.btnDanger {
+  background: var(--ww-danger);
+  color: #fff;
+}
+
+.btnDanger:hover {
+  background: #9d3325;
+}
+
+.btnPrimary:focus-visible,
+.btnSecondary:focus-visible,
+.btnGhost:focus-visible,
+.btnDanger:focus-visible {
+  box-shadow: var(--ww-shadow-focus);
+  outline: 0;
+}
+
+.btnPrimary:disabled,
+.btnSecondary:disabled,
+.btnGhost:disabled,
+.btnDanger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* === Icon button (ghost square, used for trash / copy / eye toggle) ===== */
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-sm);
+  background: var(--ww-paper);
+  color: var(--ww-ink-3);
+  cursor: pointer;
+  transition: all var(--ww-dur-fast) var(--ww-ease-out);
+}
+
+.iconBtn:hover {
+  color: var(--ww-ink-0);
+  border-color: var(--ww-ink-5);
+}
+
+.iconBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.iconBtnDanger:hover {
+  color: var(--ww-danger);
+  border-color: var(--ww-danger);
+}
+
+/* === Run-style row pattern (shared across list sections) =============== */
+
+.runs {
+  display: flex;
+  flex-direction: column;
+}
+
+.run {
+  display: grid;
+  grid-template-columns: 100px 14px 1fr auto;
+  gap: 14px;
+  padding: 12px 0;
+  align-items: center;
+  border-top: 1px dashed var(--ww-ink-6);
+  font-family: var(--ww-font-mono);
+  font-size: 12px;
+}
+
+.run:first-child {
+  border-top: 0;
+}
+
+.runT {
+  color: var(--ww-ink-4);
+}
+
+.runDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ww-ink-5);
+  justify-self: center;
+}
+
+.runDotSuccess {
+  background: var(--ww-success);
+}
+
+.runDotDanger {
+  background: var(--ww-danger);
+}
+
+.runDotInfo {
+  background: var(--ww-info);
+}
+
+.runDotEmber {
+  background: var(--ww-ember);
+}
+
+.runB {
+  color: var(--ww-ink-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.runBStrong {
+  color: var(--ww-ink-0);
+}
+
+.runBMuted {
+  color: var(--ww-ink-4);
+  text-decoration: line-through;
+}
+
+.runMeta {
+  color: var(--ww-ink-4);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* Two-line variant of .run for rows that need a sub-line below the body */
+.runDetail {
+  grid-column: 3 / -1;
+  color: var(--ww-ink-4);
+  font-size: 11px;
+  margin-top: 4px;
+  white-space: normal;
+}
+
+/* === Field row with inline action button (e.g. URL + Save) ============= */
+
+.fieldRow {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.fieldRow .field {
+  flex: 1;
+  min-width: 0;
+}
+
+/* === Secret display (mono, dark surface) =============================== */
+
+.secret {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--ww-ink-1);
+  color: var(--ww-ink-7);
+  border-radius: var(--ww-radius-sm);
+  font-family: var(--ww-font-mono);
+  font-size: 12px;
+  min-width: 0;
+}
+
+.secret code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+/* === Toggle row (label left, switch right) ============================= */
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-sm);
+  background: var(--ww-paper);
+}
+
+.toggleLabel {
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ww-ink-3);
+}
+
+.toggleHint {
+  font-family: var(--ww-font-sans);
+  font-size: 12px;
+  color: var(--ww-ink-4);
+  text-transform: none;
+  letter-spacing: 0;
+  margin-top: 2px;
+}
+
+/* === One-time disclosure card (created API key) ======================== */
+
+.disclosure {
+  background: var(--ww-paper);
+  border: 1px solid var(--ww-ink-6);
+  border-left: 3px solid var(--ww-warn);
+  border-radius: var(--ww-radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.disclosureWarn {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  color: var(--ww-warn);
+}
+
+/* === Inline loading row =============================================== */
+
+.loadingRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0;
+  color: var(--ww-ink-4);
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  gap: 8px;
+}

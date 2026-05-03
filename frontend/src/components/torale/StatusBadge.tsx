@@ -43,90 +43,103 @@ interface StatusBadgeProps {
   size?: 'sm' | 'md';
 }
 
+type VariantStyle = {
+  background: string;
+  color: string;
+  border: string;
+};
+
+const SUCCESS: VariantStyle = {
+  background: 'var(--ww-success-bg)',
+  color: 'var(--ww-success)',
+  border: '1px solid transparent',
+};
+const WARN: VariantStyle = {
+  background: 'var(--ww-warn-soft)',
+  color: 'var(--ww-warn)',
+  border: '1px solid transparent',
+};
+const DANGER: VariantStyle = {
+  background: 'var(--ww-danger-soft)',
+  color: 'var(--ww-danger)',
+  border: '1px solid transparent',
+};
+const INFO: VariantStyle = {
+  background: 'var(--ww-info-soft)',
+  color: 'var(--ww-info)',
+  border: '1px solid transparent',
+};
+const NEUTRAL: VariantStyle = {
+  background: 'var(--ww-paper)',
+  color: 'var(--ww-ink-3)',
+  border: '1px solid var(--ww-ink-6)',
+};
+const EMBER: VariantStyle = {
+  background: 'var(--ww-ember-bg)',
+  color: 'var(--ww-ember-ink)',
+  border: '1px solid transparent',
+};
+
 const variantConfig: Record<
   StatusVariant,
   {
-    bg: string;
-    text: string;
-    border: string;
+    style: VariantStyle;
     icon: React.ReactNode;
     label: string;
   }
 > = {
   active: {
-    bg: 'bg-emerald-50',
-    text: 'text-emerald-600',
-    border: 'border-emerald-200',
+    style: SUCCESS,
     icon: <Activity className="w-3 h-3" />,
     label: 'Active',
   },
   paused: {
-    bg: 'bg-zinc-50',
-    text: 'text-zinc-500',
-    border: 'border-zinc-200',
+    style: NEUTRAL,
     icon: <PauseCircle className="w-3 h-3" />,
     label: 'Paused',
   },
   completed: {
-    bg: 'bg-blue-50',
-    text: 'text-blue-600',
-    border: 'border-blue-200',
+    style: INFO,
     icon: <CheckCircle className="w-3 h-3" />,
     label: 'Completed',
   },
   success: {
-    bg: 'bg-emerald-50',
-    text: 'text-emerald-700',
-    border: 'border-emerald-200',
+    style: SUCCESS,
     icon: <CheckCircle2 className="h-3 w-3" />,
     label: 'Success',
   },
   failed: {
-    bg: 'bg-red-50',
-    text: 'text-red-700',
-    border: 'border-red-200',
+    style: DANGER,
     icon: <XCircle className="h-3 w-3" />,
     label: 'Failed',
   },
   pending: {
-    bg: 'bg-zinc-50',
-    text: 'text-zinc-600',
-    border: 'border-zinc-200',
+    style: INFO,
     icon: <Clock className="h-3 w-3" />,
     label: 'Pending',
   },
   running: {
-    bg: 'bg-amber-50',
-    text: 'text-amber-600',
-    border: 'border-amber-200',
+    style: INFO,
     icon: <Clock className="h-3 w-3" />,
     label: 'Running',
   },
   retrying: {
-    bg: 'bg-amber-50',
-    text: 'text-amber-600',
-    border: 'border-amber-200',
+    style: WARN,
     icon: <Clock className="h-3 w-3" />,
     label: 'Retrying',
   },
   triggered: {
-    bg: 'bg-emerald-50',
-    text: 'text-emerald-700',
-    border: 'border-emerald-200',
+    style: EMBER,
     icon: <Zap className="h-3 w-3" />,
     label: 'Triggered',
   },
   cancelled: {
-    bg: 'bg-zinc-50',
-    text: 'text-zinc-500',
-    border: 'border-zinc-200',
+    style: NEUTRAL,
     icon: <Pause className="h-3 w-3" />,
     label: 'Cancelled',
   },
   unknown: {
-    bg: 'bg-amber-50',
-    text: 'text-amber-600',
-    border: 'border-amber-200',
+    style: WARN,
     icon: <AlertCircle className="h-3 w-3" />,
     label: 'Unknown',
   },
@@ -146,13 +159,16 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 px-2 py-1 rounded-sm border font-mono uppercase tracking-wider',
-        config.bg,
-        config.text,
-        config.border,
-        size === 'sm' ? 'text-[9px]' : 'text-[10px]',
+        'inline-flex items-center gap-1.5 px-2 py-1 rounded-sm font-mono uppercase',
+        size === 'sm' ? 'text-[10.5px]' : 'text-[11px]',
         className
       )}
+      style={{
+        background: config.style.background,
+        color: config.style.color,
+        border: config.style.border,
+        letterSpacing: '0.06em',
+      }}
     >
       {displayIcon}
       {displayLabel}

@@ -1,9 +1,9 @@
 export { StatusBadge } from './StatusBadge';
 export type { StatusVariant } from './StatusBadge';
 
-export { BrutalistCard } from './BrutalistCard';
+export { Card } from './Card';
 
-export { BrutalistSwitch } from './BrutalistSwitch';
+export { Switch } from './Switch';
 
 export { SectionLabel } from './SectionLabel';
 
@@ -24,10 +24,10 @@ export { EmptyState } from './EmptyState';
 export { FieldError } from './FieldError';
 
 export {
-  BrutalistTable,
-  BrutalistTableHeader,
-  BrutalistTableBody,
-  BrutalistTableRow,
-  BrutalistTableHead,
-  BrutalistTableCell,
-} from './BrutalistTable';
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from './Table';

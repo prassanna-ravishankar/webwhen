@@ -10,6 +10,8 @@ Torale is a **grounded monitoring platform**. Users create tasks that watch for 
 
 **Memory**: `.claude/memory/` stores project context (design decisions, gotchas, legacy data notes) that doesn't belong in git commit history -- read it, keep it current, commit it with your changes.
 
+**Rebrand in flight**: Torale is being rebranded to **webwhen.ai** on the `feat/webwhen-rebrand` branch. The canonical brand + UI system lives at `design/webwhen/` — see the [Design system](#design-system) section below. Existing `torale` strings, file paths, and aesthetic patterns will gradually disappear; don't reproduce them in new work.
+
 ## Codebase
 
 **Stack**: Python FastAPI + React/TypeScript + GKE + APScheduler + Clerk Auth + Gemini (with tools: Perplexity, Parallel web systems, browser, MCP)
@@ -61,14 +63,27 @@ For cross-cutting questions ("what touches X?", "where does data flow?"), use gr
 - Prefer composition over inheritance
 - Design clean interfaces that support future extensions without current complexity
 
-## Skills & Patterns
+## Design system
 
-See `.claude/skills/` for implementation guidance:
-- **`torale-design-patterns.md`** — UI patterns, anti-patterns, StatusBadge usage
-- **`torale-design-system.md`** — design system tokens and primitives
-- **`torale-component-library.md`** — when to use shared components vs custom
-- **`torale-animation-patterns.md`** — animation conventions
-- **`tmux-playwright-dev/`** — live UI dev workflow with tmux + Playwright
+The canonical brand + UI system for **webwhen** (rebrand in flight from Torale) lives at `design/webwhen/`. This was exported from Claude Design as a handoff bundle. **Read it before building or styling anything.**
+
+- @design/webwhen/README.md — brand voice, vocabulary, visual foundations, anti-patterns. **Read top to bottom; treat as canonical.**
+- @design/webwhen/colors_and_type.css — token surface (CSS vars + semantic classes). The single source of truth for colour, type, spacing, shadows, motion, radii.
+- @design/webwhen/motion.css — motion tokens + the hourglass mark animation states.
+- `design/webwhen/assets/` — `webwhen-mark.svg`, `webwhen-wordmark.svg`, `webwhen-mark-mono.svg`, `webwhen-mark-favicon.svg`. Plus `legacy-*` Torale artefacts kept for reference only (do not use).
+- `design/webwhen/ui_kits/marketing/` and `design/webwhen/ui_kits/app/` — HTML/CSS/JSX prototypes. **These are design artefacts, not production code.** Recreate the *visual output* in our React + Vite + Tailwind stack; don't port the prototype structure wholesale. Don't render them in a browser unless asked — read source directly.
+- `design/webwhen/preview/` — specimen cards (colour ramps, type, components). Visual reference only.
+
+**Styling paradigm — direction**: rebrand-era components use **CSS Modules** (`*.module.css`) co-located with the component. Tokens still come from `--ww-*` CSS vars (defined globally in `frontend/src/index.css`) and Tailwind utilities for trivial layout. First instance: `frontend/src/components/landing/Landing.module.css`. End state: app-shell + dashboard surfaces will follow the same pattern as they get redesigned. Existing Tailwind-utility code stays in place until its surface is rebuilt.
+
+**Deprecated** (do not build against, even if you find them in the codebase):
+- The old "neo-brutalist Machine" system: `border-2`, `shadow-[4px_4px_0px_0px_*]`, `brand-orange` (`hsl(10, 90%, 55%)`), `font-grotesk` headings, brutalist offset shadows generally, 2px borders, "Deploy Monitor"/"Initialize"/"Terminate" copy.
+- Vocabulary: "monitor" (noun) → use **"watch"**. "alert" → use **"trigger"** or **"the moment"**. "rule" → use **"condition"**. "data points/signals" → use **"evidence"**.
+- Product name in flowing copy: lowercase `webwhen` (capital W only at sentence start). `.ai` lives in URLs only — never in the wordmark or mid-sentence.
+- Migration is in progress on this branch (`feat/webwhen-rebrand`). Legacy patterns and `torale` strings will gradually disappear.
+
+Workflow:
+- `.claude/skills/tmux-playwright-dev/` — live UI dev workflow with tmux + Playwright.
 
 ## Critical Patterns
 

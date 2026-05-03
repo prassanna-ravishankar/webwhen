@@ -101,7 +101,7 @@ export function WaitlistTable() {
 
   if (loading && !entries.length) {
     return (
-      <div className="flex items-center justify-center h-64 bg-white border-2 border-zinc-200">
+      <div className="flex items-center justify-center h-64 bg-white border border-zinc-200">
         <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
       </div>
     )
@@ -119,7 +119,7 @@ export function WaitlistTable() {
       {stats && (
         <div className="grid gap-4 md:grid-cols-3">
           {/* Total */}
-          <div className="bg-white border-2 border-zinc-200 p-4">
+          <div className="bg-white border border-zinc-200 p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">
                 Total
@@ -128,11 +128,11 @@ export function WaitlistTable() {
                 <Users className="h-4 w-4 text-zinc-600" />
               </div>
             </div>
-            <p className="text-2xl font-grotesk font-bold tracking-tight">{stats.total}</p>
+            <p className="text-2xl font-bold tracking-tight">{stats.total}</p>
           </div>
 
           {/* Pending */}
-          <div className="bg-white border-2 border-zinc-200 p-4">
+          <div className="bg-white border border-zinc-200 p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">
                 Pending
@@ -141,11 +141,11 @@ export function WaitlistTable() {
                 <Clock className="h-4 w-4 text-amber-600" />
               </div>
             </div>
-            <p className="text-2xl font-grotesk font-bold tracking-tight text-amber-600">{stats.pending}</p>
+            <p className="text-2xl font-bold tracking-tight text-amber-600">{stats.pending}</p>
           </div>
 
           {/* Converted */}
-          <div className="bg-white border-2 border-zinc-200 p-4">
+          <div className="bg-white border border-zinc-200 p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">
                 Converted
@@ -154,20 +154,20 @@ export function WaitlistTable() {
                 <CheckCircle2 className="h-4 w-4 text-emerald-600" />
               </div>
             </div>
-            <p className="text-2xl font-grotesk font-bold tracking-tight text-emerald-600">{stats.converted}</p>
+            <p className="text-2xl font-bold tracking-tight text-emerald-600">{stats.converted}</p>
           </div>
         </div>
       )}
 
       {/* Waitlist Table */}
-      <div className="bg-white border-2 border-zinc-200">
+      <div className="bg-white border border-zinc-200">
         {/* Header */}
         <div className="p-4 border-b border-zinc-200 flex items-center gap-3">
           <div className="bg-zinc-900 text-white w-8 h-8 flex items-center justify-center shrink-0">
             <Users className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-grotesk font-bold">Waitlist Entries</h3>
+            <h3 className="text-sm font-bold">Waitlist Entries</h3>
             <p className="text-[10px] font-mono text-zinc-400">
               Manage users waiting for access
             </p>

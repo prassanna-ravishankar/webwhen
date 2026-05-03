@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>webwhen · Watch card</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 24px; background: var(--ww-canvas); }
+  .card {
+    background: var(--ww-paper); border: 1px solid var(--ww-ink-6);
+    border-radius: var(--ww-radius-md); box-shadow: var(--ww-shadow-sm);
+    overflow: hidden;
+  }
+  .head { padding: 18px 22px 14px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .title { font-family: var(--ww-font-sans); font-size: 16px; font-weight: 500; color: var(--ww-ink-0); margin: 0 0 4px; letter-spacing: -0.01em; }
+  .q { font-family: var(--ww-font-serif); font-style: italic; font-size: 15px; color: var(--ww-ink-3); margin: 0; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--ww-font-mono); font-size: 10.5px; letter-spacing: 0.04em; padding: 3px 8px; border-radius: var(--ww-radius-pill); }
+  .pill.watch { background: var(--ww-info-soft); color: var(--ww-info); }
+  .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--ww-info); animation: p 2.4s ease-in-out infinite; }
+  @keyframes p { 0%,100%{opacity:1;} 50%{opacity:.35;} }
+  .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 12px 22px 16px; border-top: 1px solid var(--ww-ink-7); }
+  .meta .k { font-family: var(--ww-font-mono); font-size: 10px; color: var(--ww-ink-4); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .meta .v { font-family: var(--ww-font-mono); font-size: 12.5px; color: var(--ww-ink-2); }
+  .foot { padding: 10px 22px; background: var(--ww-canvas); border-top: 1px solid var(--ww-ink-7); font-family: var(--ww-font-mono); font-size: 10.5px; color: var(--ww-ink-4); display: flex; justify-content: space-between; }
+</style>
+</head>
+<body class="ww-base">
+<div class="card">
+  <div class="head">
+    <div>
+      <h3 class="title">PS5 stock watch</h3>
+      <p class="q">"Tell me when the PS5 is back in stock at Best Buy."</p>
+    </div>
+    <span class="pill watch"><span class="dot"></span>watching</span>
+  </div>
+  <div class="meta">
+    <div><div class="k">last check</div><div class="v">4 minutes ago</div></div>
+    <div><div class="k">next check</div><div class="v">in 56 minutes</div></div>
+  </div>
+  <div class="foot"><span>run #284 · 6 sources</span><span>14:32 UTC</span></div>
+</div>
+</body>
+</html>

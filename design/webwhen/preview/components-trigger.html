@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>webwhen · Trigger</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 24px; background: var(--ww-canvas); }
+  .card { position: relative; background: var(--ww-paper); border: 1px solid var(--ww-ink-6); border-radius: var(--ww-radius-md); box-shadow: var(--ww-shadow-md); overflow: hidden; }
+  .stripe { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--ww-ember); }
+  .head { padding: 18px 22px 8px 28px; display: flex; justify-content: space-between; align-items: baseline; }
+  .eyebrow { font-family: var(--ww-font-mono); font-size: 10.5px; color: var(--ww-ember); letter-spacing: 0.08em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+  .ed { width: 7px; height: 7px; border-radius: 999px; background: var(--ww-ember); }
+  .body { padding: 4px 22px 18px 28px; }
+  .head-line { font-family: var(--ww-font-serif); font-style: italic; font-size: 28px; color: var(--ww-ink-0); margin: 6px 0 8px; letter-spacing: -0.01em; line-height: 1.2; text-wrap: balance; }
+  .sub { font-family: var(--ww-font-sans); font-size: 14px; color: var(--ww-ink-3); margin: 0; }
+  .meta { display: flex; gap: 18px; padding: 12px 22px 14px 28px; border-top: 1px solid var(--ww-ink-7); font-family: var(--ww-font-mono); font-size: 11px; color: var(--ww-ink-4); }
+  .meta b { color: var(--ww-ink-2); font-weight: 400; }
+</style>
+</head>
+<body class="ww-base">
+<div class="card">
+  <div class="stripe"></div>
+  <div class="head">
+    <span class="eyebrow"><span class="ed"></span>moment · 14:32 utc</span>
+    <span class="ww-small" style="color: var(--ww-ink-4);">PS5 stock watch</span>
+  </div>
+  <div class="body">
+    <div class="head-line">The PS5 is back at Best Buy.</div>
+    <p class="sub">Confirmed 4 minutes ago, with three corroborating sources.</p>
+  </div>
+  <div class="meta">
+    <span><b>bestbuy.com</b> · listing live</span>
+    <span><b>polygon.com</b> · article</span>
+    <span><b>reddit.com/r/PS5</b> · thread</span>
+  </div>
+</div>
+</body>
+</html>

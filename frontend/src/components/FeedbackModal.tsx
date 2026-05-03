@@ -48,7 +48,7 @@ export function FeedbackModal({ open, onOpenChange }: FeedbackModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="font-grotesk text-lg">Send Feedback</DialogTitle>
+          <DialogTitle className="text-lg">Send Feedback</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -56,7 +56,7 @@ export function FeedbackModal({ open, onOpenChange }: FeedbackModalProps) {
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value as typeof category)}
-              className="w-full border-2 border-zinc-200 focus:border-zinc-900 p-2 font-mono text-sm"
+              className="w-full border border-zinc-200 focus:border-zinc-900 p-2 font-mono text-sm"
             >
               <option value="bug">Bug Report</option>
               <option value="feature">Feature Request</option>
@@ -69,7 +69,7 @@ export function FeedbackModal({ open, onOpenChange }: FeedbackModalProps) {
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
               placeholder="Tell us what you think..."
-              className="w-full border-2 border-zinc-200 focus:border-zinc-900 p-3 font-sans text-sm min-h-[120px]"
+              className="w-full border border-zinc-200 focus:border-zinc-900 p-3 font-sans text-sm min-h-[120px]"
               required
             />
           </div>

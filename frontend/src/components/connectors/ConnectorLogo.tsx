@@ -41,9 +41,9 @@ export const ConnectorLogo: React.FC<ConnectorLogoProps> = ({
   return (
     <div
       className={cn(
-        'flex items-center justify-center font-grotesk font-bold',
+        'flex items-center justify-center font-bold',
         sizeClass[size],
-        muted ? 'bg-zinc-200 text-zinc-500' : 'bg-zinc-900 text-white',
+        muted ? 'bg-[var(--ww-ink-7)] text-[var(--ww-ink-4)]' : 'bg-[var(--ww-ink-1)] text-[var(--ww-paper)]',
         className
       )}
       aria-label={displayName}

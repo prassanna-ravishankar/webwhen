@@ -1,0 +1,585 @@
+/* Landing.module.css
+   Ported from design/webwhen/ui_kits/marketing/marketing.css.
+   Tokens (--ww-*) come from frontend/src/index.css :root — DO NOT redefine here.
+   Tag-selector rules from the kit have been refactored into class-based selectors
+   so the JSX consumer owns naming explicitly.
+   The `.dot-bg` utility is intentionally NOT in this module — it lives in
+   frontend/src/index.css under @layer utilities. */
+
+/* === Layout containers ============================================== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+.reading {
+  max-width: 720px;
+}
+
+/* === NAV ============================================================= */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(250, 250, 247, 0.82);
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  border-bottom: 1px solid var(--ww-ink-6);
+}
+.navRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+.navLeft,
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.navLinks {
+  display: flex;
+  gap: 24px;
+  font-size: 14px;
+  color: var(--ww-ink-3);
+}
+.navLink:hover {
+  color: var(--ww-ink-0);
+}
+
+/* === Brand =========================================================== */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.brandWord {
+  font-family: var(--ww-font-serif);
+  font-style: normal;
+  font-size: 22px;
+  color: var(--ww-ink-0);
+  letter-spacing: -0.01em;
+}
+.brandTld {
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  color: var(--ww-ink-4);
+  margin-left: -2px;
+}
+.brandImg {
+  width: 26px;
+  height: 26px;
+}
+
+/* === Buttons ========================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 9px 16px;
+  border-radius: var(--ww-radius-sm);
+  border: 1px solid transparent;
+  transition: all var(--ww-dur-fast) var(--ww-ease-out);
+  line-height: 1;
+}
+.btnPrimary {
+  background: var(--ww-ink-0);
+  color: white;
+}
+.btnPrimary:hover {
+  background: var(--ww-ink-1);
+}
+.btnSecondary {
+  background: var(--ww-paper);
+  color: var(--ww-ink-0);
+  border-color: var(--ww-ink-6);
+  box-shadow: var(--ww-shadow-xs);
+}
+.btnSecondary:hover {
+  border-color: var(--ww-ink-5);
+}
+.btnGhost {
+  background: transparent;
+  color: var(--ww-ink-2);
+}
+.btnGhost:hover {
+  color: var(--ww-ink-0);
+}
+.btnLg {
+  font-size: 15px;
+  padding: 12px 22px;
+}
+
+/* === Hero ============================================================ */
+.hero {
+  position: relative;
+  padding: 120px 0 80px;
+}
+.heroTitle {
+  font-family: var(--ww-font-serif);
+  font-weight: 400;
+  font-size: clamp(56px, 7.5vw, 88px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--ww-ink-0);
+  margin: 0 0 28px;
+  max-width: 14ch;
+  text-wrap: balance;
+}
+.heroEmber {
+  font-style: normal;
+  color: var(--ww-ember);
+}
+.heroLede {
+  font-family: var(--ww-font-sans);
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--ww-ink-3);
+  max-width: 50ch;
+  margin: 0 0 36px;
+}
+.heroActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.heroMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  font-family: var(--ww-font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: var(--ww-ink-3);
+  text-transform: uppercase;
+}
+.liveDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--ww-success);
+  animation: live 2.4s ease-in-out infinite;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 80px;
+  align-items: center;
+}
+
+/* === Composer (inline mock) ========================================== */
+.composer {
+  background: var(--ww-paper);
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-lg);
+  box-shadow: var(--ww-shadow-md);
+  overflow: hidden;
+}
+.composerHead {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--ww-ink-7);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  color: var(--ww-ink-4);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.composerBody {
+  padding: 22px 22px 18px;
+}
+.composerPrompt {
+  font-family: var(--ww-font-serif);
+  font-size: 22px;
+  line-height: 1.4;
+  color: var(--ww-ink-0);
+  margin: 0 0 6px;
+}
+.composerCursor {
+  display: inline-block;
+  width: 1.5px;
+  height: 22px;
+  background: var(--ww-ember);
+  margin-left: 2px;
+  vertical-align: -3px;
+  animation: blink 1.05s steps(2, start) infinite;
+}
+.composerSub {
+  font-family: var(--ww-font-sans);
+  font-size: 13px;
+  color: var(--ww-ink-4);
+  margin: 12px 0 0;
+}
+.composerFoot {
+  padding: 12px 18px;
+  border-top: 1px solid var(--ww-ink-7);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.chip {
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  color: var(--ww-ink-3);
+  padding: 4px 10px;
+  border-radius: var(--ww-radius-pill);
+  border: 1px solid var(--ww-ink-6);
+  background: var(--ww-canvas);
+}
+.chip + .chip {
+  margin-left: 6px;
+}
+
+/* === Event log strip ================================================ */
+.log {
+  margin-top: 20px;
+  background: transparent;
+}
+.logItem {
+  display: flex;
+  gap: 14px;
+  padding: 10px 4px;
+  border-top: 1px dashed var(--ww-ink-6);
+  align-items: baseline;
+  font-family: var(--ww-font-mono);
+  font-size: 12px;
+  color: var(--ww-ink-3);
+}
+.logItem:first-child {
+  border-top: 0;
+}
+.logItemTime {
+  color: var(--ww-ink-4);
+  width: 70px;
+  flex-shrink: 0;
+}
+.logItemBody {
+  color: var(--ww-ink-2);
+}
+.logItemEmber .logItemBody {
+  color: var(--ww-ember);
+}
+.logItemDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ww-ink-5);
+  flex-shrink: 0;
+  align-self: center;
+}
+.logItemEmber .logItemDot {
+  background: var(--ww-ember);
+}
+
+/* === Sections ======================================================== */
+.section {
+  position: relative;
+  padding: 96px 0;
+}
+.sectionAlt {
+  background: var(--ww-paper);
+  border-top: 1px solid var(--ww-ink-6);
+  border-bottom: 1px solid var(--ww-ink-6);
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ww-ink-4);
+  text-transform: uppercase;
+  margin-bottom: 22px;
+}
+.eyebrow::before {
+  content: "";
+  width: 18px;
+  height: 1px;
+  background: var(--ww-ink-5);
+}
+.sectionHeading {
+  font-family: var(--ww-font-sans);
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ww-ink-0);
+  margin: 0 0 16px;
+  max-width: 22ch;
+  text-wrap: balance;
+}
+.sectionHeadingAccent {
+  font-family: var(--ww-font-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ww-ember);
+}
+.sectionDesc {
+  font-size: 17px;
+  color: var(--ww-ink-3);
+  max-width: 56ch;
+  line-height: 1.6;
+  margin: 0 0 56px;
+}
+
+/* === Steps grid (How it works) ====================================== */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--ww-ink-6);
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-md);
+  overflow: hidden;
+}
+.step {
+  background: var(--ww-paper);
+  padding: 32px 30px;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+}
+.stepNum {
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ww-ink-4);
+  margin-bottom: 14px;
+}
+.stepHeading {
+  font-family: var(--ww-font-sans);
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  color: var(--ww-ink-0);
+  margin: 0 0 10px;
+}
+.stepBody {
+  font-size: 15px;
+  color: var(--ww-ink-3);
+  line-height: 1.55;
+  margin: 0 0 auto;
+}
+.stepHint {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--ww-ink-6);
+  font-family: var(--ww-font-mono);
+  font-size: 11.5px;
+  color: var(--ww-ink-3);
+  line-height: 1.5;
+}
+.stepHintEm {
+  color: var(--ww-ember);
+}
+
+/* === Use cases ====================================================== */
+.cases {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+.caseCard {
+  background: var(--ww-paper);
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-md);
+  padding: 26px 26px 22px;
+  transition: all var(--ww-dur-normal) var(--ww-ease-out);
+  display: flex;
+  flex-direction: column;
+  min-height: 230px;
+}
+.caseCard:hover {
+  box-shadow: var(--ww-shadow-md);
+  border-color: var(--ww-ink-5);
+}
+.caseTag {
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  color: var(--ww-ink-4);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.caseQuestion {
+  font-family: var(--ww-font-serif);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1.35;
+  color: var(--ww-ink-0);
+  margin: 0 0 18px;
+  text-wrap: balance;
+}
+.caseResult {
+  margin-top: auto;
+  font-family: var(--ww-font-mono);
+  font-size: 12px;
+  color: var(--ww-ink-3);
+  padding-top: 14px;
+  border-top: 1px dashed var(--ww-ink-6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.caseResultOk {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ww-success);
+}
+.caseResultOk::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ww-success);
+}
+
+/* === Manifesto ====================================================== */
+.manifesto {
+  display: grid;
+  grid-template-columns: 0.4fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.manifestoQuote {
+  font-family: var(--ww-font-serif);
+  font-size: 36px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ww-ink-0);
+  margin: 0;
+  text-wrap: balance;
+}
+.manifestoQuoteEm {
+  color: var(--ww-ember);
+}
+.manifestoBody {
+  font-size: 16px;
+  color: var(--ww-ink-3);
+  line-height: 1.7;
+  margin: 0 0 14px;
+}
+
+/* === CTA ============================================================ */
+.cta {
+  padding: 120px 0;
+  text-align: center;
+}
+.ctaHeading {
+  font-family: var(--ww-font-serif);
+  font-size: 64px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ww-ink-0);
+  margin: 0 0 24px;
+  text-wrap: balance;
+}
+.ctaBody {
+  font-size: 17px;
+  color: var(--ww-ink-3);
+  margin: 0 0 36px;
+}
+
+/* === Footer ========================================================= */
+.footer {
+  background: var(--ww-ink-1);
+  color: var(--ww-ink-5);
+  padding: 72px 0 36px;
+}
+.footer .brandWord {
+  color: white;
+}
+.footerHeading {
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ww-ink-4);
+  text-transform: uppercase;
+  margin: 0 0 18px;
+  font-weight: 500;
+}
+.footerList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.footerListItem {
+  font-size: 14px;
+  padding: 4px 0;
+  color: var(--ww-ink-5);
+}
+.footerListItem a:hover {
+  color: white;
+}
+.footerGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  gap: 48px;
+  padding-bottom: 64px;
+  border-bottom: 1px solid #2A2A2D;
+}
+.footerRow2 {
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  color: var(--ww-ink-3);
+  letter-spacing: 0.04em;
+}
+
+/* === Responsive ===================================================== */
+@media (max-width: 900px) {
+  .heroGrid,
+  .manifesto {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .steps,
+  .cases {
+    grid-template-columns: 1fr;
+  }
+  .footerGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .navLinks {
+    display: none;
+  }
+  .navRight .btnGhost {
+    display: none;
+  }
+  .navRight .btn {
+    padding: 7px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}
+
+/* === Keyframes (module-scoped by Vite/CSS Modules) ================== */
+@keyframes live {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes blink {
+  to {
+    background: transparent;
+  }
+}

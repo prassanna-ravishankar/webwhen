@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>webwhen · Status badges</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 28px; background: var(--ww-canvas); }
+  .row { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--ww-font-mono); font-size: 11px; letter-spacing: 0.04em;
+    padding: 4px 10px 4px 8px; border-radius: var(--ww-radius-pill);
+    border: 1px solid transparent;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 999px; }
+  .pulse { animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+  .lbl { font-family: var(--ww-font-mono); font-size: 10px; color: var(--ww-ink-4); margin-bottom: 10px; letter-spacing: 0.04em; }
+</style>
+</head>
+<body class="ww-base">
+  <div class="lbl">STATUS PILLS — used in cards, lists, the agent timeline</div>
+  <div class="row">
+    <span class="pill" style="background: var(--ww-info-soft); color: var(--ww-info); border-color: rgba(58,95,140,0.18);"><span class="dot pulse" style="background: var(--ww-info);"></span>watching</span>
+    <span class="pill" style="background: var(--ww-success-soft); color: var(--ww-success); border-color: rgba(47,125,92,0.18);"><span class="dot" style="background: var(--ww-success);"></span>triggered</span>
+    <span class="pill" style="background: var(--ww-ember-soft); color: var(--ww-ember-ink); border-color: rgba(201,88,42,0.22);"><span class="dot" style="background: var(--ww-ember);"></span>moment</span>
+    <span class="pill" style="background: var(--ww-warn-soft); color: var(--ww-warn); border-color: rgba(181,127,26,0.22);"><span class="dot" style="background: var(--ww-warn);"></span>paused</span>
+    <span class="pill" style="background: var(--ww-danger-soft); color: var(--ww-danger); border-color: rgba(178,58,42,0.22);"><span class="dot" style="background: var(--ww-danger);"></span>error</span>
+    <span class="pill" style="background: var(--ww-ink-8); color: var(--ww-ink-3); border-color: var(--ww-ink-6);"><span class="dot" style="background: var(--ww-ink-4);"></span>idle</span>
+  </div>
+</body>
+</html>

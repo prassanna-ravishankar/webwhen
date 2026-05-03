@@ -15,56 +15,82 @@ export default {
       },
     },
     extend: {
-      // Tri-font stack (from mock designs)
+      // webwhen tri-font stack — Instrument Sans (UI), Instrument Serif (display),
+      // JetBrains Mono (technical specimens). Inter remains as fallback during
+      // the migration; design/webwhen/colors_and_type.css is canonical.
       fontFamily: {
-        grotesk: ['Space Grotesk', 'Space Grotesk Fallback', 'Arial', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans:  ['Instrument Sans', 'Inter', 'system-ui', 'sans-serif'],
+        serif: ['Instrument Serif', 'Iowan Old Style', 'Apple Garamond', 'Baskerville', 'Times New Roman', 'serif'],
+        mono:  ['JetBrains Mono', 'monospace'],
       },
 
-      // Brutalist shadows (from mock designs)
+      // Soft shadows from the --ww-shadow-* token surface.
+      // Brutalist offset shadows (4px 4px 0 0 black, etc.) are deprecated.
       boxShadow: {
-        'brutalist-sm': '2px 2px 0px 0px rgba(0,0,0,0.1)',
-        'brutalist': '4px 4px 0px 0px rgba(0,0,0,0.1)',
-        'brutalist-lg': '6px 6px 0px 0px rgba(24,24,27,1)',
-        'brutalist-xl': '8px 8px 0px 0px rgba(0,0,0,1)',
+        'ww-xs':    'var(--ww-shadow-xs)',
+        'ww-sm':    'var(--ww-shadow-sm)',
+        'ww-md':    'var(--ww-shadow-md)',
+        'ww-lg':    'var(--ww-shadow-lg)',
+        'ww-focus': 'var(--ww-shadow-focus)',
+        'ww-inset': 'var(--ww-shadow-inset)',
       },
 
       colors: {
-        brand: {
-          orange: "hsl(10, 90%, 55%)",
+        // Direct token consumers — for cases where the shadcn alias indirection
+        // isn't appropriate (e.g. ember as a literal accent on a non-semantic surface).
+        ink: {
+          0: 'var(--ww-ink-0)',
+          1: 'var(--ww-ink-1)',
+          2: 'var(--ww-ink-2)',
+          3: 'var(--ww-ink-3)',
+          4: 'var(--ww-ink-4)',
+          5: 'var(--ww-ink-5)',
+          6: 'var(--ww-ink-6)',
+          7: 'var(--ww-ink-7)',
+          8: 'var(--ww-ink-8)',
         },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
+        canvas: 'var(--ww-canvas)',
+        paper:  'var(--ww-paper)',
+        ember: {
+          DEFAULT: 'var(--ww-ember)',
+          hover:   'var(--ww-ember-hover)',
+          soft:    'var(--ww-ember-soft)',
+          ink:     'var(--ww-ember-ink)',
+        },
+
+        // shadcn alias layer — derives from --ww-* via index.css :root block.
+        // DO NOT hand-edit values in index.css without updating --ww-* first.
+        border:     "hsl(var(--border))",
+        input:      "hsl(var(--input))",
+        ring:       "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT:    "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
+          DEFAULT:    "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
+          DEFAULT:    "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
+          DEFAULT:    "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
+          DEFAULT:    "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
+          DEFAULT:    "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
+          DEFAULT:    "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
       },
@@ -86,6 +112,15 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      transitionTimingFunction: {
+        'ww-out':   'var(--ww-ease-out)',
+        'ww-inout': 'var(--ww-ease-inout)',
+      },
+      transitionDuration: {
+        'ww-fast':   'var(--ww-dur-fast)',
+        'ww-normal': 'var(--ww-dur-normal)',
+        'ww-slow':   'var(--ww-dur-slow)',
       },
     },
   },

@@ -22,7 +22,33 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Serve with nginx
+#
+# Build the headers-more dynamic module from source against this image's
+# nginx version. headers-more is not in the alpine apk repo for the official
+# `nginx:alpine` images (only acme/geoip/image-filter/njs/xslt are packaged),
+# so we compile it ourselves. The module is required because stock nginx
+# `add_header` at server scope is silently discarded the moment a `location`
+# block uses its own `add_header` — even when the parent directive carries
+# `always`. See issue #259.
 FROM nginx:alpine
+
+ARG HEADERS_MORE_VERSION=0.37
+RUN apk add --no-cache --virtual .build-deps \
+        gcc libc-dev make pcre2-dev zlib-dev openssl-dev linux-headers curl ca-certificates \
+    && NGINX_VER=$(nginx -v 2>&1 | sed -E 's|.*/([0-9.]+).*|\1|') \
+    && curl -fsSL "https://nginx.org/download/nginx-${NGINX_VER}.tar.gz" -o /tmp/nginx.tar.gz \
+    && curl -fsSL "https://github.com/openresty/headers-more-nginx-module/archive/v${HEADERS_MORE_VERSION}.tar.gz" -o /tmp/headers-more.tar.gz \
+    && mkdir -p /tmp/build && cd /tmp/build \
+    && tar -xzf /tmp/nginx.tar.gz \
+    && tar -xzf /tmp/headers-more.tar.gz \
+    && cd "nginx-${NGINX_VER}" \
+    && CONFIGURE_ARGS=$(nginx -V 2>&1 | grep "configure arguments:" | sed 's|.*configure arguments: ||') \
+    && eval ./configure ${CONFIGURE_ARGS} --add-dynamic-module=/tmp/build/headers-more-nginx-module-${HEADERS_MORE_VERSION} \
+    && make modules \
+    && cp objs/ngx_http_headers_more_filter_module.so /etc/nginx/modules/ \
+    && cd / && rm -rf /tmp/build /tmp/nginx.tar.gz /tmp/headers-more.tar.gz \
+    && apk del .build-deps \
+    && sed -i '1i load_module modules/ngx_http_headers_more_filter_module.so;' /etc/nginx/nginx.conf
 
 # Copy built assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html

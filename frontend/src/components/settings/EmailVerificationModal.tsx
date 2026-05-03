@@ -2,24 +2,20 @@ import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Mail, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 import { api } from '@/lib/api';
 import { getErrorMessage } from '@/lib/utils';
 import { toast } from 'sonner';
+import settingsStyles from './Settings.module.css';
+import modalStyles from '@/components/ui/modal/Modal.module.css';
 
 interface EmailVerificationModalProps {
   open: boolean;
@@ -128,56 +124,81 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const headTitle = step === 'enter_email' ? 'verify email' : 'enter code';
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Mail className="h-5 w-5" />
-            Verify Email Address
-          </DialogTitle>
-          <DialogDescription>
-            {step === 'enter_email'
-              ? 'Add a custom email address to receive notifications'
-              : 'Enter the 6-digit code sent to your email'}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className={modalStyles.modal}>
+        <DialogTitle className="sr-only">Verify email address</DialogTitle>
+        <DialogDescription className="sr-only">
+          {step === 'enter_email'
+            ? 'Add a custom email address to receive notifications'
+            : 'Enter the 6-digit code sent to your email'}
+        </DialogDescription>
 
-        <div className="space-y-4 py-4">
+        <div className={modalStyles.head}>
+          <span className={modalStyles.headTitle}>{headTitle}</span>
+          <button
+            type="button"
+            className={modalStyles.headClose}
+            onClick={() => onOpenChange(false)}
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className={modalStyles.body}>
           {step === 'enter_email' && (
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSendCode();
-                  }
-                }}
-                disabled={isLoading}
-                autoFocus
-              />
+            <div className="flex flex-col gap-3">
+              <div className={settingsStyles.field}>
+                <label htmlFor="verify-email">Email address</label>
+                <input
+                  id="verify-email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSendCode();
+                    }
+                  }}
+                  disabled={isLoading}
+                  autoFocus
+                />
+              </div>
               {error && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
+                <div
+                  className="flex items-start gap-2 p-2 rounded-sm"
+                  style={{
+                    background: 'var(--ww-danger-soft)',
+                    color: 'var(--ww-danger)',
+                    fontFamily: 'var(--ww-font-mono)',
+                    fontSize: '11px',
+                  }}
+                >
+                  <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                  {error}
+                </div>
               )}
-              <p className="text-sm text-muted-foreground">
-                You'll receive a 6-digit verification code valid for 15 minutes
+              <p
+                style={{
+                  fontFamily: 'var(--ww-font-mono)',
+                  fontSize: '11px',
+                  color: 'var(--ww-ink-4)',
+                }}
+              >
+                You'll receive a 6-digit verification code valid for 15 minutes.
               </p>
             </div>
           )}
 
           {step === 'verify_code' && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Verification Code</Label>
-                <div className="flex justify-center">
+            <div className="flex flex-col gap-4">
+              <div className={settingsStyles.field}>
+                <label>Verification code</label>
+                <div className="flex justify-center pt-1">
                   <InputOTP
                     maxLength={6}
                     value={code}
@@ -200,99 +221,129 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
               </div>
 
               {error && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
+                <div
+                  className="flex items-start gap-2 p-2 rounded-sm"
+                  style={{
+                    background: 'var(--ww-danger-soft)',
+                    color: 'var(--ww-danger)',
+                    fontFamily: 'var(--ww-font-mono)',
+                    fontSize: '11px',
+                  }}
+                >
+                  <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                  {error}
+                </div>
               )}
 
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">
-                  Code sent to <strong>{email}</strong>
+              <div
+                className="flex items-center justify-between"
+                style={{
+                  fontFamily: 'var(--ww-font-mono)',
+                  fontSize: '11px',
+                  color: 'var(--ww-ink-4)',
+                }}
+              >
+                <span>
+                  sent to <strong style={{ color: 'var(--ww-ink-2)' }}>{email}</strong>
                 </span>
-                <Button
+                <button
                   type="button"
-                  variant="link"
-                  size="sm"
                   onClick={() => setStep('enter_email')}
-                  className="h-auto p-0"
+                  className={settingsStyles.btnGhost}
+                  style={{ padding: '4px 8px' }}
                 >
                   Change email
-                </Button>
+                </button>
               </div>
 
               {timeRemaining > 0 ? (
-                <Alert>
-                  <CheckCircle2 className="h-4 w-4" />
-                  <AlertDescription>
-                    Code expires in <strong>{formatTime(timeRemaining)}</strong>
-                  </AlertDescription>
-                </Alert>
+                <p
+                  style={{
+                    fontFamily: 'var(--ww-font-mono)',
+                    fontSize: '11px',
+                    color: 'var(--ww-ink-4)',
+                  }}
+                >
+                  Code expires in <strong style={{ color: 'var(--ww-ink-2)' }}>{formatTime(timeRemaining)}</strong>
+                </p>
               ) : (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    Verification code has expired
-                  </AlertDescription>
-                </Alert>
+                <div
+                  className="flex items-start gap-2 p-2 rounded-sm"
+                  style={{
+                    background: 'var(--ww-danger-soft)',
+                    color: 'var(--ww-danger)',
+                    fontFamily: 'var(--ww-font-mono)',
+                    fontSize: '11px',
+                  }}
+                >
+                  <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                  Verification code has expired
+                </div>
               )}
 
               {timeRemaining === 0 && (
-                <Button
+                <button
                   type="button"
-                  variant="outline"
-                  className="w-full"
+                  className={settingsStyles.btnSecondary}
                   onClick={handleResendCode}
                   disabled={isLoading}
+                  style={{ alignSelf: 'flex-start' }}
                 >
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Resend Code
-                </Button>
+                  {isLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                  Resend code
+                </button>
               )}
             </div>
           )}
         </div>
 
-        <DialogFooter>
-          {step === 'enter_email' ? (
-            <>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                onClick={handleSendCode}
-                disabled={isLoading || !email}
-              >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Send Code
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setStep('enter_email')}
-                disabled={isLoading}
-              >
-                Back
-              </Button>
-              <Button
-                type="button"
-                onClick={handleVerifyCode}
-                disabled={isLoading || code.length !== 6 || timeRemaining === 0}
-              >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Verify Email
-              </Button>
-            </>
-          )}
-        </DialogFooter>
+        <div className={modalStyles.foot}>
+          <span className={modalStyles.footHint}>
+            {step === 'enter_email' ? 'one-time code · 15 min validity' : 'enter the 6-digit code'}
+          </span>
+          <div className={modalStyles.footActions}>
+            {step === 'enter_email' ? (
+              <>
+                <button
+                  type="button"
+                  className={settingsStyles.btnGhost}
+                  onClick={() => onOpenChange(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className={settingsStyles.btnPrimary}
+                  onClick={handleSendCode}
+                  disabled={isLoading || !email}
+                >
+                  {isLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                  Send code
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className={settingsStyles.btnGhost}
+                  onClick={() => setStep('enter_email')}
+                  disabled={isLoading}
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  className={settingsStyles.btnPrimary}
+                  onClick={handleVerifyCode}
+                  disabled={isLoading || code.length !== 6 || timeRemaining === 0}
+                >
+                  {isLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                  Verify
+                </button>
+              </>
+            )}
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

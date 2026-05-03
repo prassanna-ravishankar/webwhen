@@ -1,0 +1,229 @@
+/* ============================================================================
+   webwhen — watch list (Dashboard)
+   ----------------------------------------------------------------------------
+   Ports design/webwhen/ui_kits/app/app.css patterns: .filters, .watch-list,
+   .watch-row, .empty. Tokens live globally in frontend/src/index.css.
+   ========================================================================== */
+
+/* === Filters bar ======================================================== */
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--ww-ink-6);
+  flex-wrap: wrap;
+}
+
+.seg {
+  display: inline-flex;
+  background: var(--ww-paper);
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-sm);
+  overflow: hidden;
+}
+
+.segButton {
+  font-family: var(--ww-font-sans);
+  font-size: 12.5px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 0;
+  color: var(--ww-ink-3);
+  border-right: 1px solid var(--ww-ink-6);
+  cursor: pointer;
+  transition: all var(--ww-dur-fast) var(--ww-ease-out);
+}
+
+.segButton:last-child {
+  border-right: 0;
+}
+
+.segButton:hover {
+  color: var(--ww-ink-1);
+}
+
+.segButton.on {
+  background: var(--ww-ink-7);
+  color: var(--ww-ink-0);
+}
+
+.search {
+  flex: 1;
+  max-width: 320px;
+  background: var(--ww-paper);
+  border: 1px solid var(--ww-ink-6);
+  border-radius: var(--ww-radius-sm);
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--ww-ink-1);
+  outline: 0;
+  transition: border-color var(--ww-dur-fast) var(--ww-ease-out);
+}
+
+.search:focus {
+  border-color: var(--ww-ink-3);
+}
+
+.search::placeholder {
+  color: var(--ww-ink-4);
+}
+
+/* === Watch row list ===================================================== */
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 14px 1fr 130px 130px 26px;
+  gap: 18px;
+  align-items: center;
+  padding: 18px 4px;
+  border-top: 1px solid var(--ww-ink-6);
+  cursor: pointer;
+  transition: background var(--ww-dur-fast) var(--ww-ease-out);
+  text-decoration: none;
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+.row:hover {
+  background: rgba(0, 0, 0, 0.018);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--ww-success);
+}
+
+.dot.triggered {
+  background: var(--ww-ember);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.dot.paused {
+  background: var(--ww-ink-5);
+}
+
+.dot.completed {
+  background: var(--ww-ink-4);
+}
+
+.dot.error {
+  background: var(--ww-danger);
+}
+
+.text {
+  min-width: 0;
+}
+
+.q {
+  font-family: var(--ww-font-serif);
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.35;
+  color: var(--ww-ink-0);
+  margin: 0 0 4px;
+  text-wrap: balance;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.meta {
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  color: var(--ww-ink-4);
+  letter-spacing: 0.02em;
+}
+
+.cell {
+  font-family: var(--ww-font-mono);
+  font-size: 11.5px;
+  color: var(--ww-ink-3);
+  text-align: left;
+}
+
+.cell.ember {
+  color: var(--ww-ember);
+}
+
+.more {
+  color: var(--ww-ink-4);
+  justify-self: end;
+  background: transparent;
+  border: 0;
+  padding: 4px;
+  border-radius: var(--ww-radius-xs);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all var(--ww-dur-fast) var(--ww-ease-out);
+}
+
+.more:hover {
+  color: var(--ww-ink-0);
+  background: var(--ww-ink-7);
+}
+
+/* === Empty state ======================================================== */
+
+.empty {
+  text-align: center;
+  padding: 80px 0;
+}
+
+.emptyPull {
+  font-family: var(--ww-font-serif);
+  font-size: 28px;
+  color: var(--ww-ink-2);
+  margin: 0 0 12px;
+  text-wrap: balance;
+}
+
+.emptySub {
+  font-family: var(--ww-font-sans);
+  font-size: 14px;
+  color: var(--ww-ink-4);
+  margin: 0 0 32px;
+}
+
+/* === Loading ============================================================ */
+
+.loading {
+  display: grid;
+  place-items: center;
+  padding: 96px 0;
+  color: var(--ww-ink-4);
+  font-family: var(--ww-font-mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+
+/* === Mobile ============================================================= */
+
+@media (max-width: 720px) {
+  .row {
+    grid-template-columns: 14px 1fr 26px;
+    gap: 14px;
+  }
+  .cell {
+    display: none;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

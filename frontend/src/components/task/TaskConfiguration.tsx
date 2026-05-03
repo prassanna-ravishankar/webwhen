@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Search, Mail, Webhook, CheckCircle, Clock } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { InfoCard, CollapsibleSection, BrutalistSwitch } from "@/components/torale";
+import { InfoCard, CollapsibleSection, Switch } from "@/components/torale";
 import { NotificationChannelBadges } from "@/components/notifications/NotificationChannelBadges";
 import { formatTimeUntil } from '@/lib/utils';
 import type { Task } from '@/types';
@@ -39,7 +39,7 @@ const renderTaskStatus = (task: Task, onToggle: () => void) => {
     badge: null,
     button: (
       <div className="flex items-center gap-1.5">
-        <BrutalistSwitch
+        <Switch
           checked={task.state === 'active'}
           onCheckedChange={onToggle}
         />
@@ -64,7 +64,7 @@ export const TaskConfiguration: React.FC<TaskConfigurationProps> = ({
       <div className="flex items-start gap-3">
         <Search className="h-4 w-4 text-zinc-500 mt-0.5 shrink-0" />
         <div className="flex-1 min-w-0">
-          <div className="text-xs font-mono text-zinc-500 uppercase tracking-wider mb-1">Monitoring</div>
+          <div className="text-xs font-mono text-zinc-500 uppercase tracking-wider mb-1">Watching</div>
           <p className="text-sm text-zinc-900 leading-relaxed">{task.search_query}</p>
         </div>
       </div>

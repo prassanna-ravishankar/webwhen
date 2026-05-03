@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>webwhen · Color · Ember</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 24px; background: var(--ww-canvas); }
+  .row { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 1px; background: var(--ww-ink-6); border: 1px solid var(--ww-ink-6); border-radius: var(--ww-radius-md); overflow: hidden; }
+  .swatch { padding: 22px 20px; min-height: 110px; display: flex; flex-direction: column; justify-content: space-between; }
+  .name { font-family: var(--ww-font-mono); font-size: 11px; color: var(--ww-ink-3); }
+  .hex { font-family: var(--ww-font-mono); font-size: 11px; color: var(--ww-ink-4); }
+  .swatch.dark .name { color: rgba(255,255,255,0.95); }
+  .swatch.dark .hex { color: rgba(255,255,255,0.65); }
+  .lead { padding: 22px 24px; background: var(--ww-paper); }
+  .lead .ww-h3 { margin: 0 0 6px; }
+  .lead .ww-small { color: var(--ww-ink-3); margin: 0; }
+  .dot { display:inline-block; width: 10px; height: 10px; border-radius: 999px; background: var(--ww-ember); margin-right: 8px; vertical-align: middle; }
+</style>
+</head>
+<body class="ww-base">
+<div class="row">
+  <div class="lead">
+    <div class="ww-eyebrow">accent</div>
+    <h3 class="ww-h3" style="margin-top:8px;"><span class="dot"></span>Ember</h3>
+    <p class="ww-small">A patient terracotta. The single moment of emphasis. Use &lt; 5% of the canvas — never as a fill on large surfaces.</p>
+  </div>
+  <div class="swatch dark" style="background:var(--ww-ember);">
+    <span class="name">ember</span><span class="hex">#C9582A</span>
+  </div>
+  <div class="swatch dark" style="background:var(--ww-ember-hover);">
+    <span class="name">ember-hover</span><span class="hex">#B14B22</span>
+  </div>
+  <div class="swatch" style="background:var(--ww-ember-soft); color:var(--ww-ember-ink);">
+    <span class="name" style="color:var(--ww-ember-ink);">ember-soft</span><span class="hex" style="color:var(--ww-ember-ink); opacity:.7;">#F4E4DA</span>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>webwhen · Inputs</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 28px; background: var(--ww-canvas); }
+  .stack > * + * { margin-top: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .lab { font-family: var(--ww-font-mono); font-size: 10.5px; letter-spacing: 0.04em; color: var(--ww-ink-4); text-transform: uppercase; }
+  .input, .textarea {
+    font-family: var(--ww-font-sans); font-size: 14px; color: var(--ww-ink-0);
+    padding: 10px 14px; background: var(--ww-paper);
+    border: 1px solid var(--ww-ink-6); border-radius: var(--ww-radius-sm);
+    outline: none; transition: border-color var(--ww-dur-fast), box-shadow var(--ww-dur-fast);
+  }
+  .input:focus, .textarea:focus { border-color: var(--ww-ember); box-shadow: var(--ww-shadow-focus); }
+  .textarea { font-family: var(--ww-font-serif); font-size: 18px; line-height: 1.45; min-height: 78px; resize: none; }
+  .help { font-family: var(--ww-font-mono); font-size: 10.5px; color: var(--ww-ink-4); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+</style>
+</head>
+<body class="ww-base">
+  <div class="stack">
+    <div class="field">
+      <span class="lab">condition</span>
+      <textarea class="textarea" placeholder="Tell me when the next iPhone release date is announced…">Tell me when the PS5 is back in stock at Best Buy.</textarea>
+      <span class="help">Plain English. No keywords required.</span>
+    </div>
+    <div class="row">
+      <div class="field">
+        <span class="lab">name</span>
+        <input class="input" value="PS5 stock watch">
+      </div>
+      <div class="field">
+        <span class="lab">checks every</span>
+        <input class="input" value="6 hours">
+      </div>
+    </div>
+  </div>
+</body>
+</html>

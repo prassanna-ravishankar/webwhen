@@ -4,7 +4,7 @@ import { api } from '@/lib/api'
 import { TaskCard } from './cards/TaskCard'
 import { TaskDetailPanel } from './TaskDetailPanel'
 import { Loader2, Search, Zap } from 'lucide-react'
-import { SectionLabel, BrutalistCard, StatusBadge, BrutalistSwitch } from '@/components/torale'
+import { SectionLabel, Card, StatusBadge, Switch } from '@/components/torale'
 import { stateToVariant } from './types'
 import type { TaskData } from './types'
 
@@ -26,7 +26,7 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
       setTasks(data.queries ?? [])
       setError(null)
     } catch (err) {
-      setError(getErrorMessage(err, 'Failed to load tasks'))
+      setError(getErrorMessage(err, "Couldn't load your watches"))
     } finally {
       setLoading(false)
     }
@@ -42,15 +42,15 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
 
   if (loading) {
     return (
-      <BrutalistCard className="flex items-center justify-center h-64">
+      <Card className="flex items-center justify-center h-64">
         <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
-      </BrutalistCard>
+      </Card>
     )
   }
 
   if (error) {
     return (
-      <BrutalistCard className="flex items-center justify-center h-64">
+      <Card className="flex items-center justify-center h-64">
         <div className="text-center">
           <p className="text-sm font-mono text-red-600">Error: {error}</p>
           <button
@@ -60,12 +60,12 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
             Retry
           </button>
         </div>
-      </BrutalistCard>
+      </Card>
     )
   }
 
   return (
-    <BrutalistCard>
+    <Card>
       {/* Header */}
       <div className="p-4 border-b border-zinc-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
@@ -73,14 +73,14 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
             <Search className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-grotesk font-bold">All Tasks</h3>
+            <h3 className="text-sm font-bold">All Watches</h3>
             <p className="text-[10px] font-mono text-zinc-400">
-              Click a row to view task details and execution history
+              Click a row to view watch details and execution history
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <BrutalistSwitch
+          <Switch
             checked={activeOnly}
             onCheckedChange={setActiveOnly}
           />
@@ -118,7 +118,7 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
               <tr>
                 <td colSpan={7} className="p-8 text-center">
                   <Search className="h-5 w-5 text-zinc-400 mx-auto mb-2" />
-                  <p className="text-xs text-zinc-500 font-mono">No tasks found</p>
+                  <p className="text-xs text-zinc-500 font-mono">No watches found</p>
                 </td>
               </tr>
             ) : (
@@ -174,7 +174,7 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
         {tasks.length === 0 ? (
           <div className="p-4 bg-zinc-50 border border-dashed border-zinc-300 text-center">
             <Search className="h-5 w-5 text-zinc-400 mx-auto mb-2" />
-            <p className="text-xs text-zinc-500 font-mono">No tasks found</p>
+            <p className="text-xs text-zinc-500 font-mono">No watches found</p>
           </div>
         ) : (
           tasks.map((task) => (
@@ -191,6 +191,6 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
           ))
         )}
       </div>
-    </BrutalistCard>
+    </Card>
   )
 }
