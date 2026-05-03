@@ -1,23 +1,27 @@
 ---
-description: Notifications API reference. View notification send history and task-scoped notification filtering.
+description: Notifications API reference. View notification send history and per-watch trigger filtering.
 ---
 
 # Notifications API
 
-View notification send history and per-task notification filtering.
+View notification send history and per-watch trigger filtering.
+
+::: tip Naming during the transition
+URLs still address watches as `tasks` (`/api/v1/tasks/{task_id}/notifications`). The rename to `webwhen` is a later phase.
+:::
 
 ## Overview
 
-Torale has two notification-related endpoints:
+webwhen has two notification-related endpoints:
 
-1. **`GET /api/v1/notifications/sends`** - Global notification send history (email/webhook delivery records)
-2. **`GET /api/v1/tasks/{task_id}/notifications`** - Task-scoped: executions where condition was met
+1. **`GET /api/v1/notifications/sends`** — global notification send history (email/webhook delivery records).
+2. **`GET /api/v1/tasks/{task_id}/notifications`** — per-watch: executions where the condition was met.
 
 ## Endpoints
 
-### Notification Send History
+### Notification send history
 
-View the delivery history of email and webhook notifications across all your tasks. This tracks actual send attempts, not just condition matches.
+View the delivery history of email and webhook notifications across all your watches. Tracks actual send attempts, not just condition matches.
 
 **Endpoint:** `GET /api/v1/notifications/sends`
 
@@ -31,7 +35,7 @@ Authorization: Bearer {api_key}
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `notification_type` | string | Filter by `email` or `webhook` |
-| `task_id` | string | Filter by specific task UUID |
+| `task_id` | string | Filter by a specific watch UUID |
 | `limit` | integer | Max results (default: 50) |
 | `offset` | integer | Pagination offset (default: 0) |
 
@@ -66,7 +70,7 @@ curl -X GET https://api.torale.ai/api/v1/notifications/sends \
 curl -X GET "https://api.torale.ai/api/v1/notifications/sends?notification_type=webhook" \
   -H "Authorization: Bearer sk_..."
 
-# Filter by task
+# Filter by watch
 curl -X GET "https://api.torale.ai/api/v1/notifications/sends?task_id=660e8400..." \
   -H "Authorization: Bearer sk_..."
 
@@ -75,13 +79,13 @@ curl -X GET "https://api.torale.ai/api/v1/notifications/sends?limit=10&offset=20
   -H "Authorization: Bearer sk_..."
 ```
 
-### Notification Send Object
+### Notification send object
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `id` | UUID | Send record ID |
-| `user_id` | UUID | Task owner |
-| `task_id` | UUID | Associated task |
+| `user_id` | UUID | Watch owner |
+| `task_id` | UUID | Associated watch |
 | `execution_id` | UUID | Execution that triggered the send |
 | `recipient` | string | Email address (for email type) |
 | `notification_type` | string | `email` or `webhook` |
@@ -89,25 +93,25 @@ curl -X GET "https://api.torale.ai/api/v1/notifications/sends?limit=10&offset=20
 | `error_message` | string/null | Error if delivery failed |
 | `created_at` | timestamp | When the send was attempted |
 
-### Task-Scoped Notifications
+### Per-watch trigger feed
 
-Get executions where the condition was met for a specific task. This is a filtered view of the [Executions API](/api/executions).
+Get executions where the condition was met for a specific watch. This is a filtered view of the [Executions API](/api/executions).
 
 **Endpoint:** `GET /api/v1/tasks/{task_id}/notifications`
 
-See [Executions API - Task-Scoped Notifications](/api/executions#task-scoped-notifications) for details.
+See [Executions API — Per-watch trigger feed](/api/executions#per-watch-trigger-feed) for details.
 
-## Difference Between Endpoints
+## Difference between the endpoints
 
 | Feature | `/notifications/sends` | `/tasks/{id}/notifications` |
-|---------|----------------------|---------------------------|
-| Scope | All tasks | Single task |
-| What it tracks | Email/webhook delivery attempts | Executions where condition was met |
+|---------|------------------------|-----------------------------|
+| Scope | All watches | Single watch |
+| What it tracks | Email/webhook delivery attempts | Executions where the condition was met |
 | Response type | Send records with delivery status | Execution objects with results |
-| Use case | Audit notification delivery | View what triggered alerts |
+| Use case | Audit notification delivery | View what triggered |
 
-## Next Steps
+## Next steps
 
-- View [Executions API](/api/executions) for full execution history
-- Check [Tasks API](/api/tasks) for task management
-- Read [Error Handling](/api/errors) guide
+- See the [Executions API](/api/executions) for full execution history
+- Check the [Watches API](/api/tasks) for watch management
+- Read the [Error Handling](/api/errors) guide

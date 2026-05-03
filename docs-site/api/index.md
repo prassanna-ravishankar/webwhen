@@ -1,35 +1,40 @@
 ---
-description: Torale REST API reference. HTTP endpoints, authentication, request/response formats, and API usage patterns.
+description: webwhen REST API reference. HTTP endpoints, authentication, request and response formats, and usage patterns.
 ---
 
 # REST API Reference
 
-Direct HTTP API access for Torale monitoring platform.
+Direct HTTP API access for the webwhen platform.
 
-## Getting Started
+::: tip Naming during the transition
+The API host is still `api.torale.ai` and watches are still addressed as `tasks` in URLs (`/api/v1/tasks`). The rename to `webwhen` is a later phase — endpoint paths below reflect the current shipping API.
+:::
 
-**[API Overview](./overview)** - Base URLs, authentication methods, and complete endpoint listing
+## Getting started
 
-**[Authentication](./authentication)** - API keys, Clerk JWT, and user management endpoints
+**[API Overview](./overview)** — base URLs, authentication methods, and the full endpoint listing.
 
-## API Endpoints
+**[Authentication](./authentication)** — API keys, Clerk JWT, and user-management endpoints.
 
-**[Tasks API](./tasks)** - Create, list, update, delete, fork, and execute monitoring tasks
+## Endpoints
 
-**[Executions API](./executions)** - View execution history, results, and task-scoped notifications
+**[Watches API](./tasks)** — create, list, update, delete, fork, and execute watches.
 
-**[Notifications API](./notifications)** - Notification send history and delivery tracking
+**[Executions API](./executions)** — execution history, results, and per-watch trigger feed.
+
+**[Notifications API](./notifications)** — notification send history and delivery tracking.
 
 ## Reference
 
-**[Error Responses](./errors)** - HTTP status codes, error formats, and common mistakes
+**[Error responses](./errors)** — HTTP status codes, error formats, and common mistakes.
 
-## Interactive Documentation
+## Interactive documentation
 
-Torale provides interactive API documentation at:
+webwhen ships interactive API documentation at:
+
 - ReDoc: `https://api.torale.ai/redoc`
 - OpenAPI JSON: `https://api.torale.ai/openapi.json`
 
-Note: Admin endpoints are intentionally hidden from the OpenAPI schema.
+Note: admin endpoints are intentionally hidden from the OpenAPI schema.
 
 Start with the [API Overview](./overview) to understand authentication and endpoints.

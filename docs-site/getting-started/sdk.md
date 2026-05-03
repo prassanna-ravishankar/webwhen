@@ -1,10 +1,14 @@
 ---
-description: Python SDK guide for programmatic Torale integration. Create tasks, manage executions, and build automated monitoring workflows in your applications.
+description: Python SDK guide for programmatic webwhen integration. Create watches, manage executions, and build automated workflows in Python.
 ---
 
 # Python SDK
 
-Integrate Torale into your Python applications.
+Integrate webwhen into your Python applications.
+
+::: tip Naming during the transition
+The package on PyPI is still `torale` and the client class is still `ToraleClient`. The rename to `webwhen` is a later phase — the code samples below use the current shipping names.
+:::
 
 ## Installation
 
@@ -12,14 +16,14 @@ Integrate Torale into your Python applications.
 pip install torale
 ```
 
-## Get API Key
+## Get an API key
 
 1. Log in to [torale.ai](https://torale.ai)
 2. Go to Settings → API Keys
-3. Generate new key
-4. Copy and save securely
+3. Generate a new key
+4. Copy and save it securely
 
-## Create Your First Task
+## Create your first watch
 
 ```python
 from torale import ToraleClient
@@ -32,14 +36,14 @@ task = client.tasks.create(
     schedule="0 9 * * *"
 )
 
-print(f"Created task: {task.id}")
+print(f"Created watch: {task.id}")
 ```
 
 
-## Check Results
+## Check results
 
 ```python
-# Get execution history
+# Execution history
 executions = client.tasks.get_executions(task.id)
 
 for execution in executions:
@@ -48,7 +52,7 @@ for execution in executions:
         print(f"Sources: {execution.grounding_sources}")
 ```
 
-## Environment Variables
+## Environment variables
 
 Store your API key in an environment variable:
 
@@ -59,11 +63,11 @@ export TORALE_API_KEY=sk_...
 ```python
 from torale import ToraleClient
 
-# Client automatically reads from environment
+# Client reads the key from the environment automatically
 client = ToraleClient()
 ```
 
-## Async Client
+## Async client
 
 For async applications:
 
@@ -85,8 +89,8 @@ async def main():
 asyncio.run(main())
 ```
 
-## Next Steps
+## Next steps
 
 - Read the [SDK Quickstart](/sdk/quickstart) for detailed examples
-- Learn about [Async Client](/sdk/async)
-- View [Error Handling](/sdk/errors)
+- Learn about the [Async Client](/sdk/async)
+- See [Error Handling](/sdk/errors)

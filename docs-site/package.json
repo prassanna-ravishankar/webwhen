@@ -1,7 +1,7 @@
 {
-  "name": "torale-docs",
+  "name": "webwhen-docs",
   "version": "1.0.0",
-  "description": "Documentation for Torale - Grounded search monitoring platform",
+  "description": "Developer documentation for webwhen — the agent that watches the open web and tells you when something matters.",
   "type": "module",
   "scripts": {
     "docs:dev": "vitepress dev",
@@ -24,6 +24,7 @@
   },
   "keywords": [
     "documentation",
+    "webwhen",
     "torale",
     "monitoring",
     "grounded-search"

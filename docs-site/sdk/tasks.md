@@ -1,30 +1,34 @@
 ---
-description: Manage monitoring tasks with Torale Python SDK. Create, list, update, and delete tasks programmatically with fluent API examples.
+description: Manage watches with the webwhen Python SDK. Create, list, update, and delete watches programmatically with fluent API examples.
 ---
 
-# Tasks
+# Watches
 
-Create and manage monitoring tasks with the Python SDK.
+Create and manage watches with the Python SDK.
 
-## Create Task
+::: tip Naming during the transition
+SDK methods and types still use `tasks` / `Task` / `TaskState`. The rename to `webwhen` is a later phase — code samples below use the current shipping names.
+:::
+
+## Create a watch
 
 The `name`, `search_query`, and `condition_description` are the core parameters:
 
 ```python
 task = client.tasks.create(
-    name="iPhone Release Monitor",
+    name="iPhone Release Watch",
     search_query="When is the iPhone 17 being released?",
     condition_description="Apple has announced a specific release date",
 )
 ```
 
-**With all options:**
+**With every option:**
 
 ```python
 from torale.tasks import TaskState
 
 task = client.tasks.create(
-    name="iPhone Release Monitor",
+    name="iPhone Release Watch",
     search_query="When is the iPhone 17 being released?",
     condition_description="Apple has announced a specific release date",
     notifications=[
@@ -35,38 +39,38 @@ task = client.tasks.create(
 )
 ```
 
-### Create Parameters
+### Create parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `name` | `str` | Yes | - | Task name |
-| `search_query` | `str` | Yes | - | Query to monitor |
-| `condition_description` | `str` | Yes | - | Condition that triggers notification |
+| `name` | `str` | Yes | — | Watch name |
+| `search_query` | `str` | Yes | — | Query to watch |
+| `condition_description` | `str` | Yes | — | Condition that triggers a notification |
 | `notifications` | `list[dict]` | No | `[]` | Notification channels |
 | `state` | `str` or `TaskState` | No | `"active"` | `"active"` or `"paused"` |
 
-### Notification Config
+### Notification config
 
-Each notification dict has a `type` field and type-specific fields:
+Each notification dict has a `type` field plus type-specific fields:
 
 ```python
-# Email notification
+# Email
 {"type": "email", "address": "me@example.com"}
 
-# Webhook notification
+# Webhook
 {"type": "webhook", "url": "https://myapp.com/alert", "method": "POST", "headers": {"X-Custom": "value"}}
 ```
 
-## Fluent Builder API
+## Fluent builder API
 
 For a more readable syntax, use the fluent builder:
 
 ```python
-# Via client instance
+# Via the client instance
 task = (client.monitor("When is iPhone 17 being released?")
     .when("Apple has announced a specific release date")
     .notify(email="me@example.com", webhook="https://myapp.com/alert")
-    .named("iPhone Release Monitor")
+    .named("iPhone Release Watch")
     .create())
 
 # Create in paused state
@@ -87,32 +91,32 @@ task = (monitor("Bitcoin price")
     .create())
 ```
 
-The standalone `monitor()` creates a default `Torale` client automatically (using env vars or config file for authentication).
+The standalone `monitor()` creates a default `Torale` client automatically (using env vars or config file for authentication). The method names come from the current SDK surface and stay until the SDK rename.
 
-### Builder Methods
+### Builder methods
 
 | Method | Description |
 |--------|-------------|
 | `.when(condition)` | Set the condition description (required) |
 | `.notify(email=..., webhook=...)` | Add notification channels |
-| `.named(name)` | Set a custom task name |
-| `.paused()` | Create task in paused state |
-| `.create()` | Build and create the task |
+| `.named(name)` | Set a custom watch name |
+| `.paused()` | Create the watch in paused state |
+| `.create()` | Build and create the watch |
 
-## List Tasks
+## List watches
 
 ```python
-# Get all tasks
+# Every watch
 tasks = client.tasks.list()
 
-# Filter active only
+# Active only
 active_tasks = client.tasks.list(active=True)
 
-# Filter paused only
+# Paused only
 paused_tasks = client.tasks.list(active=False)
 ```
 
-## Get Task
+## Get a watch
 
 ```python
 task = client.tasks.get("task-id")
@@ -124,14 +128,14 @@ print(f"Created: {task.created_at}")
 print(f"Next Run: {task.next_run}")
 ```
 
-### Task Fields
+### Watch fields
 
 Key fields on the returned `Task` object:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `id` | `UUID` | Task ID |
-| `name` | `str` | Task name |
+| `id` | `UUID` | Watch ID |
+| `name` | `str` | Watch name |
 | `state` | `TaskState` | `"active"`, `"paused"`, or `"completed"` |
 | `search_query` | `str` | Search query |
 | `condition_description` | `str` | Trigger condition |
@@ -140,18 +144,18 @@ Key fields on the returned `Task` object:
 | `next_run` | `datetime` or `None` | Next scheduled execution |
 | `last_execution` | `TaskExecution` or `None` | Most recent execution |
 
-## Update Task
+## Update a watch
 
-Only pass the fields you want to change:
+Pass only the fields you want to change:
 
 ```python
-# Pause task
+# Pause
 task = client.tasks.update("task-id", state="paused")
 
-# Resume task
+# Resume
 task = client.tasks.update("task-id", state="active")
 
-# Update search query and condition
+# Update query and condition
 task = client.tasks.update(
     "task-id",
     search_query="New search query",
@@ -159,13 +163,13 @@ task = client.tasks.update(
 )
 ```
 
-## Delete Task
+## Delete a watch
 
 ```python
 client.tasks.delete("task-id")
 ```
 
-## Execute Immediately
+## Execute immediately
 
 Trigger a manual execution (test run):
 
@@ -174,38 +178,38 @@ execution = client.tasks.execute("task-id")
 print(f"Status: {execution.status}")
 ```
 
-## View Executions
+## View executions
 
 ```python
-# Get execution history
+# Execution history
 executions = client.tasks.executions("task-id")
 
 for execution in executions:
     print(f"Status: {execution.status}")
     print(f"Started: {execution.started_at}")
     if execution.notification:
-        print(f"Notification: {execution.notification}")
+        print(f"Trigger: {execution.notification}")
 
 # Limit results
 recent = client.tasks.executions("task-id", limit=5)
 ```
 
-## View Notifications
+## View triggers
 
-Get only executions where the condition was met:
+Get only the executions where the condition was met:
 
 ```python
-notifications = client.tasks.notifications("task-id")
+triggers = client.tasks.notifications("task-id")
 
-for notif in notifications:
-    print(f"Time: {notif.started_at}")
-    print(f"Notification: {notif.notification}")
-    if notif.grounding_sources:
-        print(f"Sources: {len(notif.grounding_sources)}")
+for trigger in triggers:
+    print(f"Time: {trigger.started_at}")
+    print(f"Trigger: {trigger.notification}")
+    if trigger.grounding_sources:
+        print(f"Sources: {len(trigger.grounding_sources)}")
 ```
 
-## Next Steps
+## Next steps
 
-- Use [Async Client](/sdk/async) for concurrent operations
+- Use the [Async Client](/sdk/async) for concurrent operations
 - Handle [Errors](/sdk/errors)
-- View [Examples](/sdk/examples)
+- See [Examples](/sdk/examples)
