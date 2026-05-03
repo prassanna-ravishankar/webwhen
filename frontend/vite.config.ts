@@ -3,10 +3,37 @@ import react from '@vitejs/plugin-react-swc'
 import path from 'path'
 import { visualizer } from 'rollup-plugin-visualizer'
 
+/**
+ * Inject a per-build version param into the /config.js script tag so each
+ * new build gets a unique URL — bypasses browser disk cache on config
+ * rotations (e.g. the Clerk pub-key swap during the webwhen.ai cutover).
+ * Runtime nginx serves /config.js with `Cache-Control: no-store,
+ * must-revalidate`, but Chromium honors stale disk-cache entries from prior
+ * visits in a way that can race fresh navigations. A different URL =
+ * different cache key = the browser actually fetches. Build-time only via
+ * `apply: 'build'`; the dev server's unhashed /config.js stays as-is.
+ *
+ * See #246 (rebrand) + the Clerk pub-key rotation post-mortem in vault.
+ */
+function hashConfigJs() {
+  const buildId = String(Date.now())
+  return {
+    name: 'hash-config-js',
+    apply: 'build' as const,
+    transformIndexHtml(html: string) {
+      return html.replace(
+        /(<script[^>]+src=")(\/config\.js)(")/g,
+        `$1$2?v=${buildId}$3`,
+      )
+    },
+  }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
+    hashConfigJs(),
     visualizer({
       open: false,
       filename: 'dist/stats.html',
