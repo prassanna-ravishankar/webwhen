@@ -5,6 +5,7 @@ import { DynamicMeta } from "@/components/DynamicMeta";
 import { ChangelogEntry } from "@/types/changelog";
 import { formatChangelogDate } from "@/utils/changelog";
 import { generateChangelogStructuredData } from "@/utils/structuredData";
+import { getOrigin } from "@/utils/origin";
 import { cn } from "@/lib/utils";
 import api from "@/lib/api";
 import landingStyles from "@/components/landing/Landing.module.css";
@@ -29,6 +30,7 @@ function readPrerenderEntries(): ChangelogEntry[] {
 }
 
 export default function Changelog() {
+  const rssHref = `${getOrigin()}/changelog.xml`;
   const seeded = readPrerenderEntries();
   const [entries, setEntries] = useState<ChangelogEntry[]>(seeded);
   const [structuredData, setStructuredData] = useState<string>(() =>
@@ -37,6 +39,10 @@ export default function Changelog() {
   const [loading, setLoading] = useState(seeded.length === 0);
   const [error, setError] = useState<string | null>(null);
 
+  // Runtime fetch refreshes the prerender-seeded entries with fresh data.
+  // Crawlers read the baked JSON-LD from raw HTML pre-hydration; users see no
+  // visible JSON-LD either way, so the brief window where DOM holds the
+  // fixture-shape script tag before this resolves is benign. See #261.
   useEffect(() => {
     const fetchChangelog = async () => {
       try {
@@ -72,7 +78,7 @@ export default function Changelog() {
           rel="alternate"
           type="application/rss+xml"
           title="webwhen changelog"
-          href="https://torale.ai/changelog.xml"
+          href={rssHref}
         />
       </Helmet>
       {structuredData && (

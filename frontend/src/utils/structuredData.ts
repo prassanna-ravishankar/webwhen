@@ -1,24 +1,5 @@
 import { ChangelogEntry } from "@/types/changelog";
-
-const FALLBACK_ORIGIN = "https://webwhen.ai";
-
-/**
- * Resolve the origin used in JSON-LD URL fields. At runtime in the browser we
- * use the document origin so torale.ai-served pages self-reference correctly
- * during any future domain transition. At prerender time `window.location` is
- * the local headless server, so `scripts/prerender.mjs` injects
- * `__PRERENDER_ORIGIN__` with the production origin to bake into static HTML.
- * SSR / non-window contexts fall back to webwhen.ai.
- */
-function getOrigin(): string {
-  if (typeof window === "undefined") return FALLBACK_ORIGIN;
-  const w = window as unknown as {
-    __PRERENDER_ORIGIN__?: string;
-    __PRERENDER__?: boolean;
-  };
-  if (w.__PRERENDER__ && w.__PRERENDER_ORIGIN__) return w.__PRERENDER_ORIGIN__;
-  return window.location.origin || FALLBACK_ORIGIN;
-}
+import { getOrigin } from "@/utils/origin";
 
 export interface FAQItem {
   question: string;

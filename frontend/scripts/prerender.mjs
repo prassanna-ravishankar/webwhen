@@ -111,4 +111,23 @@ if (failed > 0) {
   console.error(`Prerendering done with ${failed} failures.`);
   process.exit(1);
 }
+
+// Contract assertion: /changelog must ship article-level JSON-LD or the whole
+// reason this script seeds __PRERENDER_CHANGELOG__ has silently regressed.
+// Catches both fixture-missing-in-CI (the original #261 trap) and
+// React-tree-stopped-emitting (someone refactors Changelog.tsx and breaks the
+// seeded init path). Skipped when /changelog isn't in ROUTES.
+if (ROUTES.includes('/changelog')) {
+  const changelogHtml = readFileSync(join(DIST, 'changelog.html'), 'utf-8');
+  const articleCount = (changelogHtml.match(/"@type":"TechArticle"/g) ?? []).length;
+  if (articleCount < 1) {
+    console.error(
+      'Prerender postcondition failed: dist/changelog.html contains 0 TechArticle items. ' +
+      'Expected article-level JSON-LD seeded from .changelog-fixture.json. See #261.',
+    );
+    process.exit(1);
+  }
+  console.log(`  postcondition OK: /changelog has ${articleCount} TechArticle items`);
+}
+
 console.log('Prerendering complete.');
