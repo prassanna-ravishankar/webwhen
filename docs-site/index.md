@@ -7,7 +7,8 @@ hero:
   text: Build with the agent that waits.
   tagline: Tell webwhen what to watch for. It will sit with the question and tell you when the answer arrives.
   image:
-    src: /logo.svg
+    light: /logo.svg
+    dark: /logo-dark.svg
     alt: webwhen
   actions:
     - theme: brand
