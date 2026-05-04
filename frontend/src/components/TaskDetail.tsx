@@ -11,6 +11,7 @@ import { DeleteMonitorDialog } from '@/components/torale'
 import { ConnectorDegradationBanner } from '@/components/connectors/ConnectorDegradationBanner'
 import { MomentBlock } from '@/components/watch/MomentBlock'
 import { RunTimeline } from '@/components/watch/RunTimeline'
+import { WebwhenMark } from '@/components/WebwhenMark'
 import landingStyles from '@/components/landing/Landing.module.css'
 import styles from '@/components/watch/Watch.module.css'
 import { cn, formatTimeAgo, formatTimeUntil } from '@/lib/utils'
@@ -265,6 +266,9 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
       <header className={styles.detailHead}>
         <div className={styles.left}>
           <div className={styles.pillRow}>
+            {hasFreshTrigger && (
+              <WebwhenMark animated="triggered" size={20} title="triggered" />
+            )}
             <span className={cn(styles.pill, pillClass)}>{pillLabel}</span>
           </div>
           <h1 className={styles.question}>{task.condition_description}</h1>

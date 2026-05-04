@@ -8,6 +8,9 @@ import { cn, getErrorMessage } from "@/lib/utils";
 import styles from "./composer/Composer.module.css";
 import modalStyles from "./ui/modal/Modal.module.css";
 import landing from "./landing/Landing.module.css";
+import { WebwhenMark } from "./WebwhenMark";
+
+const STARTING_ANIM_MS = 2400;
 
 interface TaskCreationDialogProps {
   open: boolean;
@@ -49,6 +52,7 @@ export const TaskCreationDialog: React.FC<TaskCreationDialogProps> = ({
     setError("");
     setSubmitting(true);
 
+    const animStart = performance.now();
     try {
       // Backend/agent derives the name from the condition; no explicit name field.
       const newTask = await api.createTask({
@@ -58,6 +62,14 @@ export const TaskCreationDialog: React.FC<TaskCreationDialogProps> = ({
         run_immediately: true,
         attached_connector_slugs: attachedConnectors,
       });
+
+      // Let the starting animation complete before the modal closes.
+      // The agent is "patient and watchful" — match that with the brand mark.
+      const elapsed = performance.now() - animStart;
+      const remaining = Math.max(0, STARTING_ANIM_MS - elapsed);
+      if (remaining > 0) {
+        await new Promise((r) => setTimeout(r, remaining));
+      }
 
       onTaskCreated(newTask);
       onOpenChange(false);
@@ -134,7 +146,14 @@ export const TaskCreationDialog: React.FC<TaskCreationDialogProps> = ({
               disabled={!canSubmit}
               className={cn(landing.btn, landing.btnPrimary)}
             >
-              {submitting ? "Creating…" : "Watch →"}
+              {submitting ? (
+                <span className={styles.submittingMark}>
+                  <WebwhenMark animated="starting" oneShot size={18} />
+                  watching
+                </span>
+              ) : (
+                "Watch →"
+              )}
             </button>
           </div>
         </div>
