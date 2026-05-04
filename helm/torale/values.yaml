@@ -247,6 +247,11 @@ httproute:
   # remove the values-webwhen-soak.yaml overlay (or set this to false).
   # Has no effect when domains.webwhen is unset (no webwhen routes render).
   noindex: false
+  # Inject `X-Robots-Tag: noindex, nofollow` on the torale-route frontend
+  # catchall. Set true in values-staging.yaml so staging.torale.ai isn't
+  # crawlable. Production sets httproute.cutover=true which 301-redirects
+  # the torale routes entirely, so this flag has no effect there. See #280.
+  stagingNoindex: false
 
 # webwhen.ai parallel routing (rebrand cutover).
 #

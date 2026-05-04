@@ -95,6 +95,19 @@ spec:
     - path:
         type: PathPrefix
         value: /
+    {{- if .Values.httproute.stagingNoindex }}
+    # Belt-and-suspenders alongside the backend's robots.txt Disallow:
+    # X-Robots-Tag handles crawlers that ignore robots.txt. Set in
+    # values-staging.yaml only — production never serves the torale routes
+    # as a backend (it 301s via httproute.cutover above), so this branch
+    # never renders for production.
+    filters:
+    - type: ResponseHeaderModifier
+      responseHeaderModifier:
+        set:
+        - name: X-Robots-Tag
+          value: "noindex, nofollow"
+    {{- end }}
     backendRefs:
     - group: ""
       kind: Service

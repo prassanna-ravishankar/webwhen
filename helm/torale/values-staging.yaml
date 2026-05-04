@@ -59,3 +59,9 @@ database:
 # Disable docs for staging
 docs:
   enabled: false
+
+# Keep staging out of search indices. Backend's /robots.txt already serves
+# `Disallow: /` but X-Robots-Tag covers crawlers that ignore robots.txt.
+# Closes #280.
+httproute:
+  stagingNoindex: true
