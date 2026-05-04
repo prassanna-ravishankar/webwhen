@@ -5,6 +5,7 @@ import { DynamicMeta } from "@/components/DynamicMeta";
 import { ChangelogEntry } from "@/types/changelog";
 import { formatChangelogDate } from "@/utils/changelog";
 import { generateChangelogStructuredData } from "@/utils/structuredData";
+import { getOrigin } from "@/utils/origin";
 import { cn } from "@/lib/utils";
 import api from "@/lib/api";
 import landingStyles from "@/components/landing/Landing.module.css";
@@ -18,12 +19,47 @@ const CATEGORY_LABELS: Record<ChangelogEntry["category"], string> = {
   research: "research",
 };
 
+// At prerender time `scripts/prerender.mjs` seeds the changelog fixture on
+// `window` so the very first render emits the article-level JSON-LD into the
+// baked HTML. Real users still get the runtime fetch below.
+function readPrerenderEntries(): ChangelogEntry[] {
+  if (typeof window === "undefined") return [];
+  const seeded = (window as unknown as { __PRERENDER_CHANGELOG__?: ChangelogEntry[] })
+    .__PRERENDER_CHANGELOG__;
+  return Array.isArray(seeded) ? seeded : [];
+}
+
+// Escape contract for inline JSON-LD inside a <script> tag. `<` blocks any
+// closing-tag literal forming inside the body. `/` breaks any `</script>` an
+// entry could smuggle. U+2028 and U+2029 are legal in JSON but illegal in
+// pre-ES2019 JS string literals (historic XSS vector). Source is trusted
+// today (we author changelog.json); the escape is the serialization-boundary
+// contract, not user-input defence. Built via fromCharCode so source files
+// stay free of literal U+2028/U+2029 that some tooling silently normalises.
+const LS = String.fromCharCode(0x2028);
+const PS = String.fromCharCode(0x2029);
+function escapeForScriptTag(json: string): string {
+  return json
+    .replace(/</g, "\\u003c")
+    .replace(/\//g, "\\/")
+    .split(LS).join("\\u2028")
+    .split(PS).join("\\u2029");
+}
+
 export default function Changelog() {
-  const [entries, setEntries] = useState<ChangelogEntry[]>([]);
-  const [structuredData, setStructuredData] = useState<string>("");
-  const [loading, setLoading] = useState(true);
+  const rssHref = `${getOrigin()}/changelog.xml`;
+  const seeded = readPrerenderEntries();
+  const [entries, setEntries] = useState<ChangelogEntry[]>(seeded);
+  const [structuredData, setStructuredData] = useState<string>(() =>
+    seeded.length ? JSON.stringify(generateChangelogStructuredData(seeded)) : "",
+  );
+  const [loading, setLoading] = useState(seeded.length === 0);
   const [error, setError] = useState<string | null>(null);
 
+  // Runtime fetch refreshes the prerender-seeded entries with fresh data.
+  // Crawlers read the baked JSON-LD from raw HTML pre-hydration; users see no
+  // visible JSON-LD either way, so the brief window where DOM holds the
+  // fixture-shape script tag before this resolves is benign. See #261.
   useEffect(() => {
     const fetchChangelog = async () => {
       try {
@@ -59,14 +95,14 @@ export default function Changelog() {
           rel="alternate"
           type="application/rss+xml"
           title="webwhen changelog"
-          href="https://torale.ai/changelog.xml"
+          href={rssHref}
         />
       </Helmet>
       {structuredData && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: structuredData.replace(/</g, "\\u003c"),
+            __html: escapeForScriptTag(structuredData),
           }}
         />
       )}
