@@ -5,7 +5,10 @@ import { loadTsModule } from './_lib/load-ts.mjs';
 
 const PROJECT_ROOT = join(import.meta.dirname, '..');
 const DIST = join(PROJECT_ROOT, 'dist');
-const SITE_ORIGIN = 'https://torale.ai';
+// Origin baked into <loc> entries. Production defaults to webwhen.ai;
+// staging/preview CI jobs override via PRERENDER_ORIGIN (shared with
+// prerender.mjs) so a staging sitemap doesn't point crawlers at production.
+const SITE_ORIGIN = process.env.PRERENDER_ORIGIN || 'https://webwhen.ai';
 
 const { PUBLIC_ROUTES } = await loadTsModule(join(PROJECT_ROOT, 'src/data/publicRoutes.ts'));
 
