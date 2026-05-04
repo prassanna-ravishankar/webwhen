@@ -45,10 +45,10 @@ export const WebwhenMark: React.FC<WebwhenMarkProps> = ({
       role={title ? "img" : "presentation"}
       aria-label={title}
       aria-hidden={title ? undefined : true}
-      className={cn(stateClass, className)}
+      className={cn("ww-mark", stateClass, className)}
     >
       <g
-        stroke="#0B0B0C"
+        stroke="currentColor"
         strokeWidth={1.75}
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -63,7 +63,7 @@ export const WebwhenMark: React.FC<WebwhenMarkProps> = ({
       <path
         className="ww-mark__top-sand"
         d="M10.2 5.7 C 10.4 9.5, 13 12, 16 12.5 C 19 12, 21.6 9.5, 21.8 5.7 Z"
-        fill="#0B0B0C"
+        fill="currentColor"
         opacity={0.62}
       />
 
@@ -73,7 +73,7 @@ export const WebwhenMark: React.FC<WebwhenMarkProps> = ({
         y1={13}
         x2={16}
         y2={22}
-        stroke="#0B0B0C"
+        stroke="currentColor"
         strokeWidth={1}
         strokeLinecap="round"
         opacity={0.55}
@@ -82,7 +82,7 @@ export const WebwhenMark: React.FC<WebwhenMarkProps> = ({
       <path
         className="ww-mark__pile"
         d="M11.6 25.4 C 12.8 23, 14.3 22, 16 22 C 17.7 22, 19.2 23, 20.4 25.4 Z"
-        fill="#0B0B0C"
+        fill="currentColor"
         opacity={0.62}
       />
 
