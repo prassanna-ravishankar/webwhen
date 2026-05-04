@@ -8,7 +8,11 @@ import { loadTsModule } from './_lib/load-ts.mjs';
 const PROJECT_ROOT = join(import.meta.dirname, '..');
 const DIST = join(PROJECT_ROOT, 'dist');
 const PORT = 4567;
-const PRERENDER_ORIGIN = 'https://webwhen.ai';
+// Origin baked into JSON-LD URL fields, RSS alternate links, etc. for the
+// prerendered HTML. Production defaults to webwhen.ai; staging/preview CI
+// jobs override via PRERENDER_ORIGIN so a build for staging.webwhen.ai
+// doesn't ship HTML pointing crawlers at production.
+const PRERENDER_ORIGIN = process.env.PRERENDER_ORIGIN || 'https://webwhen.ai';
 
 // Synced from backend/static/changelog.json by scripts/sync-changelog-fixture.mjs
 // (npm `prebuild`). Lives inside the frontend build context so `docker build`
@@ -119,7 +123,7 @@ if (failed > 0) {
 // seeded init path). Skipped when /changelog isn't in ROUTES.
 if (ROUTES.includes('/changelog')) {
   const changelogHtml = readFileSync(join(DIST, 'changelog.html'), 'utf-8');
-  const articleCount = (changelogHtml.match(/"@type":"TechArticle"/g) ?? []).length;
+  const articleCount = (changelogHtml.match(/"@type":\s*"TechArticle"/g) ?? []).length;
   if (articleCount < 1) {
     console.error(
       'Prerender postcondition failed: dist/changelog.html contains 0 TechArticle items. ' +

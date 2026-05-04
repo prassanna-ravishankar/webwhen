@@ -6,6 +6,13 @@ FROM mcr.microsoft.com/playwright:v1.59.1-noble AS builder
 
 WORKDIR /app
 
+# Origin baked into prerendered JSON-LD URL fields, RSS alternate links, etc.
+# Production builds inherit the default (https://webwhen.ai). Staging/preview
+# CI passes --build-arg PRERENDER_ORIGIN=https://staging.webwhen.ai so the
+# baked HTML doesn't point crawlers at production. See scripts/prerender.mjs.
+ARG PRERENDER_ORIGIN
+ENV PRERENDER_ORIGIN=${PRERENDER_ORIGIN}
+
 # Copy package files
 COPY package*.json ./
 
