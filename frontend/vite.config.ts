@@ -66,10 +66,20 @@ export default defineConfig({
       output: {
         // Only group truly always-needed vendor code into a named chunk.
         // Clerk, Radix, Recharts, Motion are reached exclusively via dynamic
-        // imports (React.lazy, route-level code splitting) so letting Rollup
-        // split them naturally keeps them off the Landing critical path.
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+        // imports (React.lazy, route-level code splitting) so letting the
+        // bundler split them naturally keeps them off the Landing critical
+        // path. Function-shape required by vite 8's rolldown bundler (the
+        // older object shape worked under rollup but throws under rolldown).
+        manualChunks: (id: string) => {
+          if (
+            id.includes('/node_modules/react/') ||
+            id.includes('/node_modules/react-dom/') ||
+            id.includes('/node_modules/react-router-dom/') ||
+            id.includes('/node_modules/react-router/')
+          ) {
+            return 'vendor-react'
+          }
+          return undefined
         },
       },
     },
