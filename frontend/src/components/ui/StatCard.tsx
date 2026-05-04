@@ -13,10 +13,10 @@ interface StatCardProps {
 }
 
 export const StatCard = ({ label, value, trend, trendUp }: StatCardProps) => (
-  <div className="bg-white p-4 border border-zinc-200 shadow-sm">
-    <div className="text-[10px] font-mono uppercase text-zinc-400 mb-2">{label}</div>
+  <div className="bg-white p-4 border border-ink-6 shadow-ww-sm">
+    <div className="text-[10px] font-mono uppercase text-ink-4 mb-2">{label}</div>
     <div className="flex items-end justify-between">
-      <div className="text-2xl font-bold text-zinc-900">{value}</div>
+      <div className="text-2xl font-medium text-ink-0">{value}</div>
       {trend && (
         <div className={`text-xs font-mono flex items-center gap-1 ${trendUp ? 'text-emerald-600' : 'text-red-600'}`}>
           {trend}

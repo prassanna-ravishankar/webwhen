@@ -95,7 +95,7 @@ export const ConnectorPickerSection: React.FC<ConnectorPickerSectionProps> = ({
   return (
     <CollapsibleSection title={title} defaultOpen={selectedCount > 0}>
       <div className="p-4 space-y-3">
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-ink-3">
           Let the agent also check your connected services.
         </p>
 
@@ -110,20 +110,20 @@ export const ConnectorPickerSection: React.FC<ConnectorPickerSectionProps> = ({
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
               {unhealthySelected.length === 1
-                ? `${unhealthySelected[0].display_name} connection isn't healthy (${unhealthySelected[0].status?.toLowerCase()}). This task will skip it until reconnected.`
-                : `${unhealthySelected.length} connections aren't healthy. Tasks will skip them until reconnected.`}
+                ? `${unhealthySelected[0].display_name} connection isn't healthy (${unhealthySelected[0].status?.toLowerCase()}). This watch will skip it until reconnected.`
+                : `${unhealthySelected.length} connections aren't healthy. Watches will skip them until reconnected.`}
             </AlertDescription>
           </Alert>
         )}
 
         {selectedCount > ADVISORY_THRESHOLD && (
-          <p className="text-xs text-zinc-500 font-mono">
+          <p className="text-xs text-ink-3 font-mono">
             Attaching many connectors can slow agent runs and increase cost.
           </p>
         )}
 
         {connections === null ? (
-          <p className="text-xs text-zinc-400 font-mono">Loading…</p>
+          <p className="text-xs text-ink-4 font-mono">Loading…</p>
         ) : connections.length === 0 ? (
           <EmptyPickerState />
         ) : (
@@ -147,14 +147,14 @@ export const ConnectorPickerSection: React.FC<ConnectorPickerSectionProps> = ({
 };
 
 const EmptyPickerState: React.FC = () => (
-  <div className="flex items-center gap-3 border border-dashed border-zinc-200 p-4">
-    <Plug2 className="h-5 w-5 text-zinc-400 flex-shrink-0" />
-    <p className="text-sm text-zinc-600 flex-1">
+  <div className="flex items-center gap-3 border border-dashed border-ink-6 p-4">
+    <Plug2 className="h-5 w-5 text-ink-4 flex-shrink-0" />
+    <p className="text-sm text-ink-3 flex-1">
       No tools connected yet.
     </p>
     <Link
       to="/settings/connectors"
-      className="font-mono text-xs uppercase tracking-wider text-zinc-900 hover:underline"
+      className="font-mono text-xs uppercase tracking-wider text-ink-0 hover:underline"
     >
       Connect one →
     </Link>
@@ -193,10 +193,10 @@ const ConnectorRow: React.FC<ConnectorRowProps> = ({
       </TableCell>
       <TableCell>
         <div className="flex flex-col">
-          <span className="font-medium text-zinc-900">
+          <span className="font-medium text-ink-0">
             {connection.display_name}
           </span>
-          <span className="font-mono text-xs text-zinc-500">
+          <span className="font-mono text-xs text-ink-3">
             {connection.toolkit_slug}
             {isExpired && " — reconnect required"}
           </span>

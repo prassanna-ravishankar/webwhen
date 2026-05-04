@@ -101,8 +101,8 @@ export function WaitlistTable() {
 
   if (loading && !entries.length) {
     return (
-      <div className="flex items-center justify-center h-64 bg-white border border-zinc-200">
-        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      <div className="flex items-center justify-center h-64 bg-white border border-ink-6">
+        <Loader2 className="h-6 w-6 animate-spin text-ink-4" />
       </div>
     )
   }
@@ -119,22 +119,22 @@ export function WaitlistTable() {
       {stats && (
         <div className="grid gap-4 md:grid-cols-3">
           {/* Total */}
-          <div className="bg-white border border-zinc-200 p-4">
+          <div className="bg-white border border-ink-6 p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-ink-4">
                 Total
               </span>
-              <div className="bg-zinc-100 w-8 h-8 flex items-center justify-center">
-                <Users className="h-4 w-4 text-zinc-600" />
+              <div className="bg-ink-7 w-8 h-8 flex items-center justify-center">
+                <Users className="h-4 w-4 text-ink-3" />
               </div>
             </div>
             <p className="text-2xl font-bold tracking-tight">{stats.total}</p>
           </div>
 
           {/* Pending */}
-          <div className="bg-white border border-zinc-200 p-4">
+          <div className="bg-white border border-ink-6 p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-ink-4">
                 Pending
               </span>
               <div className="bg-amber-50 w-8 h-8 flex items-center justify-center border border-amber-200">
@@ -145,9 +145,9 @@ export function WaitlistTable() {
           </div>
 
           {/* Converted */}
-          <div className="bg-white border border-zinc-200 p-4">
+          <div className="bg-white border border-ink-6 p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-ink-4">
                 Converted
               </span>
               <div className="bg-emerald-50 w-8 h-8 flex items-center justify-center border border-emerald-200">
@@ -160,30 +160,30 @@ export function WaitlistTable() {
       )}
 
       {/* Waitlist Table */}
-      <div className="bg-white border border-zinc-200">
+      <div className="bg-white border border-ink-6">
         {/* Header */}
-        <div className="p-4 border-b border-zinc-200 flex items-center gap-3">
-          <div className="bg-zinc-900 text-white w-8 h-8 flex items-center justify-center shrink-0">
+        <div className="p-4 border-b border-ink-6 flex items-center gap-3">
+          <div className="bg-ink-1 text-white w-8 h-8 flex items-center justify-center shrink-0">
             <Users className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold">Waitlist Entries</h3>
-            <p className="text-[10px] font-mono text-zinc-400">
+            <h3 className="text-sm font-medium">Waitlist Entries</h3>
+            <p className="text-[10px] font-mono text-ink-4">
               Manage users waiting for access
             </p>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="p-4 border-b border-zinc-200 flex flex-wrap gap-2">
+        <div className="p-4 border-b border-ink-6 flex flex-wrap gap-2">
           {filterButtons.map((btn) => (
             <button
               key={btn.value ?? 'all'}
               onClick={() => setStatusFilter(btn.value)}
               className={`px-3 py-1.5 text-xs font-mono transition-colors ${
                 statusFilter === btn.value
-                  ? 'bg-zinc-900 text-white'
-                  : 'border border-zinc-200 text-zinc-600 hover:border-zinc-400'
+                  ? 'bg-ink-1 text-white'
+                  : 'border border-ink-6 text-ink-3 hover:border-ink-4'
               }`}
             >
               {btn.label}
@@ -193,8 +193,8 @@ export function WaitlistTable() {
 
         {entries.length === 0 ? (
           <div className="p-8 text-center">
-            <Users className="h-5 w-5 text-zinc-400 mx-auto mb-2" />
-            <p className="text-xs text-zinc-500 font-mono">No waitlist entries found</p>
+            <Users className="h-5 w-5 text-ink-4 mx-auto mb-2" />
+            <p className="text-xs text-ink-3 font-mono">No waitlist entries found</p>
           </div>
         ) : (
           <>
@@ -202,35 +202,35 @@ export function WaitlistTable() {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-zinc-200 bg-zinc-50">
-                    <th className="text-left p-3 text-[10px] font-mono uppercase tracking-wider text-zinc-500">Email</th>
-                    <th className="text-left p-3 text-[10px] font-mono uppercase tracking-wider text-zinc-500">Joined</th>
-                    <th className="text-left p-3 text-[10px] font-mono uppercase tracking-wider text-zinc-500">Status</th>
-                    <th className="text-right p-3 text-[10px] font-mono uppercase tracking-wider text-zinc-500">Actions</th>
+                  <tr className="border-b border-ink-6 bg-ink-8">
+                    <th className="text-left p-3 text-[10px] font-mono uppercase tracking-wider text-ink-3">Email</th>
+                    <th className="text-left p-3 text-[10px] font-mono uppercase tracking-wider text-ink-3">Joined</th>
+                    <th className="text-left p-3 text-[10px] font-mono uppercase tracking-wider text-ink-3">Status</th>
+                    <th className="text-right p-3 text-[10px] font-mono uppercase tracking-wider text-ink-3">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {entries.map((entry) => (
-                    <tr key={entry.id} className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
+                    <tr key={entry.id} className="border-b border-ink-7 hover:bg-ink-8 transition-colors">
                       <td className="p-3">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-mono text-zinc-900">{entry.email}</span>
+                          <span className="text-sm font-mono text-ink-0">{entry.email}</span>
                           <button
                             onClick={() => copyEmail(entry.email)}
-                            className="p-1 text-zinc-400 hover:text-zinc-900 transition-colors"
+                            className="p-1 text-ink-4 hover:text-ink-0 transition-colors"
                           >
                             <Copy className="h-3 w-3" />
                           </button>
                         </div>
                       </td>
-                      <td className="p-3 text-xs font-mono text-zinc-500">
+                      <td className="p-3 text-xs font-mono text-ink-3">
                         {new Date(entry.created_at).toLocaleDateString()}
                       </td>
                       <td className="p-3">{getStatusBadge(entry.status)}</td>
                       <td className="p-3 text-right">
                         <button
                           onClick={() => deleteEntry(entry.id)}
-                          className="p-1.5 text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                          className="p-1.5 text-ink-4 hover:text-red-600 hover:bg-red-50 transition-colors"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>

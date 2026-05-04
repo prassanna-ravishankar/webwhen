@@ -14,12 +14,12 @@ const Toaster = ({ ...props }: ToasterProps) => {
       richColors
       toastOptions={{
         classNames: {
-          toast: "bg-white border border-zinc-900 shadow-ww-md font-sans",
-          title: "font-bold text-zinc-900",
-          description: "font-sans text-sm text-zinc-600",
-          actionButton: "bg-zinc-900 text-white font-bold border border-zinc-900 hover:bg-ink-1",
-          cancelButton: "bg-white text-zinc-900 border border-zinc-900",
-          closeButton: "bg-white border border-zinc-900 hover:bg-zinc-100",
+          toast: "bg-white border border-ink-6 shadow-ww-md font-sans rounded-md",
+          title: "font-medium text-ink-0",
+          description: "font-sans text-sm text-ink-3",
+          actionButton: "bg-ink-1 text-white font-medium border border-ink-1 hover:bg-ink-0 rounded-sm",
+          cancelButton: "bg-white text-ink-0 border border-ink-6 rounded-sm",
+          closeButton: "bg-white border border-ink-6 hover:bg-ink-8 rounded-sm",
           error: "border-red-600 bg-red-50",
           success: "border-emerald-600 bg-emerald-50",
           warning: "border-amber-600 bg-amber-50",

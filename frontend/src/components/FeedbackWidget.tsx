@@ -27,13 +27,13 @@ export function FeedbackWidget({ context, contextId, compact = false }: Feedback
   return (
     <div className="flex items-center gap-2">
       {voted ? (
-        <span className="text-xs text-zinc-500 font-mono">Thanks for your feedback!</span>
+        <span className="text-xs text-ink-3 font-mono">Thanks for your feedback!</span>
       ) : (
         <>
           <button
             onClick={() => handleVote('positive')}
             className={cn(
-              'border border-zinc-200 hover:border-zinc-900 transition-colors',
+              'border border-ink-6 hover:border-ink-5 hover:text-ink-1 transition-colors',
               compact ? 'p-1' : 'p-2'
             )}
             aria-label="Thumbs up"
@@ -43,7 +43,7 @@ export function FeedbackWidget({ context, contextId, compact = false }: Feedback
           <button
             onClick={() => handleVote('negative')}
             className={cn(
-              'border border-zinc-200 hover:border-zinc-900 transition-colors',
+              'border border-ink-6 hover:border-ink-5 hover:text-ink-1 transition-colors',
               compact ? 'p-1' : 'p-2'
             )}
             aria-label="Thumbs down"

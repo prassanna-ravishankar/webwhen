@@ -28,19 +28,19 @@ const TOOL_CONFIG: Record<string, { icon: LucideIcon; color: string; label: stri
   search_memories: { icon: BookOpen, color: "text-amber-500", label: "Recalled" },
   add_memory: { icon: Brain, color: "text-purple-500", label: "Remembered" },
   // Notion MCP tools
-  NOTION_SEARCH_NOTION_PAGE: { icon: FileSearch, color: "text-zinc-700", label: "Searched Notion" },
-  NOTION_FETCH_DATA: { icon: FileText, color: "text-zinc-700", label: "Read Notion" },
+  NOTION_SEARCH_NOTION_PAGE: { icon: FileSearch, color: "text-ink-2", label: "Searched Notion" },
+  NOTION_FETCH_DATA: { icon: FileText, color: "text-ink-2", label: "Read Notion" },
   // Linear MCP tools
   LINEAR_GET_ALL_LINEAR_TEAMS: { icon: Layers, color: "text-violet-500", label: "Listed Linear teams" },
   LINEAR_GET_CYCLES_BY_TEAM_ID: { icon: Layers, color: "text-violet-500", label: "Fetched Linear cycle" },
   LINEAR_GET_CURRENT_USER: { icon: Layers, color: "text-violet-500", label: "Checked Linear user" },
   // GitHub MCP tools
-  GITHUB_SEARCH_ISSUES_AND_PULL_REQUESTS: { icon: GitPullRequest, color: "text-zinc-800", label: "Searched GitHub" },
-  GITHUB_LIST_REPOSITORY_ISSUES: { icon: CircleDot, color: "text-zinc-800", label: "Listed issues" },
-  GITHUB_GET_A_PULL_REQUEST: { icon: GitPullRequest, color: "text-zinc-800", label: "Fetched PR" },
+  GITHUB_SEARCH_ISSUES_AND_PULL_REQUESTS: { icon: GitPullRequest, color: "text-ink-1", label: "Searched GitHub" },
+  GITHUB_LIST_REPOSITORY_ISSUES: { icon: CircleDot, color: "text-ink-1", label: "Listed issues" },
+  GITHUB_GET_A_PULL_REQUEST: { icon: GitPullRequest, color: "text-ink-1", label: "Fetched PR" },
 };
 
-const FALLBACK_CONFIG = { icon: Search, color: "text-zinc-400", label: "Ran" };
+const FALLBACK_CONFIG = { icon: Search, color: "text-ink-4", label: "Ran" };
 
 // Icon container is 20px (h-5 w-5) centered in 23px wrapper; line offset = 11px = ~center
 const ICON_SIZE = "h-[23px] w-[23px]";
@@ -54,9 +54,9 @@ export const AgentActivity: React.FC<AgentActivityProps> = ({ activity }) => {
       defaultOpen={false}
       className="mb-3"
     >
-      <div className="border-x-2 border-b-2 border-zinc-200 bg-zinc-50 p-4">
+      <div className="border border-ink-6 bg-ink-8 p-4">
         <div className="relative">
-          <div className="absolute left-[11px] top-3 bottom-3 w-px bg-zinc-200" />
+          <div className="absolute left-[11px] top-3 bottom-3 w-px bg-ink-6" />
 
           {activity.map((step, i) => {
             const config = TOOL_CONFIG[step.tool] || FALLBACK_CONFIG;
@@ -67,14 +67,14 @@ export const AgentActivity: React.FC<AgentActivityProps> = ({ activity }) => {
                 key={`${step.tool}-${i}`}
                 className={`relative flex items-start gap-3 ${i < activity.length - 1 ? "pb-3" : ""}`}
               >
-                <div className={`relative z-10 mt-0.5 flex ${ICON_SIZE} shrink-0 items-center justify-center bg-zinc-50`}>
-                  <div className={`flex h-5 w-5 items-center justify-center border border-zinc-200 bg-white ${config.color}`}>
+                <div className={`relative z-10 mt-0.5 flex ${ICON_SIZE} shrink-0 items-center justify-center bg-ink-8`}>
+                  <div className={`flex h-5 w-5 items-center justify-center border border-ink-6 bg-white ${config.color}`}>
                     <Icon className="h-3 w-3" />
                   </div>
                 </div>
 
-                <span className="text-xs font-mono text-zinc-600 leading-relaxed pt-0.5 break-words">
-                  <span className="text-zinc-400">{config.label}:</span>{" "}
+                <span className="text-xs font-mono text-ink-3 leading-relaxed pt-0.5 break-words">
+                  <span className="text-ink-4">{config.label}:</span>{" "}
                   {step.detail}
                 </span>
               </div>

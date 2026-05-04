@@ -49,10 +49,10 @@ export const FilterGroup = <T extends string = string>({
             key={filter.id}
             onClick={() => onChange(filter.id)}
             className={cn(
-              'px-3 py-1.5 border border-zinc-200 rounded-sm text-xs font-medium transition-colors whitespace-nowrap flex items-center gap-2',
+              'px-3 py-1.5 border border-ink-6 rounded-sm text-xs font-medium transition-colors whitespace-nowrap flex items-center gap-2',
               isActive
-                ? 'bg-zinc-900 text-white border-zinc-900'
-                : 'bg-white text-zinc-600 hover:border-zinc-400'
+                ? 'bg-ink-1 text-white border-ink-2'
+                : 'bg-white text-ink-3 hover:border-ink-4'
             )}
           >
             {Icon && <Icon className="w-3 h-3" />}
@@ -87,19 +87,19 @@ export const FilterGroup = <T extends string = string>({
       {/* Trigger button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between bg-white border border-zinc-200 rounded-sm pl-3 pr-3 py-2 text-xs font-medium text-zinc-900 hover:border-zinc-400 transition-colors"
+        className="w-full flex items-center justify-between bg-white border border-ink-6 rounded-sm pl-3 pr-3 py-2 text-xs font-medium text-ink-0 hover:border-ink-4 transition-colors"
       >
         <span className="flex items-center gap-2">
           {activeFilter?.icon && <activeFilter.icon className="w-3 h-3" />}
           {activeFilter?.label}
           {activeFilter?.count !== undefined && ` (${activeFilter.count})`}
         </span>
-        <ChevronDown className={cn('w-4 h-4 text-zinc-400 transition-transform', isOpen && 'rotate-180')} />
+        <ChevronDown className={cn('w-4 h-4 text-ink-4 transition-transform', isOpen && 'rotate-180')} />
       </button>
 
       {/* Dropdown menu */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-zinc-900 rounded-sm shadow-ww-md z-50 max-h-60 overflow-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-ink-2 rounded-sm shadow-ww-md z-50 max-h-60 overflow-auto">
           {filters.map((filter) => {
             const Icon = filter.icon;
             const isActive = active === filter.id;
@@ -112,10 +112,10 @@ export const FilterGroup = <T extends string = string>({
                   setIsOpen(false);
                 }}
                 className={cn(
-                  'w-full flex items-center gap-2 px-3 py-2.5 text-xs font-medium transition-colors text-left border-b border-zinc-100 last:border-b-0',
+                  'w-full flex items-center gap-2 px-3 py-2.5 text-xs font-medium transition-colors text-left border-b border-ink-7 last:border-b-0',
                   isActive
-                    ? 'bg-zinc-900 text-white'
-                    : 'text-zinc-900 hover:bg-zinc-50'
+                    ? 'bg-ink-1 text-white'
+                    : 'text-ink-0 hover:bg-ink-8'
                 )}
               >
                 {Icon && <Icon className="w-3 h-3 flex-shrink-0" />}

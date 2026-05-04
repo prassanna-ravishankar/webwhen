@@ -41,7 +41,7 @@ export function ErrorsList() {
   if (loading) {
     return (
       <Card className="flex items-center justify-center h-64">
-        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+        <Loader2 className="h-6 w-6 animate-spin text-ink-4" />
       </Card>
     )
   }
@@ -53,7 +53,7 @@ export function ErrorsList() {
           <p className="text-sm font-mono text-red-600">Error: {error}</p>
           <button
             onClick={loadErrors}
-            className="mt-2 px-3 py-1.5 text-xs font-mono border border-zinc-200 hover:border-zinc-900 transition-colors"
+            className="mt-2 px-3 py-1.5 text-xs font-mono border border-ink-6 hover:border-ink-2 transition-colors"
           >
             Retry
           </button>
@@ -65,14 +65,14 @@ export function ErrorsList() {
   return (
     <Card>
       {/* Header */}
-      <div className="p-4 border-b border-zinc-200 flex items-center gap-3">
+      <div className="p-4 border-b border-ink-6 flex items-center gap-3">
         <div className="bg-red-600 text-white w-8 h-8 flex items-center justify-center shrink-0">
           <AlertTriangle className="h-4 w-4" />
         </div>
         <div>
-          <h3 className="text-sm font-bold">Recent Errors</h3>
-          <p className="text-[10px] font-mono text-zinc-400">
-            Failed task executions requiring attention
+          <h3 className="text-sm font-medium">Recent Errors</h3>
+          <p className="text-[10px] font-mono text-ink-4">
+            Failed watch executions requiring attention
           </p>
         </div>
       </div>

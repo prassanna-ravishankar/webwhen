@@ -27,7 +27,7 @@ const renderTaskStatus = (task: Task, onToggle: () => void) => {
           variant="ghost"
           size="sm"
           onClick={onToggle}
-          className="text-xs h-7 px-2 font-mono uppercase tracking-wider hover:bg-zinc-100"
+          className="text-xs h-7 px-2 font-mono uppercase tracking-wider hover:bg-ink-7"
         >
           Re-activate
         </Button>
@@ -43,7 +43,7 @@ const renderTaskStatus = (task: Task, onToggle: () => void) => {
           checked={task.state === 'active'}
           onCheckedChange={onToggle}
         />
-        <span className={`text-xs font-mono ${task.state === 'active' ? 'text-zinc-700' : 'text-zinc-900 font-bold'}`}>
+        <span className={`text-xs font-mono ${task.state === 'active' ? 'text-ink-2' : 'text-ink-0 font-bold'}`}>
           {task.state === 'active' ? "Active" : "Paused"}
         </span>
       </div>
@@ -59,27 +59,27 @@ export const TaskConfiguration: React.FC<TaskConfigurationProps> = ({
   const statusControls = renderTaskStatus(task, onToggle);
   // Compact list for mobile/tablet
   const configList = (
-    <div className="space-y-3 p-4 bg-white border-t-2 border-zinc-200">
+    <div className="space-y-3 p-4 bg-white border-t-2 border-ink-6">
       {/* Trigger Condition */}
       <div className="flex items-start gap-3">
-        <Search className="h-4 w-4 text-zinc-500 mt-0.5 shrink-0" />
+        <Search className="h-4 w-4 text-ink-3 mt-0.5 shrink-0" />
         <div className="flex-1 min-w-0">
-          <div className="text-xs font-mono text-zinc-500 uppercase tracking-wider mb-1">Watching</div>
-          <p className="text-sm text-zinc-900 leading-relaxed">{task.search_query}</p>
+          <div className="text-xs font-mono text-ink-3 uppercase tracking-wider mb-1">Watching</div>
+          <p className="text-sm text-ink-0 leading-relaxed">{task.search_query}</p>
         </div>
       </div>
 
       {/* Scheduling + Status */}
       <div className="flex items-start gap-3">
-        <Clock className="h-4 w-4 text-zinc-500 mt-0.5 shrink-0" />
+        <Clock className="h-4 w-4 text-ink-3 mt-0.5 shrink-0" />
         <div className="flex-1 min-w-0">
-          <div className="text-xs font-mono text-zinc-500 uppercase tracking-wider mb-1">Scheduling</div>
+          <div className="text-xs font-mono text-ink-3 uppercase tracking-wider mb-1">Scheduling</div>
           <div className="space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-mono text-zinc-900">
+              <span className="text-sm font-mono text-ink-0">
                 {task.next_run ? `Next: ${formatTimeUntil(task.next_run)}` : task.state === 'completed' ? 'Monitoring complete' : 'Paused'}
               </span>
-              <span className="text-zinc-400">•</span>
+              <span className="text-ink-4">•</span>
               {statusControls.badge || statusControls.button}
             </div>
             {statusControls.badge && statusControls.button}
@@ -89,10 +89,10 @@ export const TaskConfiguration: React.FC<TaskConfigurationProps> = ({
 
       {/* Notification Channels */}
       <div className="flex items-start gap-3">
-        <Mail className="h-4 w-4 text-zinc-500 mt-0.5 shrink-0" />
+        <Mail className="h-4 w-4 text-ink-3 mt-0.5 shrink-0" />
         <div className="flex-1 min-w-0">
-          <div className="text-xs font-mono text-zinc-500 uppercase tracking-wider mb-1">Channels</div>
-          <div className="text-sm text-zinc-900 space-y-1">
+          <div className="text-xs font-mono text-ink-3 uppercase tracking-wider mb-1">Channels</div>
+          <div className="text-sm text-ink-0 space-y-1">
             {task.notification_channels && task.notification_channels.length > 0 ? (
               <>
                 {task.notification_channels.includes('email') && (
@@ -107,7 +107,7 @@ export const TaskConfiguration: React.FC<TaskConfigurationProps> = ({
                 )}
               </>
             ) : (
-              <span className="text-sm text-zinc-500">None configured</span>
+              <span className="text-sm text-ink-3">None configured</span>
             )}
           </div>
         </div>
@@ -119,11 +119,11 @@ export const TaskConfiguration: React.FC<TaskConfigurationProps> = ({
   const configCards = (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       <InfoCard icon={Search} label="Monitoring">
-        <p className="text-sm text-zinc-700 leading-relaxed">{task.search_query}</p>
+        <p className="text-sm text-ink-2 leading-relaxed">{task.search_query}</p>
       </InfoCard>
 
       <InfoCard icon={Clock} label="Scheduling">
-        <p className="text-sm font-mono text-zinc-700">
+        <p className="text-sm font-mono text-ink-2">
           {task.next_run ? `Next: ${formatTimeUntil(task.next_run)}` : task.state === 'completed' ? 'Monitoring complete' : 'Paused'}
         </p>
         <div className="flex items-center gap-2 mt-3">
@@ -146,7 +146,7 @@ export const TaskConfiguration: React.FC<TaskConfigurationProps> = ({
               notificationEmail={task.notification_email}
               webhookUrl={task.webhook_url}
             />
-            <div className="space-y-1 text-xs font-mono text-zinc-600">
+            <div className="space-y-1 text-xs font-mono text-ink-3">
               {task.notification_channels.includes('email') && (
                 <div className="flex items-start gap-1.5">
                   <Mail className="h-3 w-3 mt-0.5 shrink-0" />
@@ -166,7 +166,7 @@ export const TaskConfiguration: React.FC<TaskConfigurationProps> = ({
             </div>
           </div>
         ) : (
-          <p className="text-sm font-mono text-zinc-600">No channels configured</p>
+          <p className="text-sm font-mono text-ink-3">No channels configured</p>
         )}
       </InfoCard>
     </div>

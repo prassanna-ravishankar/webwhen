@@ -10,7 +10,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-interface DeleteMonitorDialogProps {
+interface DeleteWatchDialogProps {
   taskName: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -18,7 +18,7 @@ interface DeleteMonitorDialogProps {
   extraDescription?: string;
 }
 
-export const DeleteMonitorDialog: React.FC<DeleteMonitorDialogProps> = ({
+export const DeleteWatchDialog: React.FC<DeleteWatchDialogProps> = ({
   taskName,
   open,
   onOpenChange,
@@ -26,10 +26,10 @@ export const DeleteMonitorDialog: React.FC<DeleteMonitorDialogProps> = ({
   extraDescription,
 }) => (
   <AlertDialog open={open} onOpenChange={onOpenChange}>
-    <AlertDialogContent className="border border-zinc-900 shadow-ww-md">
-      <AlertDialogHeader className="border-b-2 border-zinc-100 pb-4">
+    <AlertDialogContent className="border border-ink-6 shadow-ww-md">
+      <AlertDialogHeader className="border-b border-ink-6 pb-4">
         <AlertDialogTitle className="">Delete watch?</AlertDialogTitle>
-        <AlertDialogDescription className="text-zinc-500">
+        <AlertDialogDescription className="text-ink-3">
           Are you sure you want to delete "{taskName}"? This action cannot be undone.{extraDescription ? ` ${extraDescription}` : ''}
         </AlertDialogDescription>
       </AlertDialogHeader>

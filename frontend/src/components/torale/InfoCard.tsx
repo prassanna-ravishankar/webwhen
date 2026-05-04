@@ -31,7 +31,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
 }) => {
   return (
     <Card
-      className={cn('border', onClick && 'cursor-pointer hover:border-zinc-900 transition-colors', className)}
+      className={cn('border', onClick && 'cursor-pointer hover:border-ink-5 transition-colors', className)}
       onClick={onClick}
     >
       <CardHeader className="pb-3">

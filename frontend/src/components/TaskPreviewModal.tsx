@@ -109,11 +109,11 @@ export const TaskPreviewModal: React.FC<TaskPreviewModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col overflow-hidden border border-zinc-900 shadow-ww-md">
-        <DialogHeader className="flex-shrink-0 border-b-2 border-zinc-100 pb-4">
-          <DialogTitle className="text-xl font-bold">Preview: {task.name}</DialogTitle>
-          <DialogDescription className="text-zinc-500">
-            Testing your monitoring task (notifications suppressed)
+      <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col overflow-hidden border border-ink-6 shadow-ww-md">
+        <DialogHeader className="flex-shrink-0 border-b border-ink-6 pb-4">
+          <DialogTitle className="text-xl font-medium">Preview: {task.name}</DialogTitle>
+          <DialogDescription className="text-ink-3">
+            Testing your watch (notifications suppressed)
           </DialogDescription>
         </DialogHeader>
 
@@ -123,7 +123,7 @@ export const TaskPreviewModal: React.FC<TaskPreviewModalProps> = ({
             <div className="flex flex-col items-center justify-center py-12 space-y-4">
               <Loader2 className="h-12 w-12 animate-spin text-primary" />
               <div className="text-center space-y-2">
-                <h3 className="font-medium">Running task...</h3>
+                <h3 className="font-medium">Running watch...</h3>
                 <p className="text-sm text-muted-foreground">
                   This may take a few seconds
                 </p>
@@ -141,9 +141,9 @@ export const TaskPreviewModal: React.FC<TaskPreviewModalProps> = ({
           {/* Results */}
           {execution && execution.status === 'success' && execution.result && (
             <div className="space-y-4">
-              <div className="p-3 bg-zinc-50 border border-zinc-100">
-                <p className="text-[10px] font-mono uppercase text-zinc-400 mb-1 tracking-wider">Search Query</p>
-                <p className="text-sm text-zinc-600">"{task.search_query}"</p>
+              <div className="p-3 bg-ink-8 border border-ink-6">
+                <p className="text-[10px] font-mono uppercase text-ink-4 mb-1 tracking-wider">Search Query</p>
+                <p className="text-sm text-ink-3">"{task.search_query}"</p>
               </div>
 
               {(() => {
@@ -170,7 +170,7 @@ export const TaskPreviewModal: React.FC<TaskPreviewModalProps> = ({
           )}
         </div>
 
-        <DialogFooter className="flex-shrink-0 border-t-2 border-zinc-100 pt-4 gap-3">
+        <DialogFooter className="flex-shrink-0 border-t border-ink-6 pt-4 gap-3">
           <Button
             variant="outline"
             onClick={() => {

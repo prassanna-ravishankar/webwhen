@@ -7,7 +7,7 @@ import api from '@/lib/api'
 import type { Task, TaskExecution } from '@/types'
 import { AppShell } from '@/components/app/AppShell'
 import { TaskEditDialog } from '@/components/TaskEditDialog'
-import { DeleteMonitorDialog } from '@/components/torale'
+import { DeleteWatchDialog } from '@/components/torale'
 import { ConnectorDegradationBanner } from '@/components/connectors/ConnectorDegradationBanner'
 import { MomentBlock } from '@/components/watch/MomentBlock'
 import { RunTimeline } from '@/components/watch/RunTimeline'
@@ -314,7 +314,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
         onSuccess={handleTaskUpdated}
       />
 
-      <DeleteMonitorDialog
+      <DeleteWatchDialog
         taskName={task.name}
         open={isDeleteOpen}
         onOpenChange={setIsDeleteOpen}
