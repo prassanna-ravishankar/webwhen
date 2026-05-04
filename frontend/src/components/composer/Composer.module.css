@@ -148,3 +148,10 @@
   font-size: 12px;
   color: #944;
 }
+
+/* === Submitting state on the primary button ============================ */
+.submittingMark {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
