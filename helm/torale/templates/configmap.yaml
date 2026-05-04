@@ -18,8 +18,12 @@ data:
   AGENT_URL: {{ printf "http://%s-agent-free" (include "torale.fullname" .) | quote }}
 
   # API configuration
-  API_URL: {{ printf "https://%s" .Values.domains.api | quote }}
-  FRONTEND_URL: {{ printf "https://%s" .Values.domains.frontend | quote }}
+  # Post-cutover: backend's self-URL + frontend-URL must point at the new
+  # hostnames (used for email links, OAuth callbacks, etc.). The legacy
+  # domains.{api,frontend} values are intentionally pinned to torale.ai as the
+  # 301-redirect source in httproute.yaml; do not read them from here.
+  API_URL: {{ printf "https://%s" .Values.domains.webwhen.api | quote }}
+  FRONTEND_URL: {{ printf "https://%s" .Values.domains.webwhen.frontend | quote }}
 
   # Platform capacity
   MAX_USERS: {{ .Values.capacity.maxUsers | quote }}

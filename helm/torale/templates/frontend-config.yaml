@@ -9,7 +9,7 @@ data:
   config.js: |
     // Runtime configuration injected by Kubernetes
     window.CONFIG = {
-      apiUrl: 'https://{{ .Values.domains.api }}',
+      apiUrl: 'https://{{ .Values.domains.webwhen.api }}',
       clerkPublishableKey: '{{ .Values.clerk.publishableKey }}',
       {{- if .Values.posthog.enabled }}
       posthogApiKey: '{{ .Values.posthog.apiKey }}',
