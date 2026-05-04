@@ -75,7 +75,11 @@ export default withMermaid(
   },
 
   themeConfig: {
-    logo: '/logo.svg',
+    // Dark-mode variant: the static mark hardcodes #0B0B0C ink, so a separate
+    // light-on-dark asset is needed for the dark theme nav (same pattern as
+    // the frontend Footer's webwhen-mark-dark.svg). Replace with a single
+    // currentColor mark when the design system ships one.
+    logo: { light: '/logo.svg', dark: '/logo-dark.svg' },
 
     nav: [
       { text: 'Getting Started', link: '/getting-started/', activeMatch: '/getting-started/' },
