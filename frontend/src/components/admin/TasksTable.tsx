@@ -43,7 +43,7 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
   if (loading) {
     return (
       <Card className="flex items-center justify-center h-64">
-        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+        <Loader2 className="h-6 w-6 animate-spin text-ink-4" />
       </Card>
     )
   }
@@ -55,7 +55,7 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
           <p className="text-sm font-mono text-red-600">Error: {error}</p>
           <button
             onClick={loadTasks}
-            className="mt-2 px-3 py-1.5 text-xs font-mono border border-zinc-200 hover:border-zinc-900 transition-colors"
+            className="mt-2 px-3 py-1.5 text-xs font-mono border border-ink-6 hover:border-ink-5 transition-colors"
           >
             Retry
           </button>
@@ -67,14 +67,14 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
   return (
     <Card>
       {/* Header */}
-      <div className="p-4 border-b border-zinc-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="p-4 border-b border-ink-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="bg-zinc-900 text-white w-8 h-8 flex items-center justify-center shrink-0">
+          <div className="bg-ink-1 text-white w-8 h-8 flex items-center justify-center shrink-0">
             <Search className="h-4 w-4" />
           </div>
           <div>
             <h3 className="text-sm font-bold">All Watches</h3>
-            <p className="text-[10px] font-mono text-zinc-400">
+            <p className="text-[10px] font-mono text-ink-4">
               Click a row to view watch details and execution history
             </p>
           </div>
@@ -84,7 +84,7 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
             checked={activeOnly}
             onCheckedChange={setActiveOnly}
           />
-          <label className="text-xs font-mono text-zinc-600 whitespace-nowrap">
+          <label className="text-xs font-mono text-ink-3 whitespace-nowrap">
             Active only
           </label>
         </div>
@@ -103,7 +103,7 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
             <col className="w-[12%]" />
           </colgroup>
           <thead>
-            <tr className="border-b border-zinc-200 bg-zinc-50">
+            <tr className="border-b border-ink-6 bg-ink-8">
               <th className="text-left p-3"><SectionLabel>User</SectionLabel></th>
               <th className="text-left p-3"><SectionLabel>Name</SectionLabel></th>
               <th className="text-left p-3"><SectionLabel>Search Query</SectionLabel></th>
@@ -117,8 +117,8 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
             {tasks.length === 0 ? (
               <tr>
                 <td colSpan={7} className="p-8 text-center">
-                  <Search className="h-5 w-5 text-zinc-400 mx-auto mb-2" />
-                  <p className="text-xs text-zinc-500 font-mono">No watches found</p>
+                  <Search className="h-5 w-5 text-ink-4 mx-auto mb-2" />
+                  <p className="text-xs text-ink-3 font-mono">No watches found</p>
                 </td>
               </tr>
             ) : (
@@ -126,28 +126,28 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
                 <Fragment key={task.id}>
                   <tr
                     onClick={() => toggleExpanded(task.id)}
-                    className={`border-b border-zinc-100 cursor-pointer transition-colors ${
-                      expandedTaskId === task.id ? 'bg-zinc-100' : 'hover:bg-zinc-50'
+                    className={`border-b border-ink-7 cursor-pointer transition-colors ${
+                      expandedTaskId === task.id ? 'bg-ink-7' : 'hover:bg-ink-8'
                     }`}
                   >
-                    <td className="p-3 text-xs font-mono text-zinc-600">
+                    <td className="p-3 text-xs font-mono text-ink-3">
                       <div className="max-w-[200px] truncate" title={task.user_email}>{task.user_email}</div>
                     </td>
-                    <td className="p-3 text-sm font-mono text-zinc-900">
+                    <td className="p-3 text-sm font-mono text-ink-0">
                       <div className="max-w-[200px] truncate" title={task.name}>{task.name}</div>
                     </td>
-                    <td className="p-3 text-xs font-mono text-zinc-700">
+                    <td className="p-3 text-xs font-mono text-ink-2">
                       <div className="max-w-xs truncate" title={task.search_query}>{task.search_query}</div>
                     </td>
                     <td className="p-3">
                       <StatusBadge variant={stateToVariant(task.state)} />
                     </td>
-                    <td className="p-3 text-xs font-mono text-zinc-600">
+                    <td className="p-3 text-xs font-mono text-ink-3">
                       {task.next_run
                         ? formatShortDateTime(task.next_run)
                         : '-'}
                     </td>
-                    <td className="p-3 text-sm font-mono text-zinc-900">{task.execution_count}</td>
+                    <td className="p-3 text-sm font-mono text-ink-0">{task.execution_count}</td>
                     <td className="p-3">
                       <span className="inline-flex items-center gap-1 text-sm font-mono text-emerald-600">
                         <Zap className="h-3 w-3" />
@@ -172,9 +172,9 @@ export function TasksTable({ initialExpandedTaskId }: TasksTableProps = {}) {
       {/* Mobile Card View */}
       <div className="block md:hidden p-4 space-y-3">
         {tasks.length === 0 ? (
-          <div className="p-4 bg-zinc-50 border border-dashed border-zinc-300 text-center">
-            <Search className="h-5 w-5 text-zinc-400 mx-auto mb-2" />
-            <p className="text-xs text-zinc-500 font-mono">No watches found</p>
+          <div className="p-4 bg-ink-8 border border-dashed border-ink-5 text-center">
+            <Search className="h-5 w-5 text-ink-4 mx-auto mb-2" />
+            <p className="text-xs text-ink-3 font-mono">No watches found</p>
           </div>
         ) : (
           tasks.map((task) => (

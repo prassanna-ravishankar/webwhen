@@ -26,7 +26,7 @@ export function ExecutionCard({ execution }: ExecutionCardProps) {
         )
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-zinc-50 text-zinc-600 text-[9px] font-mono uppercase tracking-wider border border-zinc-200">
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-ink-8 text-ink-3 text-[9px] font-mono uppercase tracking-wider border border-ink-6">
             <Clock className="h-3 w-3" />
             {status}
           </span>
@@ -35,15 +35,15 @@ export function ExecutionCard({ execution }: ExecutionCardProps) {
   }
 
   return (
-    <div className="p-3 border border-zinc-200 hover:border-zinc-300 transition-colors">
+    <div className="p-3 border border-ink-6 hover:border-ink-5 transition-colors">
       <div className="space-y-3">
         <div className="flex items-start gap-3">
-          <div className="bg-zinc-100 w-8 h-8 flex items-center justify-center shrink-0">
-            <Search className="h-4 w-4 text-zinc-600" />
+          <div className="bg-ink-7 w-8 h-8 flex items-center justify-center shrink-0">
+            <Search className="h-4 w-4 text-ink-3" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-mono text-zinc-900 break-words">{execution.search_query}</p>
-            <div className="flex items-center gap-1 text-[10px] font-mono text-zinc-400 mt-0.5">
+            <p className="text-xs font-mono text-ink-0 break-words">{execution.search_query}</p>
+            <div className="flex items-center gap-1 text-[10px] font-mono text-ink-4 mt-0.5">
               <User className="h-3 w-3" />
               <span className="truncate" title={execution.user_email}>{execution.user_email}</span>
             </div>
@@ -53,7 +53,7 @@ export function ExecutionCard({ execution }: ExecutionCardProps) {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-mono text-zinc-500">
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-mono text-ink-3">
           <div className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
             {execution.started_at
@@ -61,15 +61,15 @@ export function ExecutionCard({ execution }: ExecutionCardProps) {
               : '-'}
           </div>
           <div>
-            <span className="text-zinc-400">Duration:</span>{' '}
-            <span className="text-zinc-700">
+            <span className="text-ink-4">Duration:</span>{' '}
+            <span className="text-ink-2">
               {formatDuration(execution.started_at, execution.completed_at, '-')}
             </span>
           </div>
           <div className="flex items-center gap-1">
             <Link className="h-3 w-3" />
-            <span className="text-zinc-700">{execution.grounding_sources?.length || 0}</span>
-            <span className="text-zinc-400">sources</span>
+            <span className="text-ink-2">{execution.grounding_sources?.length || 0}</span>
+            <span className="text-ink-4">sources</span>
           </div>
         </div>
       </div>

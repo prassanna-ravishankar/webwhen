@@ -40,12 +40,12 @@ export const markdownCompact: Components = {
 
 /** Full markdown styling for detailed content (standard spacing + headings). */
 export const markdownFull: Components = {
-  p: ({ children }) => <p className="mb-3 leading-relaxed text-zinc-900">{children}</p>,
+  p: ({ children }) => <p className="mb-3 leading-relaxed text-ink-0">{children}</p>,
   ul: ({ children }) => <ul className="list-disc pl-5 mb-3 space-y-1.5">{children}</ul>,
   ol: ({ children }) => <ol className="list-decimal pl-5 mb-3 space-y-1.5">{children}</ol>,
-  li: ({ children }) => <li className="text-sm leading-relaxed text-zinc-700">{children}</li>,
-  strong: ({ children }) => <strong className="font-bold text-zinc-900">{children}</strong>,
-  h1: ({ children }) => <h1 className="text-xl font-bold mb-3 mt-4 text-zinc-900">{children}</h1>,
-  h2: ({ children }) => <h2 className="text-lg font-bold mb-2 mt-3 text-zinc-900">{children}</h2>,
-  h3: ({ children }) => <h3 className="text-base font-bold mb-2 mt-2 text-zinc-900">{children}</h3>,
+  li: ({ children }) => <li className="text-sm leading-relaxed text-ink-2">{children}</li>,
+  strong: ({ children }) => <strong className="font-bold text-ink-0">{children}</strong>,
+  h1: ({ children }) => <h1 className="text-xl font-bold mb-3 mt-4 text-ink-0">{children}</h1>,
+  h2: ({ children }) => <h2 className="text-lg font-bold mb-2 mt-3 text-ink-0">{children}</h2>,
+  h3: ({ children }) => <h3 className="text-base font-bold mb-2 mt-2 text-ink-0">{children}</h3>,
 };

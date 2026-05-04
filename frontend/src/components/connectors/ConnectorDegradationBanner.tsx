@@ -81,14 +81,14 @@ export const ConnectorDegradationBanner: React.FC<ConnectorDegradationBannerProp
         >
           <AlertTriangle className="w-4 h-4 text-red-600 mt-0.5 shrink-0" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm text-zinc-900">
+            <p className="text-sm text-ink-0">
               <span className="font-semibold">{entry.displayName}</span>{' '}
               {entry.reason === 'expired' && 'connection expired.'}
               {entry.reason === 'disconnected' && 'is no longer connected.'}
               {entry.reason === 'failed' && 'connection is failing.'}
             </p>
-            <p className="font-mono text-[11px] text-zinc-500 mt-0.5">
-              This task will skip {entry.displayName} until reconnected.
+            <p className="font-mono text-[11px] text-ink-3 mt-0.5">
+              This watch will skip {entry.displayName} until reconnected.
             </p>
           </div>
           <ReconnectButton

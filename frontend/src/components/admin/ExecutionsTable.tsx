@@ -50,7 +50,7 @@ export function ExecutionsTable({ onTaskClick }: ExecutionsTableProps = {}) {
   if (loading) {
     return (
       <Card className="flex items-center justify-center h-64">
-        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+        <Loader2 className="h-6 w-6 animate-spin text-ink-4" />
       </Card>
     )
   }
@@ -62,7 +62,7 @@ export function ExecutionsTable({ onTaskClick }: ExecutionsTableProps = {}) {
           <p className="text-sm font-mono text-red-600">Error: {error}</p>
           <button
             onClick={loadExecutions}
-            className="mt-2 px-3 py-1.5 text-xs font-mono border border-zinc-200 hover:border-zinc-900 transition-colors"
+            className="mt-2 px-3 py-1.5 text-xs font-mono border border-ink-6 hover:border-ink-5 transition-colors"
           >
             Retry
           </button>
@@ -74,14 +74,14 @@ export function ExecutionsTable({ onTaskClick }: ExecutionsTableProps = {}) {
   return (
     <Card>
       {/* Header */}
-      <div className="p-4 border-b border-zinc-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="p-4 border-b border-ink-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="bg-zinc-900 text-white w-8 h-8 flex items-center justify-center shrink-0">
+          <div className="bg-ink-1 text-white w-8 h-8 flex items-center justify-center shrink-0">
             <Activity className="h-4 w-4" />
           </div>
           <div>
             <h3 className="text-sm font-bold">Execution History</h3>
-            <p className="text-[10px] font-mono text-zinc-400">
+            <p className="text-[10px] font-mono text-ink-4">
               View all watch executions across users
             </p>
           </div>
@@ -91,15 +91,15 @@ export function ExecutionsTable({ onTaskClick }: ExecutionsTableProps = {}) {
         <div className="relative">
           <button
             onClick={() => setShowDropdown(!showDropdown)}
-            className="flex items-center justify-between gap-2 px-3 py-2 w-full sm:w-[180px] border border-zinc-200 bg-white text-sm font-mono text-zinc-900 hover:border-zinc-400 transition-colors"
+            className="flex items-center justify-between gap-2 px-3 py-2 w-full sm:w-[180px] border border-ink-6 bg-white text-sm font-mono text-ink-0 hover:border-ink-4 transition-colors"
           >
             {statusOptions.find(o => o.value === statusFilter)?.label}
-            <ChevronDown className={`h-4 w-4 text-zinc-400 transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`h-4 w-4 text-ink-4 transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
           </button>
           {showDropdown && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setShowDropdown(false)} />
-              <div className="absolute right-0 mt-1 w-full sm:w-[180px] bg-white border border-zinc-900 z-20 shadow-lg">
+              <div className="absolute right-0 mt-1 w-full sm:w-[180px] bg-white border border-ink-2 z-20 shadow-lg">
                 {statusOptions.map((option) => (
                   <button
                     key={option.value}
@@ -107,8 +107,8 @@ export function ExecutionsTable({ onTaskClick }: ExecutionsTableProps = {}) {
                       setStatusFilter(option.value)
                       setShowDropdown(false)
                     }}
-                    className={`w-full text-left px-3 py-2 text-sm font-mono hover:bg-zinc-50 transition-colors ${
-                      statusFilter === option.value ? 'bg-zinc-900 text-white hover:bg-zinc-900' : ''
+                    className={`w-full text-left px-3 py-2 text-sm font-mono hover:bg-ink-8 transition-colors ${
+                      statusFilter === option.value ? 'bg-ink-1 text-white hover:bg-ink-1' : ''
                     }`}
                   >
                     {option.label}
@@ -133,7 +133,7 @@ export function ExecutionsTable({ onTaskClick }: ExecutionsTableProps = {}) {
             <col className="w-[8%]" />
           </colgroup>
           <thead>
-            <tr className="border-b border-zinc-200 bg-zinc-50">
+            <tr className="border-b border-ink-6 bg-ink-8">
               <th className="text-left p-3"><SectionLabel>User</SectionLabel></th>
               <th className="text-left p-3"><SectionLabel>Query</SectionLabel></th>
               <th className="text-left p-3"><SectionLabel>Status</SectionLabel></th>
@@ -147,23 +147,23 @@ export function ExecutionsTable({ onTaskClick }: ExecutionsTableProps = {}) {
             {executions.length === 0 ? (
               <tr>
                 <td colSpan={7} className="p-8 text-center">
-                  <Activity className="h-5 w-5 text-zinc-400 mx-auto mb-2" />
-                  <p className="text-xs text-zinc-500 font-mono">No executions found</p>
+                  <Activity className="h-5 w-5 text-ink-4 mx-auto mb-2" />
+                  <p className="text-xs text-ink-3 font-mono">No executions found</p>
                 </td>
               </tr>
             ) : (
               executions.map((execution) => (
                 <tr
                   key={execution.id}
-                  className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors"
+                  className="border-b border-ink-7 hover:bg-ink-8 transition-colors"
                 >
-                  <td className="p-3 text-xs font-mono text-zinc-600">
+                  <td className="p-3 text-xs font-mono text-ink-3">
                     <div className="max-w-[200px] truncate" title={execution.user_email}>{execution.user_email}</div>
                   </td>
                   <td className="p-3">
                     <button
                       onClick={() => onTaskClick?.(execution.task_id)}
-                      className="text-left w-full text-xs font-mono text-zinc-700 hover:text-zinc-900 hover:underline block max-w-xs truncate"
+                      className="text-left w-full text-xs font-mono text-ink-2 hover:text-ink-0 hover:underline block max-w-xs truncate"
                       title={execution.search_query}
                     >
                       {execution.search_query}
@@ -172,19 +172,19 @@ export function ExecutionsTable({ onTaskClick }: ExecutionsTableProps = {}) {
                   <td className="p-3">
                     <StatusBadge variant={stateToVariant(execution.status)} />
                   </td>
-                  <td className="p-3 text-xs font-mono text-zinc-600">
+                  <td className="p-3 text-xs font-mono text-ink-3">
                     <div className="max-w-xs truncate" title={execution.notification || undefined}>{execution.notification || '—'}</div>
                   </td>
-                  <td className="p-3 text-xs font-mono text-zinc-500">
+                  <td className="p-3 text-xs font-mono text-ink-3">
                     {execution.started_at
                       ? formatDistanceToNow(new Date(execution.started_at), { addSuffix: true })
                       : '-'}
                   </td>
-                  <td className="p-3 text-xs font-mono text-zinc-900">
+                  <td className="p-3 text-xs font-mono text-ink-0">
                     {formatDuration(execution.started_at, execution.completed_at, '-')}
                   </td>
                   <td className="p-3">
-                    <span className="inline-flex items-center gap-1 text-xs font-mono text-zinc-600">
+                    <span className="inline-flex items-center gap-1 text-xs font-mono text-ink-3">
                       <Link2 className="h-3 w-3" />
                       {execution.grounding_sources?.length || 0}
                     </span>
@@ -199,9 +199,9 @@ export function ExecutionsTable({ onTaskClick }: ExecutionsTableProps = {}) {
       {/* Mobile Card View */}
       <div className="block md:hidden p-4 space-y-3">
         {executions.length === 0 ? (
-          <div className="p-4 bg-zinc-50 border border-dashed border-zinc-300 text-center">
-            <Activity className="h-5 w-5 text-zinc-400 mx-auto mb-2" />
-            <p className="text-xs text-zinc-500 font-mono">No executions found</p>
+          <div className="p-4 bg-ink-8 border border-dashed border-ink-5 text-center">
+            <Activity className="h-5 w-5 text-ink-4 mx-auto mb-2" />
+            <p className="text-xs text-ink-3 font-mono">No executions found</p>
           </div>
         ) : (
           executions.map((execution) => <ExecutionCard key={execution.id} execution={execution} />)

@@ -23,9 +23,9 @@ const roleConfig = {
 } as const
 
 const defaultConfig = {
-  bg: 'bg-zinc-50',
-  text: 'text-zinc-600',
-  border: 'border-zinc-200',
+  bg: 'bg-ink-8',
+  text: 'text-ink-3',
+  border: 'border-ink-6',
   icon: User,
   label: 'User',
 }

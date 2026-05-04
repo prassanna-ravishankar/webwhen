@@ -33,8 +33,8 @@ export function Admin() {
   // Wait for user to load
   if (!isLoaded || !user) {
     return (
-      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      <div className="min-h-screen bg-ink-8 flex items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-ink-4" />
       </div>
     )
   }
@@ -48,7 +48,7 @@ export function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="min-h-screen bg-ink-8">
       <main className="p-4 md:p-8">
         {/* Tab Navigation */}
         <div className="mb-6 overflow-x-auto">
@@ -61,8 +61,8 @@ export function Admin() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-4 py-2 text-xs font-mono transition-colors whitespace-nowrap ${
                     activeTab === tab.id
-                      ? 'bg-zinc-900 text-white'
-                      : 'bg-white border border-zinc-200 text-zinc-600 hover:border-zinc-400 hover:text-zinc-900'
+                      ? 'bg-ink-1 text-white'
+                      : 'bg-white border border-ink-6 text-ink-3 hover:border-ink-4 hover:text-ink-0'
                   }`}
                 >
                   <Icon className="h-4 w-4" />

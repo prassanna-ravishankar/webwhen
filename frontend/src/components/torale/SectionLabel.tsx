@@ -3,13 +3,8 @@ import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
- * SectionLabel - Consistent section header labels
- *
- * Standard brutalist design system label:
- * - 10px font-mono uppercase
- * - Zinc-400 text color
- * - Wide letter spacing
- * - Optional icon
+ * SectionLabel - eyebrow label per webwhen brand brief.
+ * 10px font-mono uppercase, ink-4, wide tracking, optional icon.
  */
 
 interface SectionLabelProps {

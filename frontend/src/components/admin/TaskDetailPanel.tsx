@@ -167,14 +167,14 @@ export function TaskDetailPanel({ task, onTaskUpdate }: TaskDetailPanelProps) {
   }, [task.id, retryCount])
 
   return (
-    <div className="bg-zinc-50 border-t border-zinc-200 p-4 space-y-4 overflow-hidden">
+    <div className="bg-ink-8 border-t border-ink-6 p-4 space-y-4 overflow-hidden">
       {/* Actions */}
       <div className="flex items-center gap-2">
         <SectionLabel>Actions</SectionLabel>
         <button
           onClick={handleExecute}
           disabled={isBusy}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-900 text-white text-xs font-mono hover:bg-ink-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-ink-1 text-white text-xs font-mono hover:bg-ink-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isExecuting ? (
             <Loader2 className="h-3 w-3 animate-spin" />
@@ -186,7 +186,7 @@ export function TaskDetailPanel({ task, onTaskUpdate }: TaskDetailPanelProps) {
         <button
           onClick={handlePauseResume}
           disabled={isBusy || task.state === 'completed'}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-zinc-900 text-zinc-900 text-xs font-mono hover:bg-zinc-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-ink-2 text-ink-0 text-xs font-mono hover:bg-ink-7 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isPauseResuming ? (
             <Loader2 className="h-3 w-3 animate-spin" />
@@ -222,19 +222,19 @@ export function TaskDetailPanel({ task, onTaskUpdate }: TaskDetailPanelProps) {
         </div>
         <div>
           <SectionLabel>User</SectionLabel>
-          <p className="text-xs font-mono text-zinc-700 mt-1">{task.user_email}</p>
+          <p className="text-xs font-mono text-ink-2 mt-1">{task.user_email}</p>
         </div>
         <div>
           <SectionLabel>Created</SectionLabel>
-          <p className="text-xs font-mono text-zinc-700 mt-1">{formatTimestamp(task.created_at)}</p>
+          <p className="text-xs font-mono text-ink-2 mt-1">{formatTimestamp(task.created_at)}</p>
         </div>
         <div>
           <SectionLabel>State Changed</SectionLabel>
-          <p className="text-xs font-mono text-zinc-700 mt-1">{formatTimestamp(task.state_changed_at)}</p>
+          <p className="text-xs font-mono text-ink-2 mt-1">{formatTimestamp(task.state_changed_at)}</p>
         </div>
         <div>
           <SectionLabel>Next Run</SectionLabel>
-          <p className="text-xs font-mono text-zinc-700 mt-1">
+          <p className="text-xs font-mono text-ink-2 mt-1">
             {formatShortTimestamp(task.next_run)}
           </p>
         </div>
@@ -243,7 +243,7 @@ export function TaskDetailPanel({ task, onTaskUpdate }: TaskDetailPanelProps) {
       {/* Last Agent Response */}
       <div>
         <SectionLabel>Last Agent Response</SectionLabel>
-        <div className="mt-1 p-3 bg-white border border-zinc-200 text-xs font-mono text-zinc-700 whitespace-pre-wrap max-h-40 overflow-y-auto">
+        <div className="mt-1 p-3 bg-white border border-ink-6 text-xs font-mono text-ink-2 whitespace-pre-wrap max-h-40 overflow-y-auto">
           {loading ? (
             'Loading...'
           ) : executions.length > 0 && executions[0].result ? (
@@ -259,20 +259,20 @@ export function TaskDetailPanel({ task, onTaskUpdate }: TaskDetailPanelProps) {
         <SectionLabel>Execution History</SectionLabel>
         {loading ? (
           <div className="flex items-center justify-center py-6">
-            <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />
+            <Loader2 className="h-4 w-4 animate-spin text-ink-4" />
           </div>
         ) : error ? (
           <div className="flex items-center gap-2 mt-1">
             <p className="text-xs font-mono text-red-600">{error}</p>
             <button
               onClick={() => setRetryCount(c => c + 1)}
-              className="px-2 py-1 text-[10px] font-mono border border-zinc-200 hover:border-zinc-900 transition-colors"
+              className="px-2 py-1 text-[10px] font-mono border border-ink-6 hover:border-ink-5 transition-colors"
             >
               Retry
             </button>
           </div>
         ) : executions.length === 0 ? (
-          <p className="text-xs font-mono text-zinc-400 mt-1">No executions yet</p>
+          <p className="text-xs font-mono text-ink-4 mt-1">No executions yet</p>
         ) : (
           <div className="mt-1 space-y-2">
             {executions.map((exec) => (
@@ -312,14 +312,14 @@ function ExecutionRow({ execution }: { execution: ExecutionData }) {
   const sourceCount = Array.isArray(execution.grounding_sources) ? execution.grounding_sources.length : 0
 
   return (
-    <div className="bg-white border border-zinc-200 p-3 space-y-2">
+    <div className="bg-white border border-ink-6 p-3 space-y-2">
       <div className="flex items-center gap-3 flex-wrap">
         <StatusBadge variant={stateToVariant(execution.status)} />
-        <span className="text-[10px] font-mono text-zinc-500 flex items-center gap-1">
+        <span className="text-[10px] font-mono text-ink-3 flex items-center gap-1">
           <Clock className="h-3 w-3" />
           {formatTimestamp(execution.started_at)}
         </span>
-        <span className="text-[10px] font-mono text-zinc-400">
+        <span className="text-[10px] font-mono text-ink-4">
           {formatDuration(execution.started_at, execution.completed_at)}
         </span>
         {execution.notification && (
@@ -329,12 +329,12 @@ function ExecutionRow({ execution }: { execution: ExecutionData }) {
           </span>
         )}
         {confidence != null && (
-          <span className="text-[10px] font-mono text-zinc-500">
+          <span className="text-[10px] font-mono text-ink-3">
             conf: {typeof confidence === 'number' ? `${confidence}%` : String(confidence)}
           </span>
         )}
         {sourceCount > 0 && (
-          <span className="text-[10px] font-mono text-zinc-400 flex items-center gap-1">
+          <span className="text-[10px] font-mono text-ink-4 flex items-center gap-1">
             <FileText className="h-3 w-3" />
             {sourceCount} source{sourceCount !== 1 ? 's' : ''}
           </span>
@@ -349,10 +349,10 @@ function ExecutionRow({ execution }: { execution: ExecutionData }) {
 
       {execution.result?.evidence && (
         <details className="text-[10px] font-mono">
-          <summary className="cursor-pointer text-zinc-400 hover:text-zinc-600 transition-colors">
+          <summary className="cursor-pointer text-ink-4 hover:text-ink-3 transition-colors">
             Agent Reasoning
           </summary>
-          <pre className="mt-1 p-2 bg-zinc-50 border border-zinc-200 overflow-x-auto text-zinc-600 max-h-40 overflow-y-auto whitespace-pre-wrap">
+          <pre className="mt-1 p-2 bg-ink-8 border border-ink-6 overflow-x-auto text-ink-3 max-h-40 overflow-y-auto whitespace-pre-wrap">
             {execution.result.evidence}
           </pre>
         </details>
@@ -367,10 +367,10 @@ function ExecutionRow({ execution }: { execution: ExecutionData }) {
 
       {execution.result && (
         <details className="text-[10px] font-mono">
-          <summary className="cursor-pointer text-zinc-400 hover:text-zinc-600 transition-colors">
+          <summary className="cursor-pointer text-ink-4 hover:text-ink-3 transition-colors">
             Raw JSON
           </summary>
-          <pre className="mt-1 p-2 bg-zinc-50 border border-zinc-200 overflow-x-auto text-zinc-600 max-h-60 overflow-y-auto">
+          <pre className="mt-1 p-2 bg-ink-8 border border-ink-6 overflow-x-auto text-ink-3 max-h-60 overflow-y-auto">
             {JSON.stringify(execution.result, null, 2)}
           </pre>
         </details>

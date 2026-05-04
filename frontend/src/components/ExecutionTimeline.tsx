@@ -27,7 +27,7 @@ const ExecutionCard: React.FC<ExecutionCardProps> = ({ execution }) => {
   const sources = execution.result?.sources || execution.grounding_sources;
 
   return (
-    <div className="py-10 border-b border-zinc-100 last:border-0 relative group">
+    <div className="py-10 border-b border-ink-7 last:border-0 relative group">
       {/* Header: Date and Status */}
       <div className="flex items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
@@ -38,14 +38,14 @@ const ExecutionCard: React.FC<ExecutionCardProps> = ({ execution }) => {
             </span>
           )}
         </div>
-        <span className="text-xs text-zinc-400 font-mono">
+        <span className="text-xs text-ink-4 font-mono">
           {formatDate(execution.started_at)}
         </span>
       </div>
 
       {/* Main Content (Markdown) */}
       {content && (
-        <div className="prose prose-sm md:prose-base max-w-none text-zinc-800 leading-relaxed font-serif mb-8">
+        <div className="prose prose-sm md:prose-base max-w-none text-ink-2 leading-relaxed font-serif mb-8">
           <ReactMarkdown
             rehypePlugins={rehypePlugins}
             components={markdownFull}
@@ -58,7 +58,7 @@ const ExecutionCard: React.FC<ExecutionCardProps> = ({ execution }) => {
       {/* Sources - Seamless integration */}
       {sources && sources.length > 0 && (
         <div className="mb-8">
-          <SectionLabel className="mb-3 text-zinc-400">Sources</SectionLabel>
+          <SectionLabel className="mb-3 text-ink-4">Sources</SectionLabel>
           <GroundingSourceList
             sources={sources}
             title=""
@@ -67,7 +67,7 @@ const ExecutionCard: React.FC<ExecutionCardProps> = ({ execution }) => {
       )}
 
       {/* Technical Metadata - Subtle Footer */}
-      <div className="space-y-2 mt-8 pt-6 border-t border-zinc-50 opacity-60 hover:opacity-100 transition-opacity">
+      <div className="space-y-2 mt-8 pt-6 border-t border-ink-7 opacity-60 hover:opacity-100 transition-opacity">
         {execution.result?.activity && execution.result.activity.length > 0 && (
           <AgentActivity activity={execution.result.activity} />
         )}
@@ -78,7 +78,7 @@ const ExecutionCard: React.FC<ExecutionCardProps> = ({ execution }) => {
             defaultOpen={false}
             variant="default"
           >
-            <div className="p-4 bg-zinc-50 border border-zinc-100 mt-2 text-xs font-mono text-zinc-600 whitespace-pre-wrap leading-relaxed rounded-sm">
+            <div className="p-4 bg-ink-8 border border-ink-6 mt-2 text-xs font-mono text-ink-3 whitespace-pre-wrap leading-relaxed rounded-sm">
               {execution.result.evidence}
             </div>
           </CollapsibleSection>
@@ -111,18 +111,18 @@ export const ExecutionTimeline: React.FC<ExecutionTimelineProps> = ({
 
   if (visibleExecutions.length === 0) {
     return (
-      <div className="text-center py-20 bg-white border border-zinc-200">
-        <Clock className="h-12 w-12 mx-auto text-zinc-200 mb-4" />
-        <h3 className="text-lg font-bold text-zinc-900 mb-1">No activity recorded</h3>
-        <p className="text-sm text-zinc-400 font-mono">
-          This task hasn't produced any results yet.
+      <div className="text-center py-20 bg-white border border-ink-6">
+        <Clock className="h-12 w-12 mx-auto text-ink-5 mb-4" />
+        <h3 className="text-lg font-medium text-ink-0 mb-1">No activity recorded</h3>
+        <p className="text-sm text-ink-4 font-mono">
+          This watch hasn't produced any results yet.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white border border-zinc-200 px-6 sm:px-12 divide-y divide-zinc-50">
+    <div className="bg-white border border-ink-6 px-6 sm:px-12 divide-y divide-ink-7">
       {visibleExecutions.map((execution) => (
         <ExecutionCard
           key={execution.id}
