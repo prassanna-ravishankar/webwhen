@@ -18,10 +18,23 @@ const CATEGORY_LABELS: Record<ChangelogEntry["category"], string> = {
   research: "research",
 };
 
+// At prerender time `scripts/prerender.mjs` seeds the changelog fixture on
+// `window` so the very first render emits the article-level JSON-LD into the
+// baked HTML. Real users still get the runtime fetch below.
+function readPrerenderEntries(): ChangelogEntry[] {
+  if (typeof window === "undefined") return [];
+  const seeded = (window as unknown as { __PRERENDER_CHANGELOG__?: ChangelogEntry[] })
+    .__PRERENDER_CHANGELOG__;
+  return Array.isArray(seeded) ? seeded : [];
+}
+
 export default function Changelog() {
-  const [entries, setEntries] = useState<ChangelogEntry[]>([]);
-  const [structuredData, setStructuredData] = useState<string>("");
-  const [loading, setLoading] = useState(true);
+  const seeded = readPrerenderEntries();
+  const [entries, setEntries] = useState<ChangelogEntry[]>(seeded);
+  const [structuredData, setStructuredData] = useState<string>(() =>
+    seeded.length ? JSON.stringify(generateChangelogStructuredData(seeded)) : "",
+  );
+  const [loading, setLoading] = useState(seeded.length === 0);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

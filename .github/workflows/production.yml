@@ -79,6 +79,14 @@ jobs:
       - name: Configure Docker for GCR
         run: gcloud auth configure-docker gcr.io
 
+      # Frontend prerender bakes article-level JSON-LD into dist/changelog.html
+      # using backend/static/changelog.json. The frontend image build context is
+      # `frontend/` and cannot reach `../backend/`, so stage the fixture inside
+      # the context first. See frontend/scripts/sync-changelog-fixture.mjs.
+      - name: Stage changelog fixture for frontend prerender
+        if: matrix.component == 'frontend'
+        run: cp backend/static/changelog.json frontend/.changelog-fixture.json
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:

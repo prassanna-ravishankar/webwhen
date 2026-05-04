@@ -53,6 +53,12 @@ jobs:
       - name: Configure Docker for GCR
         run: gcloud auth configure-docker gcr.io
 
+      # See production.yml for context: stages backend/static/changelog.json
+      # inside the frontend build context so prerender can bake JSON-LD.
+      - name: Stage changelog fixture for frontend prerender
+        if: matrix.component == 'frontend'
+        run: cp backend/static/changelog.json frontend/.changelog-fixture.json
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:

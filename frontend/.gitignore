@@ -10,6 +10,10 @@ node_modules
 /build
 /dist
 
+# Synced from backend/static/changelog.json by scripts/sync-changelog-fixture.mjs
+# at build time. See scripts/prerender.mjs for the why.
+/.changelog-fixture.json
+
 # Misc
 .DS_Store
 .env.local
