@@ -47,7 +47,7 @@ class Settings(BaseSettings):
     api_reload: bool = False
 
     # Frontend URL for SEO (sitemap, OpenGraph, etc.)
-    frontend_url: str = "https://torale.ai"
+    frontend_url: str = "https://webwhen.ai"
 
     # Public API URL — used to build callback URLs for third-party redirects
     # (e.g. Composio OAuth callbacks). Populated from the API_URL env var in

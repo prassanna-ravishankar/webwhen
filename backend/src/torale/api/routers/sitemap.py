@@ -171,11 +171,10 @@ async def generate_changelog_rss():
     rss.set("xmlns:atom", "http://www.w3.org/2005/Atom")
 
     channel = ET.SubElement(rss, "channel")
-    ET.SubElement(channel, "title").text = "Torale Changelog"
+    ET.SubElement(channel, "title").text = "webwhen changelog"
     ET.SubElement(channel, "link").text = f"{base_url}/changelog"
     ET.SubElement(channel, "description").text = (
-        "Latest updates, features, and improvements to Torale - "
-        "the AI-powered grounded search monitoring platform"
+        "Updates to webwhen — the agent that waits for the web."
     )
     ET.SubElement(channel, "language").text = "en-us"
 

@@ -14,9 +14,8 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="https://webwhen.ai/og-image.webp">
 
-    <!-- Warm up TLS to the API so Landing fetches are not gated on DNS+TLS.
-         Pre-cutover this still resolves via api.torale.ai; flips at cutover. -->
-    <link rel="preconnect" href="https://api.torale.ai" crossorigin>
+    <!-- Warm up TLS to the API so Landing fetches are not gated on DNS+TLS. -->
+    <link rel="preconnect" href="https://api.webwhen.ai" crossorigin>
 
     <!-- Load runtime config (deferred for better performance) -->
     <script src="/config.js" defer></script>
