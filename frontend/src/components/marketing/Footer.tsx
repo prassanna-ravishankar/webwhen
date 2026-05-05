@@ -48,7 +48,7 @@ export const Footer: React.FC = () => {
           <h4 className={styles.footerHeading}>Resources</h4>
           <ul className={styles.footerList}>
             <li className={styles.footerListItem}>
-              <a href="https://docs.torale.ai">Docs</a>
+              <a href="https://docs.webwhen.ai">Docs</a>
             </li>
             <li className={styles.footerListItem}>
               <a href="https://github.com/prassanna-ravishankar/torale">GitHub</a>

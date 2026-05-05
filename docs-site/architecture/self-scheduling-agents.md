@@ -7,7 +7,7 @@ description: How the agent service, APScheduler, and grounded search compose int
 
 A webwhen watch runs as a self-scheduling agent: each execution decides whether the condition is met _and_ when to run next. This page documents the runtime.
 
-The public-facing explainer lives at [torale.ai/concepts/self-scheduling-agents](https://torale.ai/concepts/self-scheduling-agents). This doc is the engineering view.
+The public-facing explainer lives at [webwhen.ai/concepts/self-scheduling-agents](https://webwhen.ai/concepts/self-scheduling-agents). This doc is the engineering view.
 
 ::: tip Naming during the transition
 The codebase still uses `torale-agent` as the service name and the database table is still called `tasks`. The product is now webwhen; the rename of internal modules and endpoints is a later phase.

@@ -30,7 +30,7 @@ You (via chat) → OpenClaw → webwhen API (create watch)
 
 ### 1. Get a webwhen API key
 
-Sign up at [torale.ai](https://torale.ai) and create an API key in Settings.
+Sign up at [webwhen.ai](https://webwhen.ai) and create an API key in Settings.
 
 ### 2. Install the skill
 
