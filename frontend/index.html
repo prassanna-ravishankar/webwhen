@@ -21,18 +21,12 @@
     <!-- Load runtime config (deferred for better performance) -->
     <script src="/config.js" defer></script>
 
-    <!-- Structured Data - Organization Schema -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "webwhen",
-      "url": "https://webwhen.ai",
-      "logo": "https://webwhen.ai/brand/webwhen-mark.svg",
-      "description": "The agent that waits for the web. Tell webwhen what to watch for in plain English; it sits with the question and tells you the moment your condition is met.",
-      "foundingDate": "2025"
-    }
-    </script>
+    <!--
+      Organization JSON-LD is emitted by <OrganizationJsonLd /> at the React
+      root so it routes through getOrigin() and bakes per-environment URLs
+      during prerender (webwhen.ai in prod, PRERENDER_ORIGIN override in
+      staging). See #282.
+    -->
   </head>
   <body>
     <div id="root"></div>

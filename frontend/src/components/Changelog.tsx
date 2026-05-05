@@ -5,6 +5,7 @@ import { DynamicMeta } from "@/components/DynamicMeta";
 import { ChangelogEntry } from "@/types/changelog";
 import { formatChangelogDate } from "@/utils/changelog";
 import { generateChangelogStructuredData } from "@/utils/structuredData";
+import { escapeForScriptTag } from "@/utils/jsonLd";
 import { getOrigin } from "@/utils/origin";
 import { cn } from "@/lib/utils";
 import api from "@/lib/api";
@@ -27,23 +28,6 @@ function readPrerenderEntries(): ChangelogEntry[] {
   const seeded = (window as unknown as { __PRERENDER_CHANGELOG__?: ChangelogEntry[] })
     .__PRERENDER_CHANGELOG__;
   return Array.isArray(seeded) ? seeded : [];
-}
-
-// Escape contract for inline JSON-LD inside a <script> tag. `<` blocks any
-// closing-tag literal forming inside the body. `/` breaks any `</script>` an
-// entry could smuggle. U+2028 and U+2029 are legal in JSON but illegal in
-// pre-ES2019 JS string literals (historic XSS vector). Source is trusted
-// today (we author changelog.json); the escape is the serialization-boundary
-// contract, not user-input defence. Built via fromCharCode so source files
-// stay free of literal U+2028/U+2029 that some tooling silently normalises.
-const LS = String.fromCharCode(0x2028);
-const PS = String.fromCharCode(0x2029);
-function escapeForScriptTag(json: string): string {
-  return json
-    .replace(/</g, "\\u003c")
-    .replace(/\//g, "\\/")
-    .split(LS).join("\\u2028")
-    .split(PS).join("\\u2029");
 }
 
 export default function Changelog() {

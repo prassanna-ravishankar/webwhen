@@ -6,6 +6,20 @@ export interface FAQItem {
   answer: string;
 }
 
+export function generateOrganizationStructuredData() {
+  const origin = getOrigin();
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "webwhen",
+    "url": origin,
+    "logo": `${origin}/brand/webwhen-mark.svg`,
+    "description":
+      "The agent that waits for the web. Tell webwhen what to watch for in plain English; it sits with the question and tells you the moment your condition is met.",
+    "foundingDate": "2025",
+  };
+}
+
 export function generateFAQStructuredData(items: FAQItem[]) {
   return {
     "@context": "https://schema.org",

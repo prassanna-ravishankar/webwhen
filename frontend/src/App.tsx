@@ -7,6 +7,7 @@ import { useApiSetup } from '@/hooks/useApi'
 import { useAuth } from '@/contexts/AuthContext'
 import { captureEvent, initPostHog } from '@/lib/posthog'
 import { sanitizePath } from '@/lib/analytics'
+import { OrganizationJsonLd } from '@/components/OrganizationJsonLd'
 
 // Lazy load heavy components for better performance
 const Dashboard = lazy(() => import('@/components/Dashboard').then(m => ({ default: m.Dashboard })))
@@ -138,6 +139,7 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
+      <OrganizationJsonLd />
       <Suspense fallback={
         <div className="min-h-screen flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
