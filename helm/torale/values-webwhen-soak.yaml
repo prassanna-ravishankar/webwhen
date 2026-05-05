@@ -39,7 +39,7 @@ httproute:
   noindex: true
 
 domains:
-  webwhen:
+  live:
     # Production hostnames. Override in a staging-soak overlay (or invoke
     # helmfile with values-staging.yaml + this file, then override frontend
     # and api keys to the staging variants) for the staging soak.

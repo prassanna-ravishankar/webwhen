@@ -2,9 +2,12 @@
 # Deployed to staging.torale.ai for pre-production testing
 
 domains:
-  frontend: staging.torale.ai
-  api: api-staging.torale.ai
-  docs: docs-staging.torale.ai
+  # Staging has no parallel webwhen routes; legacy IS the live hostname.
+  # See #270 for the schema rationale.
+  legacy:
+    frontend: staging.torale.ai
+    api: api-staging.torale.ai
+    docs: docs-staging.torale.ai
 
 # Clerk authentication (uses production Clerk app - same as production)
 # Rotated 2026-05-03 alongside production for the webwhen.ai rebrand cutover.

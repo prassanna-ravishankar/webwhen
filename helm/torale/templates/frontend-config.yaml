@@ -1,12 +1,12 @@
 {{- if .Values.frontend.enabled -}}
 {{- /*
 Live API hostname. Post-cutover (production), the live host is
-.Values.domains.webwhen.api; the legacy .Values.domains.api is pinned to
-torale.ai as the 301-redirect source (see httproute.yaml). On surfaces with
-no parallel-route setup (staging, dev, default chart values), domains.webwhen
-is absent and the legacy key IS the live host. Fall back accordingly.
+.Values.domains.live.api; .Values.domains.legacy.api is pinned to torale.ai
+as the 301-redirect source (see httproute.yaml). On surfaces with no
+parallel-route setup (staging, dev, default chart values), domains.live is
+absent and the legacy key IS the live host. Fall back accordingly.
 */ -}}
-{{- $apiHost := default .Values.domains.api (dig "webwhen" "api" "" .Values.domains) -}}
+{{- $apiHost := default .Values.domains.legacy.api (dig "live" "api" "" .Values.domains) -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:

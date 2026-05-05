@@ -1,14 +1,16 @@
 # Production values for Torale on GKE ClusterKit
 
 domains:
-  frontend: torale.ai
-  api: api.torale.ai
   # webwhen.ai cutover (T-0, 2026-05-03):
   # webwhen routes now ship with the production chart (no soak overlay).
   # noindex flag is OFF (httproute.noindex: false) so webwhen.ai is
   # crawlable. The torale routes are flipped to 301 RequestRedirect via
   # the chart template's $isCutover branch.
-  webwhen:
+  legacy:
+    frontend: torale.ai
+    api: api.torale.ai
+    docs: docs.torale.ai
+  live:
     frontend: webwhen.ai
     www: www.webwhen.ai
     api: api.webwhen.ai

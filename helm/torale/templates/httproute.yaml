@@ -30,7 +30,7 @@ spec:
     name: {{ .Values.httproute.gatewayName }}
     namespace: clusterkit
   hostnames:
-  - {{ .Values.domains.frontend | quote }}
+  - {{ .Values.domains.legacy.frontend | quote }}
   rules:
   {{- if $isCutover }}
   # T-0 cutover: 301 redirect torale.ai/* → webwhen.ai/* (path preserved)
@@ -42,7 +42,7 @@ spec:
     - type: RequestRedirect
       requestRedirect:
         scheme: https
-        hostname: {{ .Values.domains.webwhen.frontend | quote }}
+        hostname: {{ .Values.domains.live.frontend | quote }}
         statusCode: 301
   {{- else }}
   # SEO endpoints served by backend API (must be before frontend catchall)
@@ -135,7 +135,7 @@ spec:
     name: {{ .Values.httproute.gatewayName }}
     namespace: clusterkit
   hostnames:
-  - {{ .Values.domains.api | quote }}
+  - {{ .Values.domains.legacy.api | quote }}
   rules:
   {{- if $isCutover }}
   # T-0 cutover: 301 redirect api.torale.ai/* → api.webwhen.ai/* (path preserved)
@@ -147,7 +147,7 @@ spec:
     - type: RequestRedirect
       requestRedirect:
         scheme: https
-        hostname: {{ .Values.domains.webwhen.api | quote }}
+        hostname: {{ .Values.domains.live.api | quote }}
         statusCode: 301
   {{- else }}
   - matches:
@@ -182,7 +182,7 @@ spec:
     name: {{ .Values.httproute.gatewayName }}
     namespace: clusterkit
   hostnames:
-  - {{ .Values.domains.docs | quote }}
+  - {{ .Values.domains.legacy.docs | quote }}
   rules:
   {{- if $isCutover }}
   # T-0 cutover: 301 redirect docs.torale.ai/* → docs.webwhen.ai/* (path preserved)
@@ -194,7 +194,7 @@ spec:
     - type: RequestRedirect
       requestRedirect:
         scheme: https
-        hostname: {{ .Values.domains.webwhen.docs | quote }}
+        hostname: {{ .Values.domains.live.docs | quote }}
         statusCode: 301
   {{- else }}
   - matches:
@@ -214,7 +214,7 @@ spec:
 # ============================================================================
 # webwhen.ai parallel routes (rebrand cutover)
 # ----------------------------------------------------------------------------
-# These render only when .Values.domains.webwhen is set (soak overlay or
+# These render only when .Values.domains.live is set (soak overlay or
 # cutover values). Until then the chart deploys the torale.ai routes only.
 #
 # During the soak window (T-2d → T-0): set .Values.httproute.noindex=true to
@@ -256,7 +256,7 @@ spec:
 #    when no record exists. Verify cleanup via Cloudflare API
 #    (`count=0` on the records endpoint), never via dig.
 # ============================================================================
-{{- if .Values.domains.webwhen }}
+{{- if .Values.domains.live }}
 ---
 # webwhen frontend HTTPRoute
 apiVersion: gateway.networking.k8s.io/v1
@@ -276,7 +276,7 @@ spec:
     name: {{ .Values.httproute.gatewayName }}
     namespace: clusterkit
   hostnames:
-  - {{ .Values.domains.webwhen.frontend | quote }}
+  - {{ .Values.domains.live.frontend | quote }}
   rules:
   - matches:
     - path:
@@ -392,7 +392,7 @@ spec:
     name: {{ .Values.httproute.gatewayName }}
     namespace: clusterkit
   hostnames:
-  - {{ .Values.domains.webwhen.api | quote }}
+  - {{ .Values.domains.live.api | quote }}
   rules:
   - matches:
     - path:
@@ -413,7 +413,7 @@ spec:
       namespace: {{ $serviceNamespace }}
       port: {{ .Values.api.service.port }}
       weight: 1
-{{- if and .Values.docs.enabled .Values.domains.webwhen.docs }}
+{{- if and .Values.docs.enabled .Values.domains.live.docs }}
 ---
 # webwhen Docs HTTPRoute
 apiVersion: gateway.networking.k8s.io/v1
@@ -433,7 +433,7 @@ spec:
     name: {{ .Values.httproute.gatewayName }}
     namespace: clusterkit
   hostnames:
-  - {{ .Values.domains.webwhen.docs | quote }}
+  - {{ .Values.domains.live.docs | quote }}
   rules:
   - matches:
     - path:
@@ -455,7 +455,7 @@ spec:
       port: {{ .Values.docs.service.port }}
       weight: 1
 {{- end }}
-{{- if and (not $isStagingRelease) .Values.domains.webwhen.www }}
+{{- if and (not $isStagingRelease) .Values.domains.live.www }}
 ---
 # www.webwhen.ai → apex 301 redirect
 # Production-only (no www-staging hostname). Redirect-only HTTPRoute carries
@@ -477,7 +477,7 @@ spec:
     name: {{ .Values.httproute.gatewayName }}
     namespace: clusterkit
   hostnames:
-  - {{ .Values.domains.webwhen.www | quote }}
+  - {{ .Values.domains.live.www | quote }}
   rules:
   - matches:
     - path:
@@ -487,7 +487,7 @@ spec:
     - type: RequestRedirect
       requestRedirect:
         scheme: https
-        hostname: {{ .Values.domains.webwhen.frontend | quote }}
+        hostname: {{ .Values.domains.live.frontend | quote }}
         statusCode: 301
 {{- end }}
 {{- end }}

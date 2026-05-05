@@ -7,10 +7,27 @@ global:
   region: us-central1
 
 # Domain configuration
+#
+# Two-tier schema (renamed in #270 to remove the cutover-time semantic flip
+# that bit #268). Read this before adding a hostname reference:
+#
+# - domains.legacy.*  the redirect-source hostnames. Post-cutover these are
+#                     pinned to torale.ai and serve 301 RequestRedirect to
+#                     domains.live.* in httproute.yaml. Pre-cutover (and on
+#                     surfaces with no live block — staging, dev), legacy
+#                     IS the customer-facing hostname; the templates fall
+#                     back via `dig "live" ... .Values.domains`.
+# - domains.live.*    the customer-facing hostnames post-cutover. Set in
+#                     values-production.yaml. Absent in staging/dev.
+#
+# Consumer-site rule: if you want the live hostname, read
+# `dig "live" "<key>" "" .Values.domains` with a fallback to legacy. If you
+# want the redirect source specifically, read .Values.domains.legacy.*.
 domains:
-  frontend: torale.ai
-  api: api.torale.ai
-  docs: docs.torale.ai
+  legacy:
+    frontend: torale.ai
+    api: api.torale.ai
+    docs: docs.torale.ai
 
 # Clerk authentication
 clerk:
@@ -263,7 +280,7 @@ httproute:
 #
 # Production overlay shape:
 #   domains:
-#     webwhen:
+#     live:
 #       frontend: webwhen.ai
 #       www: www.webwhen.ai
 #       api: api.webwhen.ai
@@ -271,11 +288,11 @@ httproute:
 #
 # Staging overlay shape (no www, no docs):
 #   domains:
-#     webwhen:
+#     live:
 #       frontend: staging.webwhen.ai
 #       api: api-staging.webwhen.ai
 #
-# domains.webwhen: {}  # leave commented; overlays set this
+# domains.live: {}  # leave commented; overlays set this
 
 # ConfigMap for non-sensitive configuration
 config:
