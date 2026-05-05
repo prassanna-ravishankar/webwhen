@@ -1,5 +1,14 @@
 [
   {
+    "id": "2026-05-05-webhook-headers-renamed",
+    "date": "2026-05-05",
+    "title": "Webhook headers renamed to X-Webwhen-*",
+    "description": "Webhook delivery headers were renamed as part of the rebrand from Torale to webwhen. The four custom headers (Event, Signature, Delivery, Timestamp) now use the X-Webwhen-* prefix instead of X-Torale-*, and the User-Agent string is now Webwhen-Webhooks/1.0. If you have any webhook receivers that parse these headers — particularly any signature-verification code matching on X-Torale-Signature — update them to the new names.",
+    "category": "infra",
+    "requestedBy": [],
+    "pr": 315
+  },
+  {
     "id": "2026-04-26-custom-connectors",
     "date": "2026-04-26",
     "title": "Custom Connectors: Notion, Linear, GitHub",

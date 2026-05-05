@@ -276,6 +276,6 @@ class TestWebhookDeliveryService:
         headers = call_kwargs["headers"]
 
         assert headers["Content-Type"] == "application/json"
-        assert "X-Torale-Signature" in headers
-        assert headers["X-Torale-Event"] == "task.condition_met"
-        assert "X-Torale-Delivery" in headers
+        assert "X-Webwhen-Signature" in headers
+        assert headers["X-Webwhen-Event"] == "task.condition_met"
+        assert "X-Webwhen-Delivery" in headers
