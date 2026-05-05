@@ -17,6 +17,11 @@
     <!-- Warm up TLS to the API so Landing fetches are not gated on DNS+TLS. -->
     <link rel="preconnect" href="https://api.webwhen.ai" crossorigin>
 
+    <!-- Preload the LCP-critical font (Instrument Sans powers the hero <h1>).
+         font-display: swap means text paints in fallback first, then swaps when
+         the woff2 arrives — preloading hides the swap moment and tightens LCP. -->
+    <link rel="preload" href="/fonts/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+
     <!-- Load runtime config (deferred for better performance) -->
     <script src="/config.js" defer></script>
 
