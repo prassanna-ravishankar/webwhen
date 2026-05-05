@@ -149,6 +149,13 @@ releases:
       component: torale
     values:
       - helm/torale/{{ .Values.valuesFile }}
+      # Optional overlay layered on top of the env's values file. Set via the
+      # EXTRA_VALUES env var (or the workflow_dispatch input that maps to it
+      # in production.yml). Empty string means no overlay — helmfile expands
+      # to nothing and only the base values file applies.
+      {{- if env "EXTRA_VALUES" }}
+      - {{ env "EXTRA_VALUES" }}
+      {{- end }}
     set:
       - name: image.tag
         value: {{ env "IMAGE_TAG" | default "latest" }}
