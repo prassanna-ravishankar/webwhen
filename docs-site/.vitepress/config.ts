@@ -30,6 +30,18 @@ export default withMermaid(
     /^http:\/\/localhost/
   ],
 
+  // Mermaid pulls in 30+ diagram chunks via dynamic import; without this filter
+  // VitePress emits `<link rel="modulepreload">` for every one of them (plus
+  // katex, dagre, cose-bilkent) on every page, including the home page which
+  // has zero diagrams. Only one page in the site (architecture/self-scheduling-
+  // agents) actually renders mermaid. Demoting these to `<link rel="prefetch">`
+  // via `shouldPreload` lets the browser still grab them on idle bandwidth so
+  // mermaid renders fast on the one page that uses it, without contending with
+  // the LCP on every other page. ~600KB of contention dropped from first paint.
+  // See #306.
+  shouldPreload: (link, _page) =>
+    !/(?:Diagram|diagram-|katex|dagre|cose-bilkent|-definition|virtual_mermaid)/.test(link),
+
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
     ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/logo-32.png' }],
