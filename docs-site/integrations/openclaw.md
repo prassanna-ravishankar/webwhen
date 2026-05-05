@@ -154,7 +154,7 @@ webwhen requires webhook URLs to use HTTPS. If your OpenClaw instance runs local
 
 ## Authentication
 
-webwhen uses HMAC-SHA256 signing (Stripe-compatible) on every webhook delivery. The signature is in the `X-Torale-Signature` header (header name preserved during the transition). OpenClaw authenticates via the `Authorization: Bearer` header you configure in the notification.
+webwhen uses HMAC-SHA256 signing (Stripe-compatible) on every webhook delivery. The signature is in the `X-Webwhen-Signature` header. OpenClaw authenticates via the `Authorization: Bearer` header you configure in the notification.
 
 ## Rate limits
 

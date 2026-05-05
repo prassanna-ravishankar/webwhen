@@ -276,7 +276,7 @@ export const WebhookConfigSection: React.FC = () => {
           <div>
             <h4 className={styles.sectionLabel} style={{ marginBottom: 6 }}>Signature header</h4>
             <code style={{ color: 'var(--ww-success)' }}>
-              X-Torale-Signature: t=&lt;timestamp&gt;,v1=&lt;signature&gt;
+              X-Webwhen-Signature: t=&lt;timestamp&gt;,v1=&lt;signature&gt;
             </code>
           </div>
 
@@ -284,9 +284,9 @@ export const WebhookConfigSection: React.FC = () => {
             <h4 className={styles.sectionLabel} style={{ marginBottom: 6 }}>Headers</h4>
             <ul className="space-y-1" style={{ color: 'var(--ww-ink-5)' }}>
               <li><code style={{ color: 'var(--ww-ink-7)' }}>Content-Type:</code> application/json</li>
-              <li><code style={{ color: 'var(--ww-ink-7)' }}>User-Agent:</code> Torale-Webhooks/1.0</li>
-              <li><code style={{ color: 'var(--ww-ink-7)' }}>X-Torale-Event:</code> task.condition_met</li>
-              <li><code style={{ color: 'var(--ww-ink-7)' }}>X-Torale-Delivery:</code> [execution_id]</li>
+              <li><code style={{ color: 'var(--ww-ink-7)' }}>User-Agent:</code> Webwhen-Webhooks/1.0</li>
+              <li><code style={{ color: 'var(--ww-ink-7)' }}>X-Webwhen-Event:</code> task.condition_met</li>
+              <li><code style={{ color: 'var(--ww-ink-7)' }}>X-Webwhen-Delivery:</code> [execution_id]</li>
             </ul>
           </div>
 

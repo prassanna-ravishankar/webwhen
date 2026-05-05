@@ -70,10 +70,10 @@ async def main():
     # Show headers that would be sent
     print("Headers that would be sent:")
     print("Content-Type: application/json")
-    print("User-Agent: Torale-Webhooks/1.0")
-    print("X-Torale-Event: task.condition_met")
-    print(f"X-Torale-Signature: {signature}")
-    print(f"X-Torale-Delivery: {payload.id}")
+    print("User-Agent: Webwhen-Webhooks/1.0")
+    print("X-Webwhen-Event: task.condition_met")
+    print(f"X-Webwhen-Signature: {signature}")
+    print(f"X-Webwhen-Delivery: {payload.id}")
     print()
 
     print("\n✓ Webhook test data generated!")
@@ -84,9 +84,9 @@ async def main():
     print()
     print("curl -X POST https://webhook.site/YOUR-ID \\")
     print("  -H 'Content-Type: application/json' \\")
-    print("  -H 'X-Torale-Event: task.condition_met' \\")
-    print(f"  -H 'X-Torale-Signature: {signature}' \\")
-    print(f"  -H 'X-Torale-Delivery: {payload.id}' \\")
+    print("  -H 'X-Webwhen-Event: task.condition_met' \\")
+    print(f"  -H 'X-Webwhen-Signature: {signature}' \\")
+    print(f"  -H 'X-Webwhen-Delivery: {payload.id}' \\")
     print(f"  -d '{payload_json}'")
 
 

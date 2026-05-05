@@ -26,7 +26,7 @@ class WebhookPayload(BaseModel):
     event_type: Literal["task.condition_met"]
     created_at: int  # Unix timestamp
 
-    # Torale metadata
+    # webwhen metadata
     object: str = "event"
     api_version: str = "v1"
 
@@ -123,11 +123,11 @@ class WebhookDeliveryService:
         # Prepare headers (following GitHub/Stripe conventions)
         headers = {
             "Content-Type": "application/json",
-            "User-Agent": "Torale-Webhooks/1.0",
-            "X-Torale-Event": payload.event_type,
-            "X-Torale-Signature": signature,
-            "X-Torale-Delivery": payload.id,
-            "X-Torale-Timestamp": str(timestamp),
+            "User-Agent": "Webwhen-Webhooks/1.0",
+            "X-Webwhen-Event": payload.event_type,
+            "X-Webwhen-Signature": signature,
+            "X-Webwhen-Delivery": payload.id,
+            "X-Webwhen-Timestamp": str(timestamp),
         }
 
         if custom_headers:
