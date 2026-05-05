@@ -36,13 +36,29 @@ if (!existsSync(configPath)) {
   writeFileSync(configPath, 'window.CONFIG = {};', 'utf-8');
 }
 
-// Serve dist/ on a local port
-const server = http.createServer((req, res) =>
-  handler(req, res, {
-    public: DIST,
-    rewrites: [{ source: '**', destination: '/index.html' }],
-  })
-);
+// Snapshot the original SPA shell BEFORE any prerender runs. Once we start
+// writing route outputs, `/` writes back to `dist/index.html`, clobbering
+// the empty-root shell. Subsequent route passes would then load the
+// populated `/` HTML, see `root.children.length > 0` in main.tsx, call
+// `hydrateRoot()` against the previous route's DOM, and emit React #418/#423
+// on every pass after the first. Real users never hit this — they get the
+// per-route .html with matching content. Serve the in-memory shell for any
+// rewritten path so each pass starts against an empty root. See #299.
+const SHELL_HTML = readFileSync(join(DIST, 'index.html'), 'utf-8');
+
+// Serve dist/ on a local port. SPA-rewrite paths (anything that would
+// otherwise fall back to /index.html) get the original shell from memory.
+// Real assets pass through to serve-handler.
+const ASSET_PATH = /\.[a-zA-Z0-9]+$/; // any path ending in an extension is a real file
+const server = http.createServer((req, res) => {
+  const url = req.url || '/';
+  if (url === '/' || url === '/index.html' || !ASSET_PATH.test(url.split('?')[0])) {
+    res.setHeader('content-type', 'text/html; charset=utf-8');
+    res.end(SHELL_HTML);
+    return;
+  }
+  handler(req, res, { public: DIST });
+});
 
 const [{ PUBLIC_ROUTES }, browser] = await Promise.all([
   loadTsModule(join(PROJECT_ROOT, 'src/data/publicRoutes.ts')),
