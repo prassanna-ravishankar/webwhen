@@ -105,7 +105,7 @@ export function TermsOfService() {
               </p>
               <p>
                 <strong>Your Rights:</strong> You may request data deletion, export your data,
-                or deactivate your account at any time by contacting <a href="mailto:support@torale.ai">support@torale.ai</a>.
+                or deactivate your account at any time by contacting <a href="mailto:support@webwhen.ai">support@webwhen.ai</a>.
               </p>
 
               <h2>6. Third-Party Services and AI Providers</h2>
@@ -172,7 +172,7 @@ export function TermsOfService() {
                 including for violations of these Terms.
               </p>
               <p>
-                You may terminate your account at any time by contacting <a href="mailto:support@torale.ai">support@torale.ai</a>.
+                You may terminate your account at any time by contacting <a href="mailto:support@webwhen.ai">support@webwhen.ai</a>.
                 Upon termination, your data will be retained for 90 days before permanent deletion.
               </p>
 
@@ -193,7 +193,7 @@ export function TermsOfService() {
               <p>For questions about these Terms, contact us at:</p>
               <p>
                 webwhen<br />
-                Email: <a href="mailto:legal@torale.ai">legal@torale.ai</a>
+                Email: <a href="mailto:legal@webwhen.ai">legal@webwhen.ai</a>
               </p>
             </div>
           </div>

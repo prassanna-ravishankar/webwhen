@@ -197,7 +197,7 @@ export function PrivacyPolicy() {
                 <li><strong>Restrict processing:</strong> Request limitations on how we use your data</li>
               </ul>
               <p>
-                To exercise these rights, contact <a href="mailto:privacy@torale.ai">privacy@torale.ai</a>.
+                To exercise these rights, contact <a href="mailto:privacy@webwhen.ai">privacy@webwhen.ai</a>.
                 We will respond within 30 days.
               </p>
 
@@ -211,7 +211,7 @@ export function PrivacyPolicy() {
               <h2>10. Children's Privacy</h2>
               <p>
                 The Service is not intended for users under 18 years of age. We do not knowingly collect personal information
-                from children. If you believe we have collected data from a child, contact <a href="mailto:privacy@torale.ai">privacy@torale.ai</a>.
+                from children. If you believe we have collected data from a child, contact <a href="mailto:privacy@webwhen.ai">privacy@webwhen.ai</a>.
               </p>
 
               <h2>11. Cookies and Tracking</h2>
@@ -236,7 +236,7 @@ export function PrivacyPolicy() {
               <p>
                 webwhen<br />
                 Privacy Officer<br />
-                Email: <a href="mailto:privacy@torale.ai">privacy@torale.ai</a>
+                Email: <a href="mailto:privacy@webwhen.ai">privacy@webwhen.ai</a>
               </p>
             </div>
           </div>
