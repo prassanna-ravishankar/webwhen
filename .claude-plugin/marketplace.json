@@ -1,8 +1,8 @@
 {
   "name": "torale",
   "owner": {
-    "name": "Torale",
-    "email": "hello@torale.ai"
+    "name": "webwhen",
+    "email": "hello@webwhen.ai"
   },
   "metadata": {
     "description": "AI-powered web monitoring plugins"
@@ -14,9 +14,9 @@
       "description": "Monitor the web for conditions and get notified when they're met",
       "version": "0.1.0",
       "author": {
-        "name": "Torale"
+        "name": "webwhen"
       },
-      "homepage": "https://torale.ai",
+      "homepage": "https://webwhen.ai",
       "keywords": ["monitoring", "web", "search", "alerts", "webhooks"],
       "category": "automation"
     }

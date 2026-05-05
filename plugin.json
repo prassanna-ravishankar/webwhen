@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "description": "Monitor the web for conditions and get notified when they're met",
   "author": {
-    "name": "Torale",
-    "email": "hello@torale.ai"
+    "name": "webwhen",
+    "email": "hello@webwhen.ai"
   },
-  "homepage": "https://torale.ai",
+  "homepage": "https://webwhen.ai",
   "repository": "https://github.com/prassanna-ravishankar/torale",
   "license": "MIT",
   "skills": "./skills"
