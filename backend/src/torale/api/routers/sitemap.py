@@ -173,9 +173,9 @@ async def generate_changelog_rss():
     channel = ET.SubElement(rss, "channel")
     ET.SubElement(channel, "title").text = "webwhen changelog"
     ET.SubElement(channel, "link").text = f"{base_url}/changelog"
-    ET.SubElement(channel, "description").text = (
-        "Updates to webwhen — the agent that waits for the web."
-    )
+    ET.SubElement(
+        channel, "description"
+    ).text = "Updates to webwhen — the agent that waits for the web."
     ET.SubElement(channel, "language").text = "en-us"
 
     # Add atom:link for feed autodiscovery
