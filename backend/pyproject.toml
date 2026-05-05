@@ -5,10 +5,10 @@ description = "Grounded search monitoring platform for AI-powered conditional au
 requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
-    {name = "Torale Team", email = "hello@torale.ai"}
+    {name = "webwhen", email = "hello@webwhen.ai"}
 ]
 maintainers = [
-    {name = "Torale Team", email = "hello@torale.ai"}
+    {name = "webwhen", email = "hello@webwhen.ai"}
 ]
 keywords = [
     "ai",
@@ -64,11 +64,11 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://torale.ai"
-Documentation = "https://github.com/prasadcode/torale#readme"
-Repository = "https://github.com/prasadcode/torale"
-"Bug Tracker" = "https://github.com/prasadcode/torale/issues"
-Changelog = "https://github.com/prasadcode/torale/releases"
+Homepage = "https://webwhen.ai"
+Documentation = "https://github.com/prassanna-ravishankar/torale#readme"
+Repository = "https://github.com/prassanna-ravishankar/torale"
+"Bug Tracker" = "https://github.com/prassanna-ravishankar/torale/issues"
+Changelog = "https://github.com/prassanna-ravishankar/torale/releases"
 
 [project.optional-dependencies]
 dev = [
