@@ -18,13 +18,13 @@ data:
   AGENT_URL: {{ printf "http://%s-agent-free" (include "torale.fullname" .) | quote }}
 
   # API + frontend self-URLs (used for email links, OAuth callbacks, etc.).
-  # Post-cutover (production), the live hosts are .Values.domains.live.*;
-  # .Values.domains.legacy.* is pinned to torale.ai as the 301-redirect
-  # source in httproute.yaml. On surfaces with no parallel-route setup
-  # (staging, dev), domains.live is absent and the legacy keys ARE the
-  # live hosts — the dig fallback below handles that.
-  API_URL: {{ printf "https://%s" (default .Values.domains.legacy.api (dig "live" "api" "" .Values.domains)) | quote }}
-  FRONTEND_URL: {{ printf "https://%s" (default .Values.domains.legacy.frontend (dig "live" "frontend" "" .Values.domains)) | quote }}
+  # Resolution order: live first (post-cutover hostname), then legacy (the
+  # rebrand-source hostname when both render in parallel during a soak), then
+  # blank. `dig` returns "" when the path is missing so this stays safe even
+  # if either block is absent — e.g. post-#281-PR-2 staging has no legacy
+  # block at all and the live hostname carries the URL on its own.
+  API_URL: {{ printf "https://%s" (coalesce (dig "live" "api" "" .Values.domains) (dig "legacy" "api" "" .Values.domains)) | quote }}
+  FRONTEND_URL: {{ printf "https://%s" (coalesce (dig "live" "frontend" "" .Values.domains) (dig "legacy" "frontend" "" .Values.domains)) | quote }}
 
   # Platform capacity
   MAX_USERS: {{ .Values.capacity.maxUsers | quote }}

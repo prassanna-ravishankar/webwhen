@@ -1,12 +1,11 @@
 {{- if .Values.frontend.enabled -}}
 {{- /*
-Live API hostname. Post-cutover (production), the live host is
-.Values.domains.live.api; .Values.domains.legacy.api is pinned to torale.ai
-as the 301-redirect source (see httproute.yaml). On surfaces with no
-parallel-route setup (staging, dev, default chart values), domains.live is
-absent and the legacy key IS the live host. Fall back accordingly.
+Live API hostname. Resolution order: live first (post-cutover), then legacy
+(the rebrand-source). Both `dig` calls return "" when the path is missing,
+so this stays safe even if either block is absent (e.g. post-#281-PR-2
+staging has no legacy block).
 */ -}}
-{{- $apiHost := default .Values.domains.legacy.api (dig "live" "api" "" .Values.domains) -}}
+{{- $apiHost := coalesce (dig "live" "api" "" .Values.domains) (dig "legacy" "api" "" .Values.domains) -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
