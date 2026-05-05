@@ -26,6 +26,12 @@ interface DynamicMetaProps {
   description?: string;
   image?: string;
   type?: 'website' | 'article';
+  /**
+   * When true, emits `<meta name="robots" content="noindex, nofollow">` and
+   * skips canonical / og:url / twitter:url. Used by the SPA catch-all 404
+   * route so unknown paths don't get indexed as soft-404s. See #305.
+   */
+  noindex?: boolean;
 }
 
 export function DynamicMeta({
@@ -35,10 +41,21 @@ export function DynamicMeta({
   description = 'Tell webwhen what to watch for in plain English. It will sit with the question, search the web on a schedule, and tell you the moment your condition is met.',
   image,
   type = 'website',
+  noindex = false,
 }: DynamicMetaProps) {
   const origin = getOrigin();
   const resolvedUrl = url ?? `${origin}${path ?? '/'}`;
   const resolvedImage = image ?? `${origin}${FALLBACK_IMAGE}`;
+
+  if (noindex) {
+    return (
+      <Helmet>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+    );
+  }
 
   return (
     <Helmet>
