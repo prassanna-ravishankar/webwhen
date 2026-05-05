@@ -5,6 +5,8 @@ import { cn } from '@/lib/utils';
 import landingStyles from '@/components/landing/Landing.module.css';
 import marketingStyles from '@/components/marketing/marketing.module.css';
 import { USE_CASES } from '@/data/useCases';
+import { generateBreadcrumbStructuredData } from '@/utils/structuredData';
+import { escapeForScriptTag } from '@/utils/jsonLd';
 
 /**
  * Editorial use-case landing page.
@@ -20,12 +22,24 @@ export function UseCasePage() {
   const useCase = USE_CASES[usecase];
   const others = Object.values(USE_CASES).filter((u) => u.slug !== useCase.slug);
 
+  const breadcrumbJson = JSON.stringify(
+    generateBreadcrumbStructuredData([
+      { name: 'Home', path: '/' },
+      { name: 'Use cases', path: '/use-cases' },
+      { name: useCase.name, path: `/use-cases/${useCase.slug}` },
+    ]),
+  );
+
   return (
     <MarketingLayout activePath="/use-cases">
       <DynamicMeta
         path={`/use-cases/${useCase.slug}`}
         title={useCase.seoTitle ?? `${useCase.heroHeadline} — webwhen`}
         description={useCase.seoDescription ?? useCase.heroLede}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: escapeForScriptTag(breadcrumbJson) }}
       />
 
       {/* Hero */}

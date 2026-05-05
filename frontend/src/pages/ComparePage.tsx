@@ -5,6 +5,8 @@ import { cn } from '@/lib/utils';
 import landingStyles from '@/components/landing/Landing.module.css';
 import marketingStyles from '@/components/marketing/marketing.module.css';
 import { COMPETITORS } from '@/data/competitors';
+import { generateBreadcrumbStructuredData } from '@/utils/structuredData';
+import { escapeForScriptTag } from '@/utils/jsonLd';
 
 /**
  * Editorial comparison page — webwhen vs a single competitor.
@@ -21,12 +23,24 @@ export function ComparePage() {
 
   const competitor = COMPETITORS[tool];
 
+  const breadcrumbJson = JSON.stringify(
+    generateBreadcrumbStructuredData([
+      { name: 'Home', path: '/' },
+      { name: 'Compare', path: '/compare' },
+      { name: competitor.name, path: `/compare/${competitor.slug}` },
+    ]),
+  );
+
   return (
     <MarketingLayout activePath="/compare">
       <DynamicMeta
         path={`/compare/${competitor.slug}`}
         title={competitor.seoTitle}
         description={competitor.seoDescription}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: escapeForScriptTag(breadcrumbJson) }}
       />
 
       {/* Hero — smaller than Landing's */}
