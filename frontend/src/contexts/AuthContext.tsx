@@ -60,10 +60,21 @@ const PendingAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const noAuth = import.meta.env.VITE_TORALE_NOAUTH === '1' || window.__PRERENDER__
-
-  if (noAuth) {
+  // VITE_TORALE_NOAUTH is the local-dev escape hatch — runs against a mocked
+  // user end-to-end. NoAuthProvider returns a stable mock user so dev flows
+  // work without Clerk.
+  if (import.meta.env.VITE_TORALE_NOAUTH === '1') {
     return <NoAuthProvider>{children}</NoAuthProvider>
+  }
+
+  // Prerender uses the same "not yet loaded" shape that the runtime Suspense
+  // fallback emits — both produce HTML matching `user: null, isLoaded: false`.
+  // Without this, the prerender baked a logged-in mock user (NoAuthProvider's
+  // default) into HTML, and the runtime ClerkAuthProvider's Suspense fallback
+  // hydrated against null, tripping React #418/#423 hydration mismatches on
+  // every marketing route. See #299.
+  if (window.__PRERENDER__) {
+    return <PendingAuthProvider>{children}</PendingAuthProvider>
   }
 
   return (
