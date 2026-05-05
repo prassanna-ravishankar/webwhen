@@ -45,41 +45,20 @@ spec:
         hostname: {{ .Values.domains.live.frontend | quote }}
         statusCode: 301
   {{- else }}
-  # SEO endpoints served by backend API (must be before frontend catchall)
+  # SEO endpoints served by backend API (must be before frontend catchall).
+  # Grouped into one rule with multiple matches — Gateway API treats each
+  # match independently while sharing backendRefs, which is exactly what
+  # this set wants.
   - matches:
     - path:
         type: Exact
         value: /sitemap.xml
-    backendRefs:
-    - group: ""
-      kind: Service
-      name: {{ $fullName }}-api
-      namespace: {{ $serviceNamespace }}
-      port: {{ .Values.api.service.port }}
-      weight: 1
-  - matches:
     - path:
         type: Exact
         value: /sitemap-dynamic.xml
-    backendRefs:
-    - group: ""
-      kind: Service
-      name: {{ $fullName }}-api
-      namespace: {{ $serviceNamespace }}
-      port: {{ .Values.api.service.port }}
-      weight: 1
-  - matches:
     - path:
         type: Exact
         value: /changelog.xml
-    backendRefs:
-    - group: ""
-      kind: Service
-      name: {{ $fullName }}-api
-      namespace: {{ $serviceNamespace }}
-      port: {{ .Values.api.service.port }}
-      weight: 1
-  - matches:
     - path:
         type: Exact
         value: /robots.txt
@@ -278,64 +257,18 @@ spec:
   hostnames:
   - {{ .Values.domains.live.frontend | quote }}
   rules:
+  # SEO endpoints served by backend API (must be before frontend catchall).
+  # Grouped — same backendRefs and same noindex filter for all four paths.
   - matches:
     - path:
         type: Exact
         value: /sitemap.xml
-    {{- if .Values.httproute.noindex }}
-    filters:
-    - type: ResponseHeaderModifier
-      responseHeaderModifier:
-        set:
-        - name: X-Robots-Tag
-          value: "noindex, nofollow"
-    {{- end }}
-    backendRefs:
-    - group: ""
-      kind: Service
-      name: {{ $fullName }}-api
-      namespace: {{ $serviceNamespace }}
-      port: {{ .Values.api.service.port }}
-      weight: 1
-  - matches:
     - path:
         type: Exact
         value: /sitemap-dynamic.xml
-    {{- if .Values.httproute.noindex }}
-    filters:
-    - type: ResponseHeaderModifier
-      responseHeaderModifier:
-        set:
-        - name: X-Robots-Tag
-          value: "noindex, nofollow"
-    {{- end }}
-    backendRefs:
-    - group: ""
-      kind: Service
-      name: {{ $fullName }}-api
-      namespace: {{ $serviceNamespace }}
-      port: {{ .Values.api.service.port }}
-      weight: 1
-  - matches:
     - path:
         type: Exact
         value: /changelog.xml
-    {{- if .Values.httproute.noindex }}
-    filters:
-    - type: ResponseHeaderModifier
-      responseHeaderModifier:
-        set:
-        - name: X-Robots-Tag
-          value: "noindex, nofollow"
-    {{- end }}
-    backendRefs:
-    - group: ""
-      kind: Service
-      name: {{ $fullName }}-api
-      namespace: {{ $serviceNamespace }}
-      port: {{ .Values.api.service.port }}
-      weight: 1
-  - matches:
     - path:
         type: Exact
         value: /robots.txt
