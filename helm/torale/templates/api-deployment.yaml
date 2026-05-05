@@ -14,6 +14,15 @@ spec:
       {{- include "torale.api.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      annotations:
+        # Roll API pods on ConfigMap-only changes. Without this, a
+        # config-only Helm sync (same image tag, different ConfigMap) does
+        # NOT restart the api Deployment because envFrom doesn't propagate.
+        # Frontend's config.js is volume-mounted and picks up changes
+        # without a restart, but the backend reads via envFrom — so a
+        # remediation that only touches values needs this annotation to
+        # actually take effect. Surfaced during #270 review.
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
       labels:
         {{- include "torale.api.selectorLabels" . | nindent 8 }}
     spec:
