@@ -1,37 +1,24 @@
 import { Helmet } from 'react-helmet-async';
+import { getOrigin } from '@/utils/origin';
 
 /**
  * Self-canonical origin: emit URLs that match the document's own origin so
- * pages served from webwhen.ai declare webwhen.ai canonical, and pages served
- * from torale.ai declare torale.ai canonical. Replaces a hardcoded
- * `https://torale.ai` literal that polluted webwhen.ai pages with torale.ai
- * canonical/og:url after react-helmet hydration. Found via the soak smoke;
- * see #246.
- *
- * During prerender (`scripts/prerender.mjs` running headless against
- * `http://localhost:4567`), `window.location.origin` is the local server,
- * not the production domain. Skip the URL-shaped tags during prerender so
- * the static `<head>` in `index.html` (already correctly webwhen.ai-shaped)
- * survives into the baked HTML. At real runtime hydration on production,
- * react-helmet adds the runtime tags with the correct origin.
+ * pages served from webwhen.ai declare webwhen.ai canonical (#246). Uses the
+ * shared `getOrigin()` helper, which reads `window.__PRERENDER_ORIGIN__`
+ * during prerender (defaults to https://webwhen.ai, overridden via the
+ * PRERENDER_ORIGIN env for staging/preview builds). Without this prerender
+ * fallback, JS-less crawlers (Bing, Yandex, social card scrapers) saw the
+ * baked HTML with no canonical at all. See #294.
  */
-const isPrerender =
-  typeof window !== 'undefined' && (window as unknown as { __PRERENDER__?: boolean }).__PRERENDER__;
-
-function getOrigin(): string | null {
-  if (typeof window === 'undefined') return null;
-  if (isPrerender) return null;
-  return window.location.origin;
-}
 
 const FALLBACK_IMAGE = '/og-image.webp';
 
 interface DynamicMetaProps {
   /**
    * Path from site root (e.g. "/compare/visualping-alternative"). Used to
-   * build canonical, og:url and twitter:url at runtime against the document
-   * origin. Provide this for every public page; `url` is the escape hatch
-   * for explicit non-self canonicals (rare).
+   * build canonical, og:url and twitter:url against the resolved origin.
+   * Provide this for every public page; `url` is the escape hatch for
+   * explicit non-self canonicals (rare).
    */
   path?: string;
   url?: string;
@@ -50,8 +37,8 @@ export function DynamicMeta({
   type = 'website',
 }: DynamicMetaProps) {
   const origin = getOrigin();
-  const resolvedUrl = url ?? (origin ? `${origin}${path ?? '/'}` : null);
-  const resolvedImage = image ?? (origin ? `${origin}${FALLBACK_IMAGE}` : null);
+  const resolvedUrl = url ?? `${origin}${path ?? '/'}`;
+  const resolvedImage = image ?? `${origin}${FALLBACK_IMAGE}`;
 
   return (
     <Helmet>
@@ -59,18 +46,18 @@ export function DynamicMeta({
       <meta name="description" content={description} />
 
       <meta property="og:type" content={type} />
-      {resolvedUrl && <meta property="og:url" content={resolvedUrl} />}
+      <meta property="og:url" content={resolvedUrl} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      {resolvedImage && <meta property="og:image" content={resolvedImage} />}
+      <meta property="og:image" content={resolvedImage} />
 
       <meta name="twitter:card" content="summary_large_image" />
-      {resolvedUrl && <meta name="twitter:url" content={resolvedUrl} />}
+      <meta name="twitter:url" content={resolvedUrl} />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      {resolvedImage && <meta name="twitter:image" content={resolvedImage} />}
+      <meta name="twitter:image" content={resolvedImage} />
 
-      {resolvedUrl && <link rel="canonical" href={resolvedUrl} />}
+      <link rel="canonical" href={resolvedUrl} />
     </Helmet>
   );
 }
