@@ -20,6 +20,33 @@ export function generateOrganizationStructuredData() {
   };
 }
 
+/**
+ * One step in a breadcrumb trail. `path` is a site-root path
+ * (e.g. "/compare/visualping-alternative") — the helper resolves it to a
+ * full URL using the prerender-time origin via getOrigin().
+ *
+ * Keep the trail in nav-hierarchy order, leaf last. Last item's path can be
+ * the page itself (Google accepts that and treats it as the current page).
+ */
+export interface BreadcrumbItem {
+  name: string;
+  path: string;
+}
+
+export function generateBreadcrumbStructuredData(items: BreadcrumbItem[]) {
+  const origin = getOrigin();
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, idx) => ({
+      "@type": "ListItem",
+      position: idx + 1,
+      name: item.name,
+      item: `${origin}${item.path}`,
+    })),
+  };
+}
+
 export function generateFAQStructuredData(items: FAQItem[]) {
   return {
     "@context": "https://schema.org",

@@ -5,6 +5,8 @@ import { cn } from '@/lib/utils';
 import landingStyles from '@/components/landing/Landing.module.css';
 import marketingStyles from '@/components/marketing/marketing.module.css';
 import { CONCEPTS } from '@/data/concepts';
+import { generateBreadcrumbStructuredData } from '@/utils/structuredData';
+import { escapeForScriptTag } from '@/utils/jsonLd';
 
 /**
  * Concept landing page: editorial explainer for webwhen's conceptual surfaces.
@@ -19,6 +21,14 @@ export function ConceptPage() {
 
   const data = CONCEPTS[concept];
 
+  const breadcrumbJson = JSON.stringify(
+    generateBreadcrumbStructuredData([
+      { name: 'Home', path: '/' },
+      { name: 'Concepts', path: '/concepts' },
+      { name: data.title, path: `/concepts/${data.slug}` },
+    ]),
+  );
+
   return (
     <MarketingLayout activePath="/concepts">
       <DynamicMeta
@@ -26,6 +36,10 @@ export function ConceptPage() {
         title={data.metaTitle}
         description={data.metaDescription}
         type="article"
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: escapeForScriptTag(breadcrumbJson) }}
       />
 
       <section className={cn(landingStyles.section, marketingStyles.articleHero)}>
