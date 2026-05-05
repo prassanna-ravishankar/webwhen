@@ -217,6 +217,9 @@ async def generate_changelog_rss():
     return Response(content=xml_output, media_type="application/rss+xml")
 
 
+PROD_FRONTEND_URLS = frozenset({"https://webwhen.ai", "https://torale.ai"})
+
+
 @router.get("/robots.txt")
 async def robots_txt():
     """
@@ -225,7 +228,7 @@ async def robots_txt():
     """
     base_url = settings.frontend_url
 
-    if base_url != "https://torale.ai":
+    if base_url not in PROD_FRONTEND_URLS:
         return Response(content="User-agent: *\nDisallow: /\n", media_type="text/plain")
 
     robots = f"""User-agent: *
