@@ -1,18 +1,25 @@
 # Staging deployment workflow
-# Deploys to staging.torale.ai for testing before production
+# Deploys to staging.webwhen.ai for testing before production
+# (legacy staging.torale.ai still served in parallel during the #281 soak)
 
 name: Deploy to Staging
 
+# Trigger matrix:
+# - workflow_dispatch: manual deploy from any branch
+# - labeled (with name=deploy): bring staging up for a PR
+# - synchronize (when PR is already labeled deploy): redeploy on every push
+# - closed (when PR was labeled deploy): scale staging namespace to 0
 on:
   workflow_dispatch:
   pull_request:
-    types: [labeled]
+    types: [labeled, synchronize, closed]
 
 jobs:
   build:
     if: |
       github.event_name == 'workflow_dispatch' ||
-      (github.event.action == 'labeled' && github.event.label.name == 'deploy')
+      (github.event.action == 'labeled' && github.event.label.name == 'deploy') ||
+      (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'deploy'))
     name: Build ${{ matrix.component }}
     runs-on: ubuntu-latest
 
@@ -69,7 +76,7 @@ jobs:
           # Stage origin baked into prerendered JSON-LD / RSS / etc. for the
           # frontend image only. Other components ignore the arg.
           build-args: |
-            PRERENDER_ORIGIN=https://staging.torale.ai
+            PRERENDER_ORIGIN=https://staging.webwhen.ai
           tags: |
             gcr.io/${{ env.GCP_PROJECT_ID }}/torale-${{ matrix.component }}:${{ env.IMAGE_TAG }}
             gcr.io/${{ env.GCP_PROJECT_ID }}/torale-${{ matrix.component }}:staging
@@ -90,7 +97,7 @@ jobs:
 
     environment:
       name: staging
-      url: https://staging.torale.ai
+      url: https://staging.webwhen.ai
 
     env:
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
@@ -130,6 +137,20 @@ jobs:
           kubectl rollout status deployment/torale-agent-free -n torale-staging --timeout=5m
           kubectl rollout status deployment/torale-agent-paid -n torale-staging --timeout=5m
 
+      # Smoke from edge mirrors production.yml. Catches DNS-not-yet-propagated
+      # cases earlier than waiting for the PR comment to fire. Both new and
+      # legacy hostnames are checked during the soak window; once the legacy
+      # block is retired (PR 2 of #281), the legacy curls will be removed.
+      - name: Smoke staging
+        run: |
+          set -e
+          echo "=== EDGE: staging.webwhen.ai (live) ==="
+          curl -sSI --retry 3 --retry-delay 5 https://staging.webwhen.ai/ | head -3
+          echo "=== EDGE: api-staging.webwhen.ai (live) ==="
+          curl -sSI --retry 3 --retry-delay 5 https://api-staging.webwhen.ai/health | head -3
+          echo "=== EDGE: staging.torale.ai (legacy, parallel route during soak) ==="
+          curl -sSI --retry 3 --retry-delay 5 https://staging.torale.ai/ | head -3 || echo "  legacy unreachable — expected once PR 2 retires it"
+
       - name: Post Deployment Info
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
@@ -139,5 +160,48 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `🚀 **Deployed to Staging!**\n\n- **URL**: https://staging.torale.ai\n- **API**: https://api-staging.torale.ai\n- **Commit**: \`${{ github.sha }}\``
+              body: `🚀 **Deployed to Staging!**\n\n- **URL**: https://staging.webwhen.ai\n- **API**: https://api-staging.webwhen.ai\n- **Commit**: \`${{ github.sha }}\``
             })
+
+  scale_down:
+    # Scale the shared torale-staging namespace to 0 when a labeled PR closes
+    # (merged OR unmerged — both paths free up cluster capacity). Per #293.
+    #
+    # Note: scaling the SHARED torale-staging namespace to 0 on PR close kills
+    # any other concurrently-labeled PR's environment. Acceptable today
+    # (single-PR staging usage in practice); revisit if multi-PR concurrent
+    # staging becomes a thing — would need either per-PR namespaces or a
+    # liveness check ("are any other PRs still labeled deploy?") before scaling.
+    name: Scale staging to zero on PR close
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed' &&
+      contains(github.event.pull_request.labels.*.name, 'deploy')
+
+    permissions:
+      contents: read
+      id-token: write
+
+    env:
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GKE_CLUSTER: clusterkit
+      GKE_REGION: us-central1
+
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Get GKE credentials
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.GKE_REGION }}
+
+      - name: Scale all deployments in torale-staging to 0
+        run: |
+          kubectl scale deployment -n torale-staging --replicas=0 --all
+          kubectl get deployment -n torale-staging
