@@ -20,6 +20,7 @@ const ConnectorsPage = lazy(() => import('@/pages/ConnectorsPage').then(m => ({ 
 import { connectorsEnabled } from '@/components/connectors/connectorsFlag'
 const TermsOfService = lazy(() => import('@/pages/TermsOfService').then(m => ({ default: m.TermsOfService })))
 const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })))
+const NotFound = lazy(() => import('@/pages/NotFound'))
 const CapacityGate = lazy(() => import('@/components/CapacityGate').then(m => ({ default: m.CapacityGate })))
 const WaitlistPage = lazy(() => import('@/components/WaitlistPage').then(m => ({ default: m.WaitlistPage })))
 const Explore = lazy(() => import('@/pages/Explore').then(m => ({ default: m.Explore })))
@@ -274,6 +275,9 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        {/* Catch-all 404 — emits noindex so unknown URLs don't get indexed as
+            soft-404s. Must be last. See #305. */}
+        <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
       <Toaster />
