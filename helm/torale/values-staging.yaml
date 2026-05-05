@@ -1,18 +1,13 @@
 # Staging values for Torale on GKE ClusterKit
-# Deployed to staging.webwhen.ai (cutover-in-progress; legacy staging.torale.ai
-# routes still render in parallel during the soak window of #281)
+# Deployed to staging.webwhen.ai (post-#281, legacy staging.torale.ai retired)
 
 domains:
-  legacy:
-    # Soak-window keep-alive. Both routes render in parallel; verify the
-    # webwhen.ai routes are healthy before retiring this block in PR 2.
-    frontend: staging.torale.ai
-    api: api-staging.torale.ai
-    docs: docs-staging.torale.ai
+  # Explicit null nulls out the global `values.yaml` legacy defaults so the
+  # legacy HTTPRoutes stop rendering (template gate on `if .Values.domains.legacy`).
+  # Staging is webwhen-only post-#281; wildcard *.webwhen.ai cert covers both
+  # hostnames.
+  legacy: ~
   live:
-    # Customer-facing post-#281. Wildcard *.webwhen.ai cert
-    # (webwhen-ai-origin-cert, attached to clusterkit-gateway via pre-shared
-    # annotation) covers both hostnames already; no per-host cert needed.
     frontend: staging.webwhen.ai
     api: api-staging.webwhen.ai
 
@@ -74,12 +69,8 @@ docs:
 # `Disallow: /` but X-Robots-Tag covers crawlers that ignore robots.txt.
 # Closes #280.
 #
-# Two flags, two scopes:
-# - stagingNoindex: applies to the legacy staging.torale.ai frontend catchall
-#   only (a $isStagingRelease-gated branch in httproute.yaml).
-# - noindex: applies to every webwhen-* route (the rebrand soak overlay's
-#   primary safety mechanism). Set true on staging because staging.webwhen.ai
-#   is also a non-production domain that should never be indexed.
+# stagingNoindex was the legacy-side flag (gated on $isStagingRelease,
+# applied to staging.torale.ai); now that legacy is retired, only the
+# webwhen-side `noindex` flag is load-bearing.
 httproute:
-  stagingNoindex: true
   noindex: true

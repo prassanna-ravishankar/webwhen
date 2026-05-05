@@ -10,6 +10,14 @@
   Pre-cutover (during the soak window), the torale routes serve normally.
 */}}
 {{- $isCutover := eq (.Values.httproute.cutover | toString) "true" -}}
+{{/*
+  Legacy HTTPRoutes (torale.ai / api.torale.ai / docs.torale.ai and their
+  staging counterparts) only render when .Values.domains.legacy is set. When
+  the legacy hostnames retire (e.g. staging.torale.ai → staging.webwhen.ai
+  cutover, #281 PR 2), drop the legacy block from the env's values and the
+  whole section below stops rendering.
+*/}}
+{{- if .Values.domains.legacy }}
 ---
 # Frontend HTTPRoute
 apiVersion: gateway.networking.k8s.io/v1
@@ -189,6 +197,7 @@ spec:
       weight: 1
   {{- end }}
 {{- end }}
+{{- end }}{{/* end if .Values.domains.legacy */}}
 
 # ============================================================================
 # webwhen.ai parallel routes (rebrand cutover)
