@@ -1,5 +1,5 @@
 /**
- * Source of truth for docs.torale.ai redirects. The generated
+ * Source of truth for docs.webwhen.ai redirects. The generated
  * nginx-redirects.conf is derived from this — edit here, never the conf.
  * Use 301 for deprecated pages with a sensible replacement, 410 for
  * intentionally-removed pages with no equivalent.

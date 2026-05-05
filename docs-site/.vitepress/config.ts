@@ -1,9 +1,11 @@
 import { defineConfig, type PageData } from 'vitepress'
 import { withMermaid } from 'vitepress-plugin-mermaid'
 
-// SITE_ORIGIN stays on docs.torale.ai for now. Clusterkit's HTTPRoutes flip the
-// hostname at the gateway during cutover; the build doesn't hardcode webwhen.ai.
-const SITE_ORIGIN = 'https://docs.torale.ai'
+// docs.torale.ai 301s to docs.webwhen.ai post-cutover. Bake webwhen.ai into
+// canonicals + sitemap so the live origin owns the index signal. Otherwise
+// pages declare "I am a duplicate of docs.torale.ai" while docs.torale.ai
+// redirects back here — a canonical/redirect loop. See #294.
+const SITE_ORIGIN = 'https://docs.webwhen.ai'
 const SITE_DESCRIPTION = 'webwhen developer documentation — REST API and Python SDK for the agent that watches the open web.'
 
 export default withMermaid(
@@ -86,8 +88,7 @@ export default withMermaid(
       { text: 'Architecture', link: '/architecture/self-scheduling-agents', activeMatch: '/architecture/' },
       { text: 'API', link: '/api/overview', activeMatch: '/api/' },
       { text: 'SDK', link: '/sdk/quickstart', activeMatch: '/sdk/' },
-      // App URL flips to webwhen.ai at cutover (gateway-level).
-      { text: 'App', link: 'https://torale.ai' }
+      { text: 'App', link: 'https://webwhen.ai' }
     ],
 
     sidebar: {
