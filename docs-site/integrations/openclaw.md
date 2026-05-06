@@ -7,7 +7,7 @@ description: Integrate webwhen with OpenClaw to add web watching to your AI assi
 Use webwhen as a web-watching backend for [OpenClaw](https://openclaw.ai). webwhen watches for conditions on the web; OpenClaw acts when they're met.
 
 ::: tip Naming during the transition
-The API host is still `api.torale.ai` and watches are still addressed as `tasks` in URLs. The rename to `webwhen` is a later phase — endpoint paths below reflect the current shipping API.
+The API host is `api.webwhen.ai` (`api.torale.ai` still 301-redirects for legacy clients). Watches are still addressed as `tasks` in URLs — the resource rename is a later phase. Endpoint paths below reflect the current shipping API.
 :::
 
 ## How it works
@@ -77,12 +77,12 @@ OpenClaw creates the watch and webwhen handles the rest.
 
 ## API reference
 
-All requests go to `https://api.torale.ai/api/v1` with `Authorization: Bearer sk_...`.
+All requests go to `https://api.webwhen.ai/api/v1` with `Authorization: Bearer sk_...`.
 
 ### Create a watch
 
 ```bash
-curl -X POST https://api.torale.ai/api/v1/tasks \
+curl -X POST https://api.webwhen.ai/api/v1/tasks \
   -H "Authorization: Bearer sk_..." \
   -H "Content-Type: application/json" \
   -d '{
@@ -104,14 +104,14 @@ curl -X POST https://api.torale.ai/api/v1/tasks \
 ### List watches
 
 ```bash
-curl https://api.torale.ai/api/v1/tasks \
+curl https://api.webwhen.ai/api/v1/tasks \
   -H "Authorization: Bearer sk_..."
 ```
 
 ### Delete a watch
 
 ```bash
-curl -X DELETE https://api.torale.ai/api/v1/tasks/{task_id} \
+curl -X DELETE https://api.webwhen.ai/api/v1/tasks/{task_id} \
   -H "Authorization: Bearer sk_..."
 ```
 

@@ -22,7 +22,7 @@ Used for browser-based authentication in the web dashboard.
 - Email + password
 
 **How it works:**
-1. User logs in via Clerk at torale.ai
+1. User logs in via Clerk at webwhen.ai
 2. Clerk issues a JWT
 3. The frontend includes the token in API requests
 4. The backend verifies the token with Clerk
@@ -51,7 +51,7 @@ Example: sk_abc123def456ghi789jkl012mno345pq
 
 ### Web dashboard
 
-1. **Log in** to [torale.ai](https://torale.ai)
+1. **Log in** to [webwhen.ai](https://webwhen.ai)
 2. **Navigate** to Settings → API Keys
 3. **Click** "Generate New Key"
 4. **Enter** a key name (for example, "My API Key", "Production Script")
@@ -76,7 +76,7 @@ Example: sk_abc123def456ghi789jkl012mno345pq
 
 **Include in the `Authorization` header:**
 ```bash
-curl -X GET https://api.torale.ai/api/v1/tasks \
+curl -X GET https://api.webwhen.ai/api/v1/tasks \
   -H "Authorization: Bearer sk_..."
 ```
 
@@ -84,7 +84,7 @@ curl -X GET https://api.torale.ai/api/v1/tasks \
 ```bash
 API_KEY="sk_..."
 
-curl -X POST https://api.torale.ai/api/v1/tasks \
+curl -X POST https://api.webwhen.ai/api/v1/tasks \
   -H "Authorization: Bearer $API_KEY" \
   -H "Content-Type: application/json" \
   -d '{

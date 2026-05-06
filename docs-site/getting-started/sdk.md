@@ -18,7 +18,7 @@ pip install torale
 
 ## Get an API key
 
-1. Log in to [torale.ai](https://torale.ai)
+1. Log in to [webwhen.ai](https://webwhen.ai)
 2. Go to Settings → API Keys
 3. Generate a new key
 4. Copy and save it securely

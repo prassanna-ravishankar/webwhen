@@ -63,19 +63,19 @@ Authorization: Bearer {api_key}
 **Examples:**
 ```bash
 # Get all notification sends
-curl -X GET https://api.torale.ai/api/v1/notifications/sends \
+curl -X GET https://api.webwhen.ai/api/v1/notifications/sends \
   -H "Authorization: Bearer sk_..."
 
 # Filter by type
-curl -X GET "https://api.torale.ai/api/v1/notifications/sends?notification_type=webhook" \
+curl -X GET "https://api.webwhen.ai/api/v1/notifications/sends?notification_type=webhook" \
   -H "Authorization: Bearer sk_..."
 
 # Filter by watch
-curl -X GET "https://api.torale.ai/api/v1/notifications/sends?task_id=660e8400..." \
+curl -X GET "https://api.webwhen.ai/api/v1/notifications/sends?task_id=660e8400..." \
   -H "Authorization: Bearer sk_..."
 
 # Paginate
-curl -X GET "https://api.torale.ai/api/v1/notifications/sends?limit=10&offset=20" \
+curl -X GET "https://api.webwhen.ai/api/v1/notifications/sends?limit=10&offset=20" \
   -H "Authorization: Bearer sk_..."
 ```
 

@@ -12,7 +12,7 @@ URLs still address watches as `tasks` (`/api/v1/tasks`) and the JSON payloads st
 
 ## Overview
 
-Base URL: `https://api.torale.ai/api/v1/tasks`
+Base URL: `https://api.webwhen.ai/api/v1/tasks`
 
 Every endpoint requires authentication via API key or Clerk JWT unless noted otherwise.
 
@@ -84,7 +84,7 @@ Content-Type: application/json
 
 **Example:**
 ```bash
-curl -X POST https://api.torale.ai/api/v1/tasks \
+curl -X POST https://api.webwhen.ai/api/v1/tasks \
   -H "Authorization: Bearer sk_..." \
   -H "Content-Type: application/json" \
   -d '{
@@ -139,11 +139,11 @@ Authorization: Bearer {api_key}
 **Examples:**
 ```bash
 # Get all watches
-curl -X GET https://api.torale.ai/api/v1/tasks \
+curl -X GET https://api.webwhen.ai/api/v1/tasks \
   -H "Authorization: Bearer sk_..."
 
 # Get only active watches
-curl -X GET "https://api.torale.ai/api/v1/tasks?state=active" \
+curl -X GET "https://api.webwhen.ai/api/v1/tasks?state=active" \
   -H "Authorization: Bearer sk_..."
 ```
 
