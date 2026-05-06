@@ -241,7 +241,7 @@ Returned when an external dependency (such as Clerk) is unavailable.
 
 ```bash
 # Verbose curl output shows status code and headers
-curl -v -X GET https://api.torale.ai/api/v1/tasks \
+curl -v -X GET https://api.webwhen.ai/api/v1/tasks \
   -H "Authorization: Bearer sk_..."
 ```
 

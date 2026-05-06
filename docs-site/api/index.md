@@ -7,7 +7,7 @@ description: webwhen REST API reference. HTTP endpoints, authentication, request
 Direct HTTP API access for the webwhen platform.
 
 ::: tip Naming during the transition
-The API host is still `api.torale.ai` and watches are still addressed as `tasks` in URLs (`/api/v1/tasks`). The rename to `webwhen` is a later phase — endpoint paths below reflect the current shipping API.
+The API host is `api.webwhen.ai` (`api.torale.ai` still 301-redirects for legacy clients). Watches are addressed as `tasks` in URLs (`/api/v1/tasks`) — the resource rename is a later phase. Endpoint paths below reflect the current shipping API.
 :::
 
 ## Getting started
@@ -32,8 +32,8 @@ The API host is still `api.torale.ai` and watches are still addressed as `tasks`
 
 webwhen ships interactive API documentation at:
 
-- ReDoc: `https://api.torale.ai/redoc`
-- OpenAPI JSON: `https://api.torale.ai/openapi.json`
+- ReDoc: `https://api.webwhen.ai/redoc`
+- OpenAPI JSON: `https://api.webwhen.ai/openapi.json`
 
 Note: admin endpoints are intentionally hidden from the OpenAPI schema.
 

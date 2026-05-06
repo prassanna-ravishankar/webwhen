@@ -12,7 +12,7 @@ Environment variable names and the client class still use `torale` (`TORALE_API_
 
 ## Get an API key
 
-1. Log in to [torale.ai](https://torale.ai)
+1. Log in to [webwhen.ai](https://webwhen.ai)
 2. Navigate to Settings → API Keys
 3. Generate a new key
 4. Copy and save it securely
@@ -68,7 +68,7 @@ The SDK reads from `~/.torale/config.json` if it exists:
 ```json
 {
   "api_key": "sk_...",
-  "api_url": "https://api.torale.ai"
+  "api_url": "https://api.webwhen.ai"
 }
 ```
 
@@ -102,7 +102,7 @@ The base URL is resolved in this order:
 2. `TORALE_API_URL` environment variable
 3. `http://localhost:8000` if `TORALE_DEV=1` or `TORALE_NOAUTH=1`
 4. `api_url` from `~/.torale/config.json`
-5. `https://api.torale.ai` (default)
+5. `https://api.webwhen.ai` (default)
 
 ## Error handling
 

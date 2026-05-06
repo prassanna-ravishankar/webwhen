@@ -7,21 +7,21 @@ description: webwhen REST API overview. HTTP endpoints, authentication, request 
 webwhen exposes a REST API for programmatic access to every platform feature.
 
 ::: tip Naming during the transition
-The host is still `api.torale.ai` and watches are addressed as `tasks` in URLs (`/api/v1/tasks`). The rename to `webwhen` is a later phase — endpoint paths below reflect the current shipping API.
+The API host is `api.webwhen.ai` (`api.torale.ai` still 301-redirects for legacy clients). Watches are addressed as `tasks` in URLs (`/api/v1/tasks`) — the resource rename is a later phase. Endpoint paths below reflect the current shipping API.
 :::
 
 ## Base URL
 
 ```
-https://api.torale.ai
+https://api.webwhen.ai
 ```
 
 ## Interactive API documentation
 
 For interactive API exploration with detailed request and response schemas:
 
-- [OpenAPI Documentation (ReDoc)](https://api.torale.ai/redoc) — full API reference with schemas
-- [OpenAPI Specification (JSON)](https://api.torale.ai/openapi.json) — machine-readable spec
+- [OpenAPI Documentation (ReDoc)](https://api.webwhen.ai/redoc) — full API reference with schemas
+- [OpenAPI Specification (JSON)](https://api.webwhen.ai/openapi.json) — machine-readable spec
 
 ::: tip Try it out
 The ReDoc interface provides detailed examples and schema information for every endpoint.
@@ -33,10 +33,10 @@ All authenticated requests need an API key or Clerk JWT in the `Authorization` h
 
 ```bash
 curl -H "Authorization: Bearer sk_..." \
-  https://api.torale.ai/api/v1/tasks
+  https://api.webwhen.ai/api/v1/tasks
 ```
 
-Generate API keys at [torale.ai/settings/api-keys](https://torale.ai/settings/api-keys).
+Generate API keys at [webwhen.ai/settings/api-keys](https://webwhen.ai/settings/api-keys).
 
 ## Core endpoints
 

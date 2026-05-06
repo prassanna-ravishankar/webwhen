@@ -12,7 +12,7 @@ URLs still address watches as `tasks` (`/api/v1/tasks/{task_id}/executions`). Th
 
 ## Overview
 
-Base URL: `https://api.torale.ai/api/v1/tasks/{task_id}/executions`
+Base URL: `https://api.webwhen.ai/api/v1/tasks/{task_id}/executions`
 
 Supports both authenticated and unauthenticated access (for public watches).
 
@@ -61,11 +61,11 @@ Get every execution for a specific watch. Returns a bare JSON array (no paginati
 **Examples:**
 ```bash
 # Get all executions (up to 100)
-curl -X GET https://api.torale.ai/api/v1/tasks/550e8400.../executions \
+curl -X GET https://api.webwhen.ai/api/v1/tasks/550e8400.../executions \
   -H "Authorization: Bearer sk_..."
 
 # Limit results
-curl -X GET "https://api.torale.ai/api/v1/tasks/550e8400.../executions?limit=10" \
+curl -X GET "https://api.webwhen.ai/api/v1/tasks/550e8400.../executions?limit=10" \
   -H "Authorization: Bearer sk_..."
 ```
 
