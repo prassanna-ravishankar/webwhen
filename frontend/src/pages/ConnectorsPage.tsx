@@ -156,7 +156,7 @@ export const ConnectorsPage: React.FC = () => {
         Connections powered by Composio — you'll see their name on the
         authorization screen.{' '}
         <a
-          href="https://docs.torale.ai/architecture/connectors-trust"
+          href="https://docs.webwhen.ai/architecture/connectors-trust"
           target="_blank"
           rel="noopener noreferrer"
           className={styles.helperLink}

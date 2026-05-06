@@ -305,7 +305,7 @@ async def disconnect_toolkit(
 
 
 _CALLBACK_HTML = """<!doctype html>
-<html lang="en">
+<html lang="en-US">
 <head>
 <meta charset="utf-8">
 <title>Connection complete</title>
@@ -333,14 +333,14 @@ _CALLBACK_FAILED_HTML = _CALLBACK_HTML.format(
     status_class="failed",
     border_color="#ef4444",
     title="Connection failed",
-    body="Something went wrong. Close this tab and try again from Torale.",
+    body="Something went wrong. Close this tab and try again from webwhen.",
 )
 
 _CALLBACK_SUCCESS_HTML = _CALLBACK_HTML.format(
     status_class="success",
     border_color="#10b981",
     title="Connection complete",
-    body="You can close this tab and return to Torale.",
+    body="You can close this tab and return to webwhen.",
 )
 
 
