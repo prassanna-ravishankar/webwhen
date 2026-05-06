@@ -79,35 +79,39 @@ async def generate_sitemap_index(request: Request, db: Database = Depends(get_db
 @router.get("/sitemap-dynamic.xml")
 async def generate_sitemap_dynamic(request: Request, db: Database = Depends(get_db)):
     """
-    Dynamic sitemap covering DB-derived public pages: landing, explore, changelog,
-    and every public task. Linked from /sitemap.xml (the index).
+    Dynamic sitemap covering DB-derived public pages: landing and changelog.
+
+    /explore and /tasks/<UUID> were intentionally removed in SEO audit V2 (B3):
+    those routes are not prerendered, so they shipped an empty SPA shell to
+    non-JS crawlers — submitting them in the sitemap promised content that
+    wasn't there. They will return when /explore + public task pages are
+    server-rendered or build-time prerendered with a fetched snapshot.
+
+    Why not just drop this whole sitemap-dynamic surface? `/` and `/changelog`
+    benefit from DB-derived lastmod values: changelog.json is the source of
+    truth for changelog freshness, and `/` carries the "newest public task
+    last seen" signal via the latest is_public task's updated_at. The static
+    sitemap can only use git commit dates, which fire on every deploy.
     """
     if not _is_marketing_host(request):
         raise HTTPException(status_code=404)
 
-    tasks_query = """
-        SELECT t.id, t.updated_at
-        FROM tasks t
-        WHERE t.is_public = true
-        ORDER BY t.updated_at DESC
-    """
-
-    tasks = await db.fetch_all(tasks_query)
-
-    # Build XML sitemap using xml.etree
     base_url = settings.frontend_url
 
     # Create root element with namespace
     urlset = ET.Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
 
-    # Get max updated_at from public tasks for explore page lastmod
-    explore_lastmod = (
-        max(task["updated_at"] for task in tasks).strftime("%Y-%m-%d")
-        if tasks
+    # Landing-page lastmod tracks the newest public task we've published.
+    latest_task_lastmod = await db.fetch_val(
+        "SELECT MAX(updated_at) FROM tasks WHERE is_public = true"
+    )
+    landing_lastmod = (
+        latest_task_lastmod.strftime("%Y-%m-%d")
+        if latest_task_lastmod
         else datetime.now().strftime("%Y-%m-%d")
     )
 
-    # Get changelog lastmod from most recent entry
+    # Changelog lastmod from the most recent entry in changelog.json.
     changelog_lastmod = datetime.now().strftime("%Y-%m-%d")
     try:
         changelog_path = Path(settings.changelog_json_path)
@@ -117,25 +121,18 @@ async def generate_sitemap_dynamic(request: Request, db: Database = Depends(get_
             with open(changelog_path, encoding="utf-8") as f:
                 changelog_entries = json.load(f)
                 if changelog_entries:
-                    # Get date from most recent entry (entries are sorted newest first)
+                    # Entries are sorted newest first.
                     changelog_lastmod = changelog_entries[0]["date"]
     except Exception:
         # Fall back to current date if changelog read fails
         pass
 
-    # Static pages with lastmod
-    static_pages = [
+    pages = [
         {
             "loc": f"{base_url}/",
             "priority": "1.0",
             "changefreq": "daily",
-            "lastmod": datetime.now().strftime("%Y-%m-%d"),
-        },
-        {
-            "loc": f"{base_url}/explore",
-            "priority": "0.9",
-            "changefreq": "hourly",
-            "lastmod": explore_lastmod,
+            "lastmod": landing_lastmod,
         },
         {
             "loc": f"{base_url}/changelog",
@@ -145,26 +142,13 @@ async def generate_sitemap_dynamic(request: Request, db: Database = Depends(get_
         },
     ]
 
-    for page in static_pages:
+    for page in pages:
         url_elem = ET.SubElement(urlset, "url")
         ET.SubElement(url_elem, "loc").text = page["loc"]
         ET.SubElement(url_elem, "changefreq").text = page["changefreq"]
         ET.SubElement(url_elem, "priority").text = page["priority"]
-        if "lastmod" in page:
-            ET.SubElement(url_elem, "lastmod").text = page["lastmod"]
+        ET.SubElement(url_elem, "lastmod").text = page["lastmod"]
 
-    # Public task pages
-    for task in tasks:
-        task_url = f"{base_url}/tasks/{task['id']}"
-        lastmod = task["updated_at"].strftime("%Y-%m-%d")
-
-        url_elem = ET.SubElement(urlset, "url")
-        ET.SubElement(url_elem, "loc").text = task_url
-        ET.SubElement(url_elem, "lastmod").text = lastmod
-        ET.SubElement(url_elem, "changefreq").text = "weekly"
-        ET.SubElement(url_elem, "priority").text = "0.8"
-
-    # Convert to XML with declaration
     xml_output = ET.tostring(urlset, encoding="utf-8", xml_declaration=True)
 
     return Response(content=xml_output, media_type="application/xml")
