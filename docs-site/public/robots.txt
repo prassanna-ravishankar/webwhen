@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://docs.torale.ai/sitemap.xml
-Sitemap: https://torale.ai/sitemap.xml
+Sitemap: https://docs.webwhen.ai/sitemap.xml
