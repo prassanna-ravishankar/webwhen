@@ -124,6 +124,41 @@ for (const route of ROUTES) {
   await page.close();
 }
 
+// Render dist/404.html — the React app's NotFound shell — for nginx's
+// error_page 404 directive. SEO audit V2 (B1): unknown URLs previously
+// served the SPA shell with HTTP 200 + canonical=/, creating a soft-404
+// avalanche (every typo became a homepage duplicate in Google's index).
+//
+// We navigate to a guaranteed-non-route path; the React-Router catch-all
+// (`<Route path="*" element={<NotFound />} />`) renders NotFound, which
+// emits robots noindex via DynamicMeta and skips canonical. Nginx then
+// serves this HTML when it returns 404 for unmatched paths.
+{
+  const page = await context.newPage();
+  page.on('pageerror', (err) => console.error(`  [error] /404: ${err.message}`));
+  await page.goto(`http://localhost:${PORT}/__webwhen_404_for_prerender__`, {
+    waitUntil: 'networkidle',
+  });
+  try {
+    await page.waitForSelector('nav, main, h1', { timeout: 15000 });
+  } catch {
+    const bodyHTML = await page.evaluate(() => document.body.innerHTML.slice(0, 300));
+    console.error(`  SKIP /404 (render failed). Body: ${bodyHTML}`);
+    failed++;
+  }
+  if (!page.isClosed()) {
+    await page.evaluate(() => {
+      delete window.__PRERENDER__;
+      delete window.__PRERENDER_ORIGIN__;
+      delete window.__PRERENDER_CHANGELOG__;
+    });
+    const html = await page.content();
+    writeFileSync(join(DIST, '404.html'), html, 'utf-8');
+    console.log('  OK /404 (NotFound shell)');
+    await page.close();
+  }
+}
+
 await browser.close();
 server.close();
 
