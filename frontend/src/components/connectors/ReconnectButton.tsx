@@ -36,7 +36,7 @@ export const ReconnectButton: React.FC<ReconnectButtonProps> = ({
         popup.location.href = redirect_url;
         popup.opener = null;
       } else {
-        toast.error('Popup blocked. Allow popups for Torale and try again.');
+        toast.error('Popup blocked. Allow popups for webwhen and try again.');
       }
     } catch (err) {
       if (popup) popup.close();
