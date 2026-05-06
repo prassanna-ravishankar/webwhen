@@ -230,6 +230,12 @@ async def robots_txt():
     if base_url not in PROD_FRONTEND_URLS:
         return Response(content="User-agent: *\nDisallow: /\n", media_type="text/plain")
 
+    # Disallow covers both live hyphenated routes (/sign-in, /sign-up) and
+    # the legacy un-hyphenated forms (/signin, /signup) so historical inbound
+    # links remain covered. /admin and /admin/ both listed because /admin/
+    # only matches /admin/foo, not /admin exact. /dashboard and /welcome
+    # added — auth-gated SPA routes that should not be indexed. /tasks/
+    # stays Allow (covers public task pages in sitemap-dynamic).
     robots = f"""User-agent: *
 Allow: /
 Allow: /explore
@@ -238,9 +244,14 @@ Allow: /tasks/
 Disallow: /api/
 Disallow: /auth/
 Disallow: /signin
+Disallow: /sign-in
 Disallow: /signup
+Disallow: /sign-up
 Disallow: /settings
+Disallow: /admin
 Disallow: /admin/
+Disallow: /dashboard
+Disallow: /welcome
 
 Sitemap: {base_url}/sitemap.xml
 """
