@@ -5,8 +5,9 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from email.utils import format_datetime
 from pathlib import Path
+from urllib.parse import urlparse
 
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 
 from torale.core.config import PROJECT_ROOT, settings
 from torale.core.database import Database, get_db
@@ -17,13 +18,39 @@ ET.register_namespace("atom", "http://www.w3.org/2005/Atom")
 router = APIRouter(tags=["seo"])
 
 
+def _is_marketing_host(request: Request) -> bool:
+    """
+    True when the inbound request hits the marketing-zone hostname (the host
+    component of settings.frontend_url).
+
+    The same FastAPI app serves both marketing-routed paths via Gateway
+    HTTPRoute (/sitemap.xml, /robots.txt, /changelog.xml on webwhen.ai) and
+    the API zone (api.webwhen.ai). The k8s HTTPRoute for api.webwhen.ai
+    forwards every path to this app, so /sitemap.xml on the api host would
+    otherwise mirror the marketing sitemap — confusing for crawlers and a
+    cross-host sitemap-declaration anti-pattern. SEO audit V2 (B4).
+
+    Falls back to True when request.url.hostname is unavailable (test client
+    edge cases) so existing tests and unauthenticated localhost dev don't
+    regress.
+    """
+    request_host = request.url.hostname
+    if not request_host:
+        return True
+    marketing_host = urlparse(settings.frontend_url).hostname
+    return request_host == marketing_host
+
+
 @router.get("/sitemap.xml")
-async def generate_sitemap_index(db: Database = Depends(get_db)):
+async def generate_sitemap_index(request: Request, db: Database = Depends(get_db)):
     """
     Sitemap index pointing at the static (frontend-served) and dynamic (backend)
     child sitemaps. Frontend owns enumerated SEO routes (publicRoutes.ts);
     backend owns DB-derived public task pages.
     """
+    if not _is_marketing_host(request):
+        raise HTTPException(status_code=404)
+
     base_url = settings.frontend_url
 
     latest_task_lastmod = await db.fetch_val(
@@ -50,11 +77,14 @@ async def generate_sitemap_index(db: Database = Depends(get_db)):
 
 
 @router.get("/sitemap-dynamic.xml")
-async def generate_sitemap_dynamic(db: Database = Depends(get_db)):
+async def generate_sitemap_dynamic(request: Request, db: Database = Depends(get_db)):
     """
     Dynamic sitemap covering DB-derived public pages: landing, explore, changelog,
     and every public task. Linked from /sitemap.xml (the index).
     """
+    if not _is_marketing_host(request):
+        raise HTTPException(status_code=404)
+
     tasks_query = """
         SELECT t.id, t.updated_at
         FROM tasks t
@@ -141,13 +171,16 @@ async def generate_sitemap_dynamic(db: Database = Depends(get_db)):
 
 
 @router.get("/changelog.xml")
-async def generate_changelog_rss():
+async def generate_changelog_rss(request: Request):
     """
     Generate RSS 2.0 feed for changelog.
 
     Reads changelog.json from frontend/public and converts to RSS format.
     Includes first 50 entries with proper RFC-2822 date formatting.
     """
+    if not _is_marketing_host(request):
+        raise HTTPException(status_code=404)
+
     # Get changelog path from settings (supports both relative and absolute paths)
     changelog_path = Path(settings.changelog_json_path)
     if not changelog_path.is_absolute():
@@ -220,12 +253,16 @@ PROD_FRONTEND_URLS = frozenset({"https://webwhen.ai", "https://torale.ai"})
 
 
 @router.get("/robots.txt")
-async def robots_txt():
+async def robots_txt(request: Request):
     """
-    robots.txt for search engine crawlers. Non-prod hosts return a blanket
-    disallow so staging/preview deployments don't get indexed.
+    robots.txt for search engine crawlers. Non-prod hosts and the API host
+    return a blanket disallow so staging/preview deployments and api.webwhen.ai
+    don't get indexed (api host has no public web pages — see B4).
     """
     base_url = settings.frontend_url
+
+    if not _is_marketing_host(request):
+        return Response(content="User-agent: *\nDisallow: /\n", media_type="text/plain")
 
     if base_url not in PROD_FRONTEND_URLS:
         return Response(content="User-agent: *\nDisallow: /\n", media_type="text/plain")
