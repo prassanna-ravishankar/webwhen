@@ -522,7 +522,7 @@
 }
 .footerGrid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
   gap: 48px;
   padding-bottom: 64px;
   border-bottom: 1px solid #2A2A2D;

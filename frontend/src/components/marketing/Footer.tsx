@@ -34,13 +34,27 @@ export const Footer: React.FC = () => {
           <h4 className={styles.footerHeading}>Product</h4>
           <ul className={styles.footerList}>
             <li className={styles.footerListItem}>
-              <Link to="/dashboard">Dashboard</Link>
-            </li>
-            <li className={styles.footerListItem}>
               <Link to="/explore">Explore</Link>
             </li>
             <li className={styles.footerListItem}>
               <Link to="/changelog">Changelog</Link>
+            </li>
+            <li className={styles.footerListItem}>
+              <Link to="/concepts/self-scheduling-agents">Self-scheduling agents</Link>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4 className={styles.footerHeading}>Compare</h4>
+          <ul className={styles.footerList}>
+            <li className={styles.footerListItem}>
+              <Link to="/compare/visualping-alternative">vs VisualPing</Link>
+            </li>
+            <li className={styles.footerListItem}>
+              <Link to="/compare/distill-alternative">vs Distill</Link>
+            </li>
+            <li className={styles.footerListItem}>
+              <Link to="/compare/changetower-alternative">vs ChangeTower</Link>
             </li>
           </ul>
         </div>
@@ -52,9 +66,6 @@ export const Footer: React.FC = () => {
             </li>
             <li className={styles.footerListItem}>
               <a href="https://github.com/prassanna-ravishankar/torale">GitHub</a>
-            </li>
-            <li className={styles.footerListItem}>
-              <Link to="/compare/visualping-alternative">Compare</Link>
             </li>
           </ul>
         </div>

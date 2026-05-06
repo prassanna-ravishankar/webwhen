@@ -62,7 +62,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "style-src 'self' 'unsafe-inline'; "
             "img-src 'self' data:; "
             "font-src 'self'; "
-            "connect-src 'self' https://*.torale.ai; "
+            "connect-src 'self' https://*.webwhen.ai; "
             "frame-ancestors 'none'; "
             "object-src 'none'; "
             "base-uri 'self';"
