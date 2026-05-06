@@ -28,13 +28,11 @@ const STATIC_ROUTES: PublicRoute[] = [
     description: 'What webwhen has been up to. Built in the open.',
     priority: 0.7,
   },
-  {
-    path: '/explore',
-    title: 'Explore — webwhen',
-    description:
-      'See what people are watching with webwhen — public watches and recent triggers across the open web.',
-    priority: 0.9,
-  },
+  // /explore is intentionally absent — it depends on a runtime API fetch and
+  // does not prerender meaningfully (the SPA shell ships empty to non-JS
+  // crawlers). Re-add once /explore is server-rendered or build-time
+  // prerendered with a fetched feed snapshot. SEO audit V2 (B3); follow-up:
+  // prerender /explore + public /tasks/<UUID>.
   {
     path: '/terms',
     title: 'Terms — webwhen',
