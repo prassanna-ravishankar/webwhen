@@ -49,11 +49,15 @@ export default withMermaid(
     ['meta', { name: 'theme-color', content: '#0B0B0C' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:site_name', content: 'webwhen docs' }],
-    ['meta', { property: 'og:image', content: `${SITE_ORIGIN}/og-image.png` }],
+    // Reuse the webwhen.ai OG image for docs social cards. docs-site has no
+    // og-image asset of its own (and the previous `${SITE_ORIGIN}/og-image.png`
+    // 404'd, breaking social card scrapers). Cross-origin OG images are fine —
+    // all major crawlers fetch them. See #seo-preflight.
+    ['meta', { property: 'og:image', content: 'https://webwhen.ai/og-image.webp' }],
     ['meta', { property: 'og:image:width', content: '1200' }],
     ['meta', { property: 'og:image:height', content: '630' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
-    ['meta', { name: 'twitter:image', content: `${SITE_ORIGIN}/og-image.png` }],
+    ['meta', { name: 'twitter:image', content: 'https://webwhen.ai/og-image.webp' }],
   ],
 
   // Per-page meta has to land in static HTML — VitePress sets it client-side
