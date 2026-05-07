@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode, Suspense, lazy, useMemo } from 'react'
+import React, { createContext, useContext, ReactNode, Suspense, lazy, useMemo, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { NoAuthProvider } from './NoAuthProvider'
 
@@ -60,6 +60,29 @@ const PendingAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
+// Anonymous-on-marketing context: Clerk is intentionally never loaded, so the
+// auth state is *known* (anonymous) rather than pending. Renders with
+// `isLoaded: false` on the first paint to match the prerendered HTML, then
+// flips to `isLoaded: true` after mount so any consumer waiting on the
+// AuthContext contract can proceed. The post-mount flip is a normal state
+// update, not a hydration mismatch.
+const MarketingAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [isLoaded, setIsLoaded] = useState(false)
+  useEffect(() => {
+    setIsLoaded(true)
+  }, [])
+  const value = useMemo<AuthContextType>(
+    () => ({
+      isLoaded,
+      isAuthenticated: false,
+      user: null,
+      getToken: async () => null,
+    }),
+    [isLoaded],
+  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+}
+
 // Routes that always need Clerk: auth flows + the authenticated app shell.
 // Anything not matching is treated as a marketing/SEO route and only
 // hydrates Clerk if a session cookie is already present. Public marketing
@@ -69,6 +92,10 @@ const PendingAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 const AUTH_REQUIRED_PREFIXES = [
   '/sign-in',
   '/sign-up',
+  // /waitlist runs Clerk's CapacityGate + AuthRedirect logic and lives behind
+  // ClerkProvider's `waitlistUrl` config — Clerk needs to be hydrated for
+  // sign-up gating to work. (Per gemini-code-assist on PR #337.)
+  '/waitlist',
   '/dashboard',
   '/tasks',
   '/settings',
@@ -125,7 +152,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Logged-in users (cookie present) still get Clerk hydrated so Nav can
   // swap "Sign in" → "Dashboard".
   if (!isAuthRequiredPath(pathname) && !hasClerkSession()) {
-    return <PendingAuthProvider>{children}</PendingAuthProvider>
+    return <MarketingAuthProvider>{children}</MarketingAuthProvider>
   }
 
   return (
