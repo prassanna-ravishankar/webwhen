@@ -6,14 +6,17 @@ import { AuthProvider } from './contexts/AuthContext'
 import App from './App'
 import './index.css'
 
+// BrowserRouter is above AuthProvider so AuthProvider can read useLocation()
+// to decide whether the current route needs Clerk hydrated. Marketing routes
+// without a Clerk session cookie skip the lazy import entirely.
 const app = (
   <React.StrictMode>
     <HelmetProvider>
-      <AuthProvider>
-        <BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
           <App />
-        </BrowserRouter>
-      </AuthProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </HelmetProvider>
   </React.StrictMode>
 )

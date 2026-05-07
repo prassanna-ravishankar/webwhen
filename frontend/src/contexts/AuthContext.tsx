@@ -1,4 +1,5 @@
-import React, { createContext, useContext, ReactNode, Suspense, lazy, useMemo } from 'react'
+import React, { createContext, useContext, ReactNode, Suspense, lazy, useMemo, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { NoAuthProvider } from './NoAuthProvider'
 
 // Lazy-loaded so the Clerk SDK (77 KiB gzip) is not part of the initial bundle.
@@ -59,7 +60,75 @@ const PendingAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
+// Anonymous-on-marketing context: Clerk is intentionally never loaded, so the
+// auth state is *known* (anonymous) rather than pending. Renders with
+// `isLoaded: false` on the first paint to match the prerendered HTML, then
+// flips to `isLoaded: true` after mount so any consumer waiting on the
+// AuthContext contract can proceed. The post-mount flip is a normal state
+// update, not a hydration mismatch.
+const MarketingAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [isLoaded, setIsLoaded] = useState(false)
+  useEffect(() => {
+    setIsLoaded(true)
+  }, [])
+  const value = useMemo<AuthContextType>(
+    () => ({
+      isLoaded,
+      isAuthenticated: false,
+      user: null,
+      getToken: async () => null,
+    }),
+    [isLoaded],
+  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+}
+
+// Routes that always need Clerk: auth flows + the authenticated app shell.
+// Anything not matching is treated as a marketing/SEO route and only
+// hydrates Clerk if a session cookie is already present. Public marketing
+// routes live in `data/publicRoutes.ts`; this list is the inverse and is
+// kept inline because it only needs to identify the auth boundary, not
+// every individual marketing path.
+const AUTH_REQUIRED_PREFIXES = [
+  '/sign-in',
+  '/sign-up',
+  // /waitlist runs Clerk's CapacityGate + AuthRedirect logic and lives behind
+  // ClerkProvider's `waitlistUrl` config — Clerk needs to be hydrated for
+  // sign-up gating to work. (Per gemini-code-assist on PR #337.)
+  '/waitlist',
+  '/dashboard',
+  '/tasks',
+  '/settings',
+  '/admin',
+  '/welcome',
+  '/explore',
+] as const
+
+function isAuthRequiredPath(pathname: string): boolean {
+  return AUTH_REQUIRED_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(p + '/'),
+  )
+}
+
+// Clerk sets `__client_uat` (user authenticated timestamp) on the app domain.
+// It's JS-readable by design — Clerk uses it client-side to detect "is this
+// browser signed in" before paying the cost of loading the full SDK. We use
+// the same probe so logged-in users on / still get the "Dashboard" nav.
+// Note: `__session` is the JWT and is HttpOnly under Clerk's defaults, so it
+// can't be read from JS. Only `__client_uat` works as a cheap signal here.
+function hasClerkSession(): boolean {
+  if (typeof document === 'undefined') return false
+  return /(?:^|;\s*)__client_uat=/.test(document.cookie)
+}
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  // useLocation must run unconditionally to satisfy rules-of-hooks. The early
+  // returns below short-circuit on env constants (NOAUTH, __PRERENDER__) which
+  // never change across renders for a given app instance, so React's hook
+  // order stays stable in practice — but reading the location up front keeps
+  // the dependency obvious and lint-clean.
+  const { pathname } = useLocation()
+
   // VITE_TORALE_NOAUTH is the local-dev escape hatch — runs against a mocked
   // user end-to-end. NoAuthProvider returns a stable mock user so dev flows
   // work without Clerk.
@@ -75,6 +144,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // every marketing route. See #299.
   if (window.__PRERENDER__) {
     return <PendingAuthProvider>{children}</PendingAuthProvider>
+  }
+
+  // Anonymous visitor on a marketing route: skip the Clerk lazy import so
+  // /, /changelog, /compare/*, /use-cases/*, /concepts/*, /terms, /privacy
+  // never trigger ~250 KiB of Clerk SDK + 2 auth XHRs during the LCP window.
+  // Logged-in users (cookie present) still get Clerk hydrated so Nav can
+  // swap "Sign in" → "Dashboard".
+  if (!isAuthRequiredPath(pathname) && !hasClerkSession()) {
+    return <MarketingAuthProvider>{children}</MarketingAuthProvider>
   }
 
   return (
