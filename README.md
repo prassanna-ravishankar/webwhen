@@ -1,18 +1,20 @@
 <div align="center">
-  <img src="./frontend/public/logo.svg" alt="τorale" width="120" height="120">
-  <h1>τorale</h1>
-  <p><strong>Grounded search monitoring platform for AI-powered conditional automation</strong></p>
+  <img src="./frontend/public/brand/webwhen-mark.svg" alt="webwhen" width="120" height="120">
+  <h1>webwhen</h1>
+  <p><strong>The agent that waits for the web.</strong></p>
 
   [![PyPI version](https://badge.fury.io/py/torale.svg)](https://badge.fury.io/py/torale)
   [![Deploy](https://github.com/prassanna-ravishankar/torale/actions/workflows/production.yml/badge.svg)](https://github.com/prassanna-ravishankar/torale/actions/workflows/production.yml)
-  [![App](https://img.shields.io/badge/app-torale.ai-green)](https://torale.ai)
-  [![Documentation](https://img.shields.io/badge/docs-torale.ai-blue)](https://docs.torale.ai)
+  [![App](https://img.shields.io/badge/app-webwhen.ai-green)](https://webwhen.ai)
+  [![Documentation](https://img.shields.io/badge/docs-webwhen.ai-blue)](https://docs.webwhen.ai)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 </div>
 
 ---
 
-Monitor the web for specific conditions using Google Search + LLM analysis, then get notified when they're met.
+Tell webwhen what to watch for in plain English. It searches the web on a schedule, evaluates the evidence, and tells you the moment your condition is met.
+
+> **Note on naming.** The product is now **webwhen** (rebranded from Torale in 2026-04). The Python SDK package on PyPI is still published as `torale` for backwards compatibility, so `pip install torale` continues to work. Internal code paths (`backend/src/torale/`, the `torale` k8s namespace, `TORALE_*` env vars) also remain unchanged. The GitHub repo will be renamed in a later wave; until then, `prassanna-ravishankar/torale` is canonical.
 
 ## Use Cases
 
@@ -28,28 +30,28 @@ Monitor the web for specific conditions using Google Search + LLM analysis, then
 pip install torale
 ```
 
-Get started at **[torale.ai](https://torale.ai)** or see the [Quick Start](#quick-start) guide below.
+Get started at **[webwhen.ai](https://webwhen.ai)** or see the [Quick Start](#quick-start) guide below.
 
 ## How It Works
 
-1. **Create a monitoring task** with a search query and condition
-2. **Agent searches the web** via Perplexity with cross-run memory (Mem0)
-3. **Agent evaluates** if your condition is met based on search results
-4. **You get notified** when condition triggers (once or always)
+1. **Describe a condition** in plain English with a search query
+2. **The agent searches the web** via Perplexity with cross-run memory (Mem0)
+3. **The agent evaluates** whether your condition is met from the evidence
+4. **You hear about it** the moment it triggers (once or always)
 
 ## Quick Start
 
 ### Option 1: Use the Hosted Service (Recommended)
 
-The fastest way to get started is using the hosted service at **[torale.ai](https://torale.ai)**:
+The fastest way to get started is using the hosted service at **[webwhen.ai](https://webwhen.ai)**:
 
-1. **Sign up** at https://torale.ai (Google/GitHub OAuth or email)
-2. **Create monitoring tasks** via the web dashboard
+1. **Sign up** at https://webwhen.ai (Google/GitHub OAuth or email)
+2. **Create watches** via the web dashboard
 3. **Get notified** when conditions are met
 
 ### Option 2: Use the Python SDK
 
-Integrate Torale into your Python applications for programmatic task management.
+Integrate webwhen into your Python applications for programmatic watch management.
 
 #### Installation
 
@@ -61,7 +63,7 @@ pip install torale
 
 The SDK requires developer access. To get an API key:
 
-1. Sign up at https://torale.ai
+1. Sign up at https://webwhen.ai
 2. Contact support to request developer access (adds `role: "developer"` to your account)
 3. Go to Settings → API Access and generate an API key
 4. Configure the SDK with your API key
@@ -265,7 +267,7 @@ except APIError as e:
 
 ### Option 3: Self-Hosted Setup
 
-Run Torale on your own infrastructure:
+Run webwhen on your own infrastructure:
 
 #### 1. Install Dependencies
 ```bash
@@ -319,7 +321,7 @@ curl -X POST http://localhost:8000/api/v1/tasks \
 
 ## Frontend
 
-The Torale frontend is a React + TypeScript application built with Vite.
+The webwhen frontend is a React + TypeScript application built with Vite.
 
 ### Setup
 ```bash
@@ -338,8 +340,8 @@ npm run dev
 
 ### Features
 - **Authentication**: Clerk (Google/GitHub OAuth + email/password)
-- **Dashboard**: View and manage all monitoring tasks
-- **Task Creation**: Create new monitoring tasks with search queries and conditions
+- **Dashboard**: View and manage all watches
+- **Task Creation**: Create new watches with search queries and conditions
 - **Task Details**: View execution history, notifications, and state changes
 - **API Key Management**: Generate API keys for SDK access
 - **Real-time Updates**: Auto-refresh execution status
@@ -368,7 +370,7 @@ Access the frontend at http://localhost:3000 after starting the dev server.
 - **Database**: Cloud SQL PostgreSQL 16 (managed, zonal)
 - **Orchestration**: APScheduler + GitHub Actions CI/CD
 - **Cost**: Spot pods (60-91% savings), zonal Cloud SQL
-- **Domains**: api.torale.ai (API), torale.ai (Frontend)
+- **Domains**: api.webwhen.ai (API), webwhen.ai (Frontend)
 
 ## Features
 
@@ -385,13 +387,13 @@ Access the frontend at http://localhost:3000 after starting the dev server.
 - API key authentication for SDK
 - Frontend dashboard with task management
 - GKE deployment with cost optimization
-- **Immediate Task Execution** - Run monitoring tasks instantly after creation
+- **Immediate Task Execution** - Run watches instantly after creation
 - **AI-Powered Task Creation** - "Magic Input" uses LLM to generate task configuration from natural language
 - **Context-Aware Task Refinement** - "Magic Refine" updates existing tasks while preserving context
 - **Simplified Task Creation UX** - 3 fields + a toggle
 
 ### 📋 Future Roadmap
-- **Shareable Tasks**: Share monitoring tasks with rich OpenGraph previews
+- **Shareable Tasks**: Share watches with rich OpenGraph previews
 - External notifications (email/SMS/Slack via webhooks)
 - Browser automation for dynamic sites
 - Price tracking with charts
@@ -415,15 +417,13 @@ Systematic evaluation framework for comparing grounded search approaches. See [`
 
 ## Testing
 
-Torale has comprehensive unit tests covering the agent pipeline, scheduler, and API.
+webwhen has comprehensive unit tests covering the agent pipeline, scheduler, and API.
 
 ```bash
 just test               # Run backend unit tests
 just test-cov           # Run with coverage report
 just lint               # Run ruff linting
 ```
-
-See [docs-site/contributing/testing.md](https://docs.torale.ai/contributing/testing) for detailed testing guide.
 
 ## Deployment
 
@@ -437,7 +437,7 @@ just dev-noauth  # Start everything in no-auth mode
 
 ### CI/CD (Recommended)
 
-Torale uses **GitHub Actions** for automated CI/CD with production and branch deployments.
+webwhen uses **GitHub Actions** for automated CI/CD with production and branch deployments.
 
 **Setup (one-time with keyless auth):**
 ```bash
@@ -448,8 +448,6 @@ Then add 3 GitHub secrets (outputted by script):
 - `GCP_PROJECT_ID`
 - `GCP_SERVICE_ACCOUNT`
 - `GCP_WORKLOAD_IDENTITY_PROVIDER`
-
-See [CI/CD Setup](https://docs.torale.ai/deployment/ci-cd) for detailed setup.
 
 **Automatic deployments:**
 - **Push to `main`** → Production deployment (`torale` namespace)
@@ -487,7 +485,7 @@ just k8s-setup      # Create Cloud SQL + IAM
 just k8s-secrets    # Create K8s secrets from .env
 
 # Manual deploy (if not using CI/CD)
-just k8s-deploy-all # Deploy Torale
+just k8s-deploy-all # Deploy webwhen
 
 # Manage
 just k8s-status     # Check deployment status
@@ -495,9 +493,8 @@ just k8s-logs-api   # View API logs
 ```
 
 **Access:**
-- Frontend: https://torale.ai
-- API: https://api.torale.ai
-See [Kubernetes Deployment](https://docs.torale.ai/deployment/kubernetes) for detailed guide.
+- Frontend: https://webwhen.ai
+- API: https://api.webwhen.ai
 
 ## How Grounded Search Works
 
