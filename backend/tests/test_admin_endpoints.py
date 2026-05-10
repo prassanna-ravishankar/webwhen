@@ -7,13 +7,13 @@ from uuid import uuid4
 import pytest
 from fastapi import HTTPException
 
-from torale.api.routers.admin import (
+from webwhen.api.routers.admin import (
     AdminTaskStateUpdateRequest,
     admin_update_task_state,
     reset_task_history,
 )
-from torale.tasks import TaskState
-from torale.tasks.service import InvalidTransitionError, TaskService
+from webwhen.tasks import TaskState
+from webwhen.tasks.service import InvalidTransitionError, TaskService
 
 
 @pytest.fixture
@@ -257,7 +257,7 @@ class TestAdminUpdateTaskState:
         with patch.object(TaskService, "transition") as mock_transition:
             mock_transition.return_value = {"success": True, "schedule_action": "created"}
 
-            with patch("torale.api.routers.admin.datetime") as mock_dt:
+            with patch("webwhen.api.routers.admin.datetime") as mock_dt:
                 mock_dt.now.return_value = mock_now
 
                 await admin_update_task_state(

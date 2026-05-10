@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Torale API Key Usage Examples
+Webwhen API Key Usage Examples
 
-This file demonstrates how to authenticate and use the Torale SDK with API keys.
+This file demonstrates how to authenticate and use the Webwhen SDK with API keys.
 
 Prerequisites:
-1. Generate an API key from the Torale web dashboard (Settings > API Access)
-2. Add the API key to your root .env file: TORALE_API_KEY=sk_...
-3. Install the SDK: pip install torale (or use uv in this repo)
+1. Generate an API key from the webwhen web dashboard (Settings > API Access)
+2. Add the API key to your root .env file: WEBWHEN_API_KEY=sk_...
+3. Install the SDK: pip install webwhen (or use uv in this repo)
 
 Run this file:
     python backend/examples/api_key_usage.py --local  # Use local dev server
@@ -21,7 +21,7 @@ import os
 from dotenv import load_dotenv
 
 # Parse args BEFORE loading SDK to set environment correctly
-parser = argparse.ArgumentParser(description="Torale SDK API Key Usage Examples")
+parser = argparse.ArgumentParser(description="Webwhen SDK API Key Usage Examples")
 parser.add_argument(
     "--local",
     action="store_true",
@@ -41,14 +41,14 @@ args = parser.parse_args()
 
 # Set dev mode BEFORE importing SDK
 if args.local:
-    os.environ["TORALE_DEV"] = "1"
+    os.environ["WEBWHEN_DEV"] = "1"
 
 # Load environment variables from root .env file
 load_dotenv()
 
 # ruff: noqa: E402
-# SDK must be imported AFTER setting TORALE_DEV environment variable
-from torale.sdk import Torale, ToraleAsync
+# SDK must be imported AFTER setting WEBWHEN_DEV environment variable
+from webwhen.sdk import Webwhen, WebwhenAsync
 
 
 def example_1_env_variable():
@@ -56,12 +56,12 @@ def example_1_env_variable():
     Method 1: Authentication via Environment Variable (RECOMMENDED)
 
     This is the recommended approach for production use.
-    Add TORALE_API_KEY=sk_... to your .env file or environment.
+    Add WEBWHEN_API_KEY=sk_... to your .env file or environment.
     """
     print("\n=== Example 1: Authentication via Environment Variable ===")
 
-    # The SDK automatically reads TORALE_API_KEY from environment
-    client = Torale()
+    # The SDK automatically reads WEBWHEN_API_KEY from environment
+    client = Webwhen()
 
     # List all tasks
     print("Fetching your monitoring tasks...")
@@ -87,14 +87,14 @@ def example_2_explicit_api_key():
     print("\n=== Example 2: Explicit API Key ===")
 
     # Get API key from environment (in real code, you might hardcode for testing)
-    api_key = os.getenv("TORALE_API_KEY")
+    api_key = os.getenv("WEBWHEN_API_KEY")
 
     if not api_key:
-        print("⚠️  TORALE_API_KEY not found in environment")
+        print("⚠️  WEBWHEN_API_KEY not found in environment")
         return None
 
     # Pass API key explicitly
-    client = Torale(api_key=api_key)
+    client = Webwhen(api_key=api_key)
     print(f"✓ Authenticated with explicit key: {api_key[:20]}...")
 
     # Get task count
@@ -110,7 +110,7 @@ def example_4_create_task():
     """
     print("\n=== Example: Create a Monitoring Task ===\n")
 
-    client = Torale()
+    client = Webwhen()
 
     # Create a new monitoring task
     print("Creating task: 'iPhone 16 Release Monitor'...")
@@ -134,7 +134,7 @@ def example_5_fluent_api():
     """
     print("\n=== Example: Fluent/Builder API ===\n")
 
-    client = Torale()
+    client = Webwhen()
 
     # Create task using fluent API
     print("Creating task with fluent API...")
@@ -154,7 +154,7 @@ def example_6_task_webhooks():
     """
     print("\n=== Example: Task with Webhook Notifications ===\n")
 
-    client = Torale()
+    client = Webwhen()
 
     # Method 1: Direct API with webhook notification
     print("Creating task with webhook notification (Direct API)...")
@@ -189,7 +189,7 @@ def example_7_task_operations():
     """
     print("\n=== Example: Task Operations ===\n")
 
-    client = Torale()
+    client = Webwhen()
 
     # List tasks
     tasks = client.tasks.list()
@@ -229,7 +229,7 @@ def example_8_webhook_management():
     """
     print("\n=== Example: Webhook Configuration & Testing ===\n")
 
-    client = Torale()
+    client = Webwhen()
 
     # Get current webhook config
     print("Fetching current webhook configuration...")
@@ -277,7 +277,7 @@ async def example_9_async_usage():
     """
     print("\n=== Example: Async SDK Usage ===\n")
 
-    async with ToraleAsync() as client:
+    async with WebwhenAsync() as client:
         # Fetch tasks asynchronously
         print("Fetching tasks asynchronously...")
         tasks = await client.tasks.list()
@@ -319,11 +319,11 @@ def main():
     print("=" * 60)
 
     # Check if API key is configured
-    if not os.getenv("TORALE_API_KEY"):
-        print("\n⚠️  WARNING: TORALE_API_KEY not found in environment!")
+    if not os.getenv("WEBWHEN_API_KEY"):
+        print("\n⚠️  WARNING: WEBWHEN_API_KEY not found in environment!")
         print("\nTo use these examples:")
         print("1. Generate an API key from: https://torale.ai/settings")
-        print("2. Add to your .env file: TORALE_API_KEY=sk_...")
+        print("2. Add to your .env file: WEBWHEN_API_KEY=sk_...")
         print("3. Run this script again")
         return
 
@@ -364,7 +364,7 @@ def main():
         print(f"\n❌ Error: {e}")
         print("\nMake sure:")
         print("1. Your API key is valid and active")
-        print("2. The Torale API is running (just dev)")
+        print("2. The Webwhen API is running (just dev)")
         print("3. You have the correct permissions")
 
 

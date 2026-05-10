@@ -3,7 +3,7 @@
 import asyncpg.exceptions as asyncpg_ex
 import pytest
 
-from torale.scheduler.errors import ErrorCategory, classify_error, get_user_friendly_message
+from webwhen.scheduler.errors import ErrorCategory, classify_error, get_user_friendly_message
 
 
 class TestErrorClassification:

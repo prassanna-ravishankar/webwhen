@@ -129,10 +129,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // the dependency obvious and lint-clean.
   const { pathname } = useLocation()
 
-  // VITE_TORALE_NOAUTH is the local-dev escape hatch — runs against a mocked
+  // VITE_WEBWHEN_NOAUTH is the local-dev escape hatch — runs against a mocked
   // user end-to-end. NoAuthProvider returns a stable mock user so dev flows
   // work without Clerk.
-  if (import.meta.env.VITE_TORALE_NOAUTH === '1') {
+  if (import.meta.env.VITE_WEBWHEN_NOAUTH === '1') {
     return <NoAuthProvider>{children}</NoAuthProvider>
   }
 

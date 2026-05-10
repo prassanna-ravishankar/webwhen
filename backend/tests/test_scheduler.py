@@ -23,10 +23,10 @@ class TestMakeJobStoreUrl:
             ),
         ],
     )
-    @patch("torale.scheduler.scheduler.settings")
+    @patch("webwhen.scheduler.scheduler.settings")
     def test_converts_to_psycopg2(self, mock_settings, input_url, expected):
         mock_settings.database_url = input_url
 
-        from torale.scheduler.scheduler import _make_job_store_url
+        from webwhen.scheduler.scheduler import _make_job_store_url
 
         assert _make_job_store_url() == expected

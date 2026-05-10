@@ -6,7 +6,7 @@ from uuid import uuid4
 import pytest
 from fastapi import HTTPException, Request
 
-from torale.api.routers.email_verification import (
+from webwhen.api.routers.email_verification import (
     VerificationConfirm,
     VerificationRequest,
     list_verified_emails,
@@ -75,12 +75,12 @@ class TestSendVerificationEmail:
 
         # Mock: email not already verified
         with patch(
-            "torale.api.routers.email_verification.EmailVerificationService.is_email_verified",
+            "webwhen.api.routers.email_verification.EmailVerificationService.is_email_verified",
             return_value=False,
         ):
             # Mock: verification creation success
             with patch(
-                "torale.api.routers.email_verification.EmailVerificationService.create_verification",
+                "webwhen.api.routers.email_verification.EmailVerificationService.create_verification",
                 return_value=(True, "123456", None),
             ):
                 # Mock: user lookup
@@ -88,7 +88,7 @@ class TestSendVerificationEmail:
 
                 # Mock: Novu service
                 with patch(
-                    "torale.api.routers.email_verification.novu_service.send_verification_email",
+                    "webwhen.api.routers.email_verification.novu_service.send_verification_email",
                     new_callable=AsyncMock,
                 ) as mock_novu:
                     result = await send_verification_email(body, mock_request, mock_user, mock_db)
@@ -104,7 +104,7 @@ class TestSendVerificationEmail:
 
         # Mock: email already verified
         with patch(
-            "torale.api.routers.email_verification.EmailVerificationService.is_email_verified",
+            "webwhen.api.routers.email_verification.EmailVerificationService.is_email_verified",
             return_value=True,
         ):
             result = await send_verification_email(body, mock_request, mock_user, mock_db)
@@ -117,12 +117,12 @@ class TestSendVerificationEmail:
         body = VerificationRequest(email="new@example.com")
 
         with patch(
-            "torale.api.routers.email_verification.EmailVerificationService.is_email_verified",
+            "webwhen.api.routers.email_verification.EmailVerificationService.is_email_verified",
             return_value=False,
         ):
             # Mock: rate limit exceeded
             with patch(
-                "torale.api.routers.email_verification.EmailVerificationService.create_verification",
+                "webwhen.api.routers.email_verification.EmailVerificationService.create_verification",
                 return_value=(False, None, "Rate limit exceeded. Please try again later."),
             ):
                 with pytest.raises(HTTPException) as exc_info:
@@ -138,18 +138,18 @@ class TestSendVerificationEmail:
         conn = await mock_db.acquire().__aenter__()
 
         with patch(
-            "torale.api.routers.email_verification.EmailVerificationService.is_email_verified",
+            "webwhen.api.routers.email_verification.EmailVerificationService.is_email_verified",
             return_value=False,
         ):
             with patch(
-                "torale.api.routers.email_verification.EmailVerificationService.create_verification",
+                "webwhen.api.routers.email_verification.EmailVerificationService.create_verification",
                 return_value=(True, "123456", None),
             ):
                 # Mock: user without first_name
                 conn.fetchrow.return_value = {"first_name": None}
 
                 with patch(
-                    "torale.api.routers.email_verification.novu_service.send_verification_email",
+                    "webwhen.api.routers.email_verification.novu_service.send_verification_email",
                     new_callable=AsyncMock,
                 ) as mock_novu:
                     await send_verification_email(body, mock_request, mock_user, mock_db)
@@ -169,7 +169,7 @@ class TestVerifyEmailCode:
 
         # Mock: verification success
         with patch(
-            "torale.api.routers.email_verification.EmailVerificationService.verify_code",
+            "webwhen.api.routers.email_verification.EmailVerificationService.verify_code",
             return_value=(True, None),
         ):
             result = await verify_email_code(request, mock_user, mock_db)
@@ -183,7 +183,7 @@ class TestVerifyEmailCode:
 
         # Mock: verification failure
         with patch(
-            "torale.api.routers.email_verification.EmailVerificationService.verify_code",
+            "webwhen.api.routers.email_verification.EmailVerificationService.verify_code",
             return_value=(False, "Invalid verification code"),
         ):
             with pytest.raises(HTTPException) as exc_info:
@@ -199,7 +199,7 @@ class TestVerifyEmailCode:
 
         # Mock: verification failure due to expiry
         with patch(
-            "torale.api.routers.email_verification.EmailVerificationService.verify_code",
+            "webwhen.api.routers.email_verification.EmailVerificationService.verify_code",
             return_value=(False, "Verification code has expired"),
         ):
             with pytest.raises(HTTPException) as exc_info:
@@ -215,7 +215,7 @@ class TestVerifyEmailCode:
 
         # Mock: no attempts left
         with patch(
-            "torale.api.routers.email_verification.EmailVerificationService.verify_code",
+            "webwhen.api.routers.email_verification.EmailVerificationService.verify_code",
             return_value=(False, "No verification attempts remaining"),
         ):
             with pytest.raises(HTTPException) as exc_info:

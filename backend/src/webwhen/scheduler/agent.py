@@ -1,0 +1,331 @@
+"""A2A client for the torale-agent using a2a-sdk."""
+
+import ast
+import asyncio
+import json
+import logging
+import time
+import uuid
+from http import HTTPStatus
+
+import httpx
+from a2a.client import A2AClient
+from a2a.client.errors import A2AClientHTTPError
+from a2a.types import (
+    DataPart,
+    GetTaskRequest,
+    JSONRPCErrorResponse,
+    Message,
+    MessageSendConfiguration,
+    MessageSendParams,
+    Part,
+    Role,
+    SendMessageRequest,
+    Task,
+    TaskQueryParams,
+    TaskState,
+    TextPart,
+)
+
+from webwhen.core.config import settings
+from webwhen.lib.posthog import capture as posthog_capture
+from webwhen.scheduler.models import MonitoringResponse
+
+logger = logging.getLogger(__name__)
+
+AGENT_TIMEOUT = 120  # seconds
+POLL_BACKOFF = [0.5, 1, 2, 4, 8, 16, 32]  # exponential backoff steps
+MAX_CONSECUTIVE_POLL_FAILURES = 3
+
+# Upstream model failures worth retrying on the paid tier.
+FALLBACK_STATUS_CODES = frozenset({HTTPStatus.TOO_MANY_REQUESTS, HTTPStatus.SERVICE_UNAVAILABLE})
+
+# Reuse httpx client for connection pooling
+_httpx_client: httpx.AsyncClient | None = None
+
+
+def _get_httpx_client() -> httpx.AsyncClient:
+    """Get or create a shared httpx client for connection reuse."""
+    global _httpx_client
+    if _httpx_client is None:
+        _httpx_client = httpx.AsyncClient(timeout=httpx.Timeout(timeout=AGENT_TIMEOUT))
+    return _httpx_client
+
+
+def _extract_error_details(task: Task) -> dict | None:
+    """Extract structured error details from a failed task's status.message.
+
+    The agent emits error details as JSON-encoded TextPart in status.message.
+
+    Returns:
+        Parsed error dict if valid JSON found.
+        Fallback error dict with error_type="JSONParseError" if parsing fails.
+        None if status.message or parts are missing.
+    """
+    message = task.status.message
+    if not message or not message.parts:
+        return None
+
+    part = message.parts[0].root
+    if not isinstance(part, TextPart) or not part.text:
+        return None
+
+    try:
+        return json.loads(part.text)
+    except (json.JSONDecodeError, TypeError) as e:
+        logger.error(
+            "Failed to parse error details from task status: %s. Raw content: %s",
+            e,
+            part.text[:500],
+        )
+        return {
+            "error_type": "JSONParseError",
+            "message": f"Agent returned malformed error data: {part.text[:200]}",
+            "parse_error": str(e),
+        }
+
+
+def _handle_failed_task(task: Task) -> None:
+    """Process failed task and raise appropriate error.
+
+    Extracts error details from task status and raises:
+    - A2AClientHTTPError for upstream model failures eligible for paid tier fallback
+      (see FALLBACK_STATUS_CODES)
+    - RuntimeError for other errors
+    """
+    task_id = task.id
+    error_details = _extract_error_details(task)
+
+    if not error_details:
+        raise RuntimeError(f"Agent task {task_id} failed without error details: {task.status}")
+
+    error_type = error_details.get("error_type")
+    message = error_details.get("message", "Unknown error")
+
+    logger.info(
+        "Extracted agent error details: type=%s, message=%s",
+        error_type,
+        message[:200],
+    )
+
+    if error_type == "ModelHTTPError":
+        status_code = error_details.get("status_code")
+        if status_code in FALLBACK_STATUS_CODES:
+            raise A2AClientHTTPError(
+                status_code, f"Agent task {task_id} upstream {status_code}: {message}"
+            )
+        raise RuntimeError(f"Agent task {task_id} HTTP error {status_code}: {message}")
+
+    raise RuntimeError(f"Agent task {task_id} {error_type}: {message}")
+
+
+async def call_agent(
+    prompt: str,
+    user_id: str | None = None,
+    task_id: str | None = None,
+    mcp_servers: list[dict] | None = None,
+) -> MonitoringResponse:
+    """Send task to agent with automatic paid tier fallback on upstream failures.
+
+    mcp_servers is a list of `{toolkit, url}` dicts; forwarded in A2A metadata
+    so the agent can wire per-run MCP tools. Omit or empty for the common
+    no-connectors path.
+    """
+    try:
+        result = await _call_agent_internal(
+            settings.agent_url_free, prompt, user_id, task_id, mcp_servers
+        )
+        tier, fallback = "free", False
+    except A2AClientHTTPError as e:
+        if e.status_code not in FALLBACK_STATUS_CODES:
+            raise
+        logger.info(
+            "Free tier upstream failure (%s), falling back to paid tier",
+            e.status_code,
+            extra={"status_code": e.status_code},
+        )
+        result = await _call_agent_internal(
+            settings.agent_url_paid, prompt, user_id, task_id, mcp_servers
+        )
+        tier, fallback = "paid", True
+
+    if user_id:
+        posthog_capture(
+            distinct_id=user_id,
+            event="agent_tier_used",
+            properties={
+                "tier": tier,
+                "fallback_triggered": fallback,
+            },
+        )
+    return result
+
+
+async def _call_agent_internal(
+    base_url: str,
+    prompt: str,
+    user_id: str | None = None,
+    task_id: str | None = None,
+    mcp_servers: list[dict] | None = None,
+) -> MonitoringResponse:
+    """Send task to torale-agent via A2A and poll for result."""
+    message_id = f"msg-{uuid.uuid4().hex[:12]}"
+    request_id = f"req-{uuid.uuid4().hex[:12]}"
+
+    httpx_client = _get_httpx_client()
+    client = A2AClient(httpx_client=httpx_client, url=base_url)
+    poll_start_time = time.monotonic()
+
+    message = Message(
+        role=Role.user,
+        kind="message",
+        message_id=message_id,
+        parts=[Part(root=TextPart(kind="text", text=prompt))],
+    )
+
+    configuration = MessageSendConfiguration(accepted_output_modes=["application/json"])
+
+    metadata: dict = {"user_id": user_id, "task_id": task_id}
+    if mcp_servers:
+        metadata["mcp_servers"] = mcp_servers
+
+    request = SendMessageRequest(
+        id=request_id,
+        params=MessageSendParams(
+            message=message,
+            configuration=configuration,
+            metadata=metadata,
+        ),
+    )
+
+    try:
+        send_response = await client.send_message(request)
+    except A2AClientHTTPError as e:
+        # Preserve status_code for fallback-eligible upstream failures; wrap the rest.
+        if e.status_code in FALLBACK_STATUS_CODES:
+            raise
+        raise RuntimeError(
+            f"Failed to send task to agent at {base_url}: status={e.status_code} {e.message[:200]}"
+        ) from e
+    except Exception as e:
+        raise RuntimeError(f"Failed to send task to agent at {base_url}: {e}") from e
+
+    response = send_response.root
+    if isinstance(response, JSONRPCErrorResponse):
+        raise RuntimeError(f"Agent returned error: {response.error}")
+
+    task = response.result
+    a2a_task_id = task.id
+    logger.info(f"Agent task sent successfully, task_id={a2a_task_id}")
+
+    # Poll for completion
+    deadline = time.monotonic() + AGENT_TIMEOUT
+    backoff_idx = 0
+    consecutive_poll_failures = 0
+    poll_count = 0
+
+    while time.monotonic() < deadline:
+        poll_count += 1
+        delay = POLL_BACKOFF[min(backoff_idx, len(POLL_BACKOFF) - 1)]
+        await asyncio.sleep(delay)
+        backoff_idx += 1
+
+        try:
+            poll_response = await client.get_task(
+                GetTaskRequest(
+                    id=request_id,
+                    params=TaskQueryParams(id=a2a_task_id),
+                )
+            )
+            consecutive_poll_failures = 0
+        except Exception as e:
+            consecutive_poll_failures += 1
+            logger.warning(
+                f"Poll failure {consecutive_poll_failures}/{MAX_CONSECUTIVE_POLL_FAILURES} "
+                f"for agent task {a2a_task_id}: {e}"
+            )
+            if consecutive_poll_failures >= MAX_CONSECUTIVE_POLL_FAILURES:
+                raise RuntimeError(
+                    f"Agent poll failed {MAX_CONSECUTIVE_POLL_FAILURES} consecutive times "
+                    f"for task {a2a_task_id}"
+                ) from e
+            continue
+
+        poll_result = poll_response.root
+        if isinstance(poll_result, JSONRPCErrorResponse):
+            consecutive_poll_failures += 1
+            logger.warning(f"Poll error for task {a2a_task_id}: {poll_result.error}")
+            if consecutive_poll_failures >= MAX_CONSECUTIVE_POLL_FAILURES:
+                raise RuntimeError(
+                    f"Agent poll returned errors {MAX_CONSECUTIVE_POLL_FAILURES} times "
+                    f"for task {a2a_task_id}"
+                )
+            continue
+
+        task = poll_result.result
+        state = task.status.state
+        logger.debug(f"Agent task {a2a_task_id} state: {state}")
+
+        match state:
+            case TaskState.completed:
+                parsed = _parse_agent_response(task)
+                poll_duration = time.monotonic() - poll_start_time
+                if user_id:
+                    posthog_capture(
+                        distinct_id=user_id,
+                        event="agent_task_completed",
+                        properties={
+                            "poll_duration_seconds": round(poll_duration, 2),
+                            "poll_iterations": poll_count,
+                        },
+                    )
+                return MonitoringResponse.model_validate(parsed)
+            case TaskState.failed:
+                _handle_failed_task(task)
+            case TaskState.working | TaskState.submitted:
+                continue
+
+    raise TimeoutError(f"Agent did not complete within {AGENT_TIMEOUT}s")
+
+
+def _parse_agent_response(task: Task) -> dict:
+    """Parse A2A Task into monitoring result shape.
+
+    Prefers DataPart (structured JSON). Falls back to TextPart for legacy
+    agent versions -- remove this fallback once all agents return DataPart.
+    """
+    artifacts = task.artifacts or []
+    text_content = ""
+
+    for artifact in artifacts:
+        for part_wrapper in artifact.parts:
+            part = part_wrapper.root
+
+            # Skip DataPart if data is empty dict (agent error or legacy response).
+            # Empty dict {} is falsy, so we fall through to TextPart legacy parsing.
+            if isinstance(part, DataPart) and part.data:
+                data = part.data
+                # Unwrap if agent wrapped response in 'result' key
+                if isinstance(data, dict) and "result" in data and len(data) == 1:
+                    return data["result"]
+                return data
+
+            if isinstance(part, TextPart):
+                text_content += part.text or ""
+
+    if not text_content:
+        raise RuntimeError(
+            f"Agent returned empty response (artifacts={len(artifacts)}, task_keys={list(Task.model_fields.keys())})"
+        )
+
+    # Legacy fallback: parse text as JSON
+    try:
+        return json.loads(text_content)
+    except (json.JSONDecodeError, TypeError):
+        pass
+
+    # Agent sometimes returns Python dict repr (single quotes)
+    try:
+        return ast.literal_eval(text_content)
+    except (ValueError, SyntaxError) as e:
+        raise RuntimeError(f"Agent returned non-JSON text response: {text_content[:200]}") from e

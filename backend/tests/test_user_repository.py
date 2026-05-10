@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import pytest
 
-from torale.access import UserRepository
+from webwhen.access import UserRepository
 
 
 @pytest.fixture

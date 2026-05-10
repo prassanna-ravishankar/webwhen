@@ -6,7 +6,7 @@ from uuid import uuid4
 
 import pytest
 
-from torale.notifications import EmailVerificationService
+from webwhen.notifications import EmailVerificationService
 
 from .conftest import MockTransaction
 

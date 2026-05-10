@@ -71,4 +71,4 @@ jobs:
 
       - name: Run pytest
         working-directory: ./backend
-        run: uv run pytest --cov=torale --cov-report=term-missing --cov-report=xml
+        run: uv run pytest --cov=webwhen --cov-report=term-missing --cov-report=xml

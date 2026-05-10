@@ -3,7 +3,7 @@
 
 import asyncio
 
-from torale.notifications.novu_service import novu_service
+from webwhen.notifications.novu_service import novu_service
 
 
 async def main():

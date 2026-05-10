@@ -6,7 +6,7 @@ from uuid import uuid4
 
 import pytest
 
-MODULE = "torale.scheduler.migrate"
+MODULE = "webwhen.scheduler.migrate"
 
 
 def _make_task_row(state="active", next_run=None):
@@ -40,7 +40,7 @@ class TestSyncJobsFromDatabase:
         scheduler.get_jobs.return_value = []
         mock_sched_fn.return_value = scheduler
 
-        from torale.scheduler.migrate import sync_jobs_from_database
+        from webwhen.scheduler.migrate import sync_jobs_from_database
 
         await sync_jobs_from_database()
 
@@ -60,7 +60,7 @@ class TestSyncJobsFromDatabase:
         scheduler.get_jobs.return_value = []
         mock_sched_fn.return_value = scheduler
 
-        from torale.scheduler.migrate import sync_jobs_from_database
+        from webwhen.scheduler.migrate import sync_jobs_from_database
 
         await sync_jobs_from_database()
 
@@ -81,7 +81,7 @@ class TestSyncJobsFromDatabase:
         scheduler.get_jobs.return_value = [_make_job(job_id, paused=True)]
         mock_sched_fn.return_value = scheduler
 
-        from torale.scheduler.migrate import sync_jobs_from_database
+        from webwhen.scheduler.migrate import sync_jobs_from_database
 
         await sync_jobs_from_database()
 
@@ -102,7 +102,7 @@ class TestSyncJobsFromDatabase:
         scheduler.get_jobs.return_value = [_make_job(job_id, paused=False)]
         mock_sched_fn.return_value = scheduler
 
-        from torale.scheduler.migrate import sync_jobs_from_database
+        from webwhen.scheduler.migrate import sync_jobs_from_database
 
         await sync_jobs_from_database()
 
@@ -120,7 +120,7 @@ class TestSyncJobsFromDatabase:
         scheduler.get_jobs.return_value = [orphan]
         mock_sched_fn.return_value = scheduler
 
-        from torale.scheduler.migrate import sync_jobs_from_database
+        from webwhen.scheduler.migrate import sync_jobs_from_database
 
         await sync_jobs_from_database()
 
@@ -141,7 +141,7 @@ class TestSyncJobsFromDatabase:
         scheduler.get_jobs.return_value = []
         mock_sched_fn.return_value = scheduler
 
-        from torale.scheduler.migrate import sync_jobs_from_database
+        from webwhen.scheduler.migrate import sync_jobs_from_database
 
         await sync_jobs_from_database()
 
@@ -158,7 +158,7 @@ class TestSyncJobsFromDatabase:
         scheduler.get_jobs.return_value = []
         mock_sched_fn.return_value = scheduler
 
-        from torale.scheduler.migrate import sync_jobs_from_database
+        from webwhen.scheduler.migrate import sync_jobs_from_database
 
         await sync_jobs_from_database()
 
@@ -173,7 +173,7 @@ class TestReapStaleExecutions:
         """Stale executions -> marked as failed."""
         mock_db.fetch_all = AsyncMock(return_value=[{"id": uuid4()}, {"id": uuid4()}])
 
-        from torale.scheduler.migrate import reap_stale_executions
+        from webwhen.scheduler.migrate import reap_stale_executions
 
         await reap_stale_executions()
 
@@ -187,7 +187,7 @@ class TestReapStaleExecutions:
         """No stale executions -> no-op."""
         mock_db.fetch_all = AsyncMock(return_value=[])
 
-        from torale.scheduler.migrate import reap_stale_executions
+        from webwhen.scheduler.migrate import reap_stale_executions
 
         await reap_stale_executions()
 

@@ -79,7 +79,7 @@ function RecentWatch({ watch, onClick }: RecentWatchProps) {
 
 export const Sidebar: React.FC<SidebarProps> = ({ onNavigate, watches = [] }) => {
   const { user } = useAuth()
-  const noAuth = import.meta.env.VITE_TORALE_NOAUTH === '1' || (typeof window !== 'undefined' && window.__PRERENDER__)
+  const noAuth = import.meta.env.VITE_WEBWHEN_NOAUTH === '1' || (typeof window !== 'undefined' && window.__PRERENDER__)
   const isAdmin = user?.publicMetadata?.role === 'admin'
 
   const triggeredCount = watches.filter(

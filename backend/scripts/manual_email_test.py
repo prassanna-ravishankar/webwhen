@@ -14,7 +14,7 @@ load_dotenv(env_path)
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # ruff: noqa: E402 - Import must come after sys.path modification
-from torale.notifications.novu_service import novu_service
+from webwhen.notifications.novu_service import novu_service
 
 
 async def main():

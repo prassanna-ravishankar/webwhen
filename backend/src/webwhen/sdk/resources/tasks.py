@@ -1,0 +1,228 @@
+"""Tasks resource for webwhen SDK."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+from uuid import UUID
+
+from webwhen.tasks import NotificationConfig, Task, TaskExecution, TaskState
+
+if TYPE_CHECKING:
+    from webwhen.sdk.client import WebwhenClient
+
+
+class TasksResource:
+    """Resource for managing tasks."""
+
+    def __init__(self, client: WebwhenClient):
+        self.client = client
+
+    def create(
+        self,
+        name: str,
+        search_query: str,
+        condition_description: str,
+        notifications: list[dict | NotificationConfig] | None = None,
+        state: str | TaskState = TaskState.ACTIVE,
+    ) -> Task:
+        """
+        Create a new monitoring task.
+
+        Args:
+            name: Task name
+            search_query: Query to monitor (e.g., "When is iPhone 16 being released?")
+            condition_description: Condition to trigger on (e.g., "A specific date is announced")
+            notifications: List of notification configs
+            state: Task state ("active" or "paused")
+
+        Returns:
+            Created Task object
+
+        Example:
+            >>> task = client.tasks.create(
+            ...     name="iPhone Monitor",
+            ...     search_query="When is iPhone 16 being released?",
+            ...     condition_description="A specific release date is announced",
+            ...     notifications=[
+            ...         {"type": "webhook", "url": "https://myapp.com/alert"}
+            ...     ]
+            ... )
+        """
+        # Convert state to string if enum
+        if isinstance(state, TaskState):
+            state = state.value
+
+        # Convert NotificationConfig objects to dicts
+        if notifications:
+            notifications = [
+                n.model_dump() if isinstance(n, NotificationConfig) else n for n in notifications
+            ]
+
+        data = {
+            "name": name,
+            "search_query": search_query,
+            "condition_description": condition_description,
+            "notifications": notifications or [],
+            "state": state,
+        }
+
+        response = self.client.post("/api/v1/tasks/", json=data)
+        return Task(**response)
+
+    def list(self, active: bool | None = None) -> list[Task]:
+        """
+        List tasks.
+
+        Args:
+            active: Filter by active status (None = all tasks)
+
+        Returns:
+            List of Task objects
+
+        Example:
+            >>> tasks = client.tasks.list(active=True)
+            >>> for task in tasks:
+            ...     print(task.name)
+        """
+        params = {}
+        if active is not None:
+            params["state"] = TaskState.ACTIVE.value if active else TaskState.PAUSED.value
+
+        response = self.client.get("/api/v1/tasks/", params=params)
+        return [Task(**task_data) for task_data in response]
+
+    def get(self, task_id: str | UUID) -> Task:
+        """
+        Get task by ID.
+
+        Args:
+            task_id: Task ID
+
+        Returns:
+            Task object
+
+        Example:
+            >>> task = client.tasks.get("550e8400-e29b-41d4-a716-446655440000")
+            >>> print(task.name)
+        """
+        response = self.client.get(f"/api/v1/tasks/{task_id}")
+        return Task(**response)
+
+    def update(
+        self,
+        task_id: str | UUID,
+        name: str | None = None,
+        search_query: str | None = None,
+        condition_description: str | None = None,
+        notifications: list[dict | NotificationConfig] | None = None,
+        state: str | TaskState | None = None,
+    ) -> Task:
+        """
+        Update task.
+
+        Args:
+            task_id: Task ID
+            name: New task name
+            search_query: New search query
+            condition_description: New condition description
+            notifications: New notification configs
+            state: New task state ("active", "paused", "completed")
+
+        Returns:
+            Updated Task object
+
+        Example:
+            >>> task = client.tasks.update(
+            ...     task_id="550e8400-e29b-41d4-a716-446655440000",
+            ...     state="paused"
+            ... )
+        """
+        data = {}
+
+        if name is not None:
+            data["name"] = name
+        if search_query is not None:
+            data["search_query"] = search_query
+        if condition_description is not None:
+            data["condition_description"] = condition_description
+        if notifications is not None:
+            notifications = [
+                n.model_dump() if isinstance(n, NotificationConfig) else n for n in notifications
+            ]
+            data["notifications"] = notifications
+        if state is not None:
+            if isinstance(state, TaskState):
+                state = state.value
+            data["state"] = state
+
+        response = self.client.put(f"/api/v1/tasks/{task_id}", json=data)
+        return Task(**response)
+
+    def delete(self, task_id: str | UUID) -> None:
+        """
+        Delete task.
+
+        Args:
+            task_id: Task ID
+
+        Example:
+            >>> client.tasks.delete("550e8400-e29b-41d4-a716-446655440000")
+        """
+        self.client.delete(f"/api/v1/tasks/{task_id}")
+
+    def execute(self, task_id: str | UUID) -> TaskExecution:
+        """
+        Manually execute task (test run).
+
+        Args:
+            task_id: Task ID
+
+        Returns:
+            TaskExecution object
+
+        Example:
+            >>> execution = client.tasks.execute("550e8400-e29b-41d4-a716-446655440000")
+            >>> print(execution.status)
+        """
+        response = self.client.post(f"/api/v1/tasks/{task_id}/execute")
+        return TaskExecution(**response)
+
+    def executions(self, task_id: str | UUID, limit: int = 100) -> list[TaskExecution]:
+        """
+        Get task execution history.
+
+        Args:
+            task_id: Task ID
+            limit: Maximum number of executions to return
+
+        Returns:
+            List of TaskExecution objects
+
+        Example:
+            >>> executions = client.tasks.executions("550e8400-e29b-41d4-a716-446655440000")
+            >>> for execution in executions:
+            ...     print(f"{execution.started_at}: {execution.status}")
+        """
+        response = self.client.get(f"/api/v1/tasks/{task_id}/executions", params={"limit": limit})
+        return [TaskExecution(**exec_data) for exec_data in response]
+
+    def notifications(self, task_id: str | UUID, limit: int = 100) -> list[TaskExecution]:
+        """
+        Get task notifications (executions where condition was met).
+
+        Args:
+            task_id: Task ID
+            limit: Maximum number of notifications to return
+
+        Returns:
+            List of TaskExecution objects where notification is present
+
+        Example:
+            >>> notifications = client.tasks.notifications("550e8400-e29b-41d4-a716-446655440000")
+            >>> for notif in notifications:
+            ...     print(f"{notif.started_at}: {notif.notification}")
+        """
+        response = self.client.get(
+            f"/api/v1/tasks/{task_id}/notifications", params={"limit": limit}
+        )
+        return [TaskExecution(**exec_data) for exec_data in response]

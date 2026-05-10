@@ -6,7 +6,7 @@ from uuid import uuid4
 import pytest
 from redis.exceptions import RedisError, ResponseError
 
-MODULE = "torale.core.views"
+MODULE = "webwhen.core.views"
 
 
 class TestIncrementView:
@@ -14,7 +14,7 @@ class TestIncrementView:
         """increment_view is a no-op when redis client is None."""
         with patch(f"{MODULE}.redis_client") as mock_rc:
             mock_rc.client = None
-            from torale.core.views import increment_view
+            from webwhen.core.views import increment_view
 
             # Should not raise or create any task
             increment_view(uuid4())
@@ -25,7 +25,7 @@ class TestIncrementView:
         task_id = uuid4()
         with patch(f"{MODULE}.redis_client") as mock_rc:
             mock_rc.client = AsyncMock()
-            from torale.core.views import _increment_view
+            from webwhen.core.views import _increment_view
 
             await _increment_view(task_id)
             mock_rc.client.hincrby.assert_awaited_once_with("task_views", str(task_id), 1)
@@ -36,7 +36,7 @@ class TestIncrementView:
         with patch(f"{MODULE}.redis_client") as mock_rc:
             mock_rc.client = AsyncMock()
             mock_rc.client.hincrby.side_effect = RedisError("connection lost")
-            from torale.core.views import _increment_view
+            from webwhen.core.views import _increment_view
 
             # Should not raise
             await _increment_view(uuid4())
@@ -48,7 +48,7 @@ class TestFlushViewsToPostgres:
         """flush is a no-op when redis client is None."""
         with patch(f"{MODULE}.redis_client") as mock_rc, patch(f"{MODULE}.db") as mock_db:
             mock_rc.client = None
-            from torale.core.views import flush_views_to_postgres
+            from webwhen.core.views import flush_views_to_postgres
 
             await flush_views_to_postgres()
             mock_db.executemany.assert_not_called()
@@ -60,7 +60,7 @@ class TestFlushViewsToPostgres:
             mock_rc.client = AsyncMock()
             mock_rc.client.exists.return_value = False
             mock_rc.client.rename.side_effect = ResponseError("no such key")
-            from torale.core.views import flush_views_to_postgres
+            from webwhen.core.views import flush_views_to_postgres
 
             await flush_views_to_postgres()
             mock_db.executemany.assert_not_called()
@@ -78,7 +78,7 @@ class TestFlushViewsToPostgres:
             mock_rc.client.hgetall.return_value = {task_id_1: "5", task_id_2: "3"}
             mock_rc.client.delete.return_value = True
             mock_db.executemany = AsyncMock()
-            from torale.core.views import flush_views_to_postgres
+            from webwhen.core.views import flush_views_to_postgres
 
             await flush_views_to_postgres()
 
@@ -110,7 +110,7 @@ class TestFlushViewsToPostgres:
             mock_rc.client.rename.return_value = True
             mock_rc.client.delete.return_value = True
             mock_db.executemany = AsyncMock()
-            from torale.core.views import flush_views_to_postgres
+            from webwhen.core.views import flush_views_to_postgres
 
             await flush_views_to_postgres()
 
@@ -129,7 +129,7 @@ class TestFlushViewsToPostgres:
             mock_rc.client.hgetall.return_value = {task_id: "0"}
             mock_rc.client.delete.return_value = True
             mock_db.executemany = AsyncMock()
-            from torale.core.views import flush_views_to_postgres
+            from webwhen.core.views import flush_views_to_postgres
 
             await flush_views_to_postgres()
 
@@ -146,7 +146,7 @@ class TestFlushViewsToPostgres:
             mock_rc.client.rename.return_value = True
             mock_rc.client.hgetall.return_value = {task_id: "7"}
             mock_db.executemany = AsyncMock(side_effect=Exception("DB down"))
-            from torale.core.views import flush_views_to_postgres
+            from webwhen.core.views import flush_views_to_postgres
 
             # Should not raise
             await flush_views_to_postgres()
@@ -159,9 +159,9 @@ class TestRedisClient:
     @pytest.mark.asyncio
     async def test_connect_noop_without_host(self):
         """connect() is a no-op when redis_host is not set."""
-        with patch("torale.core.redis.settings") as mock_settings:
+        with patch("webwhen.core.redis.settings") as mock_settings:
             mock_settings.redis_host = None
-            from torale.core.redis import RedisClient
+            from webwhen.core.redis import RedisClient
 
             client = RedisClient()
             await client.connect()
@@ -170,9 +170,9 @@ class TestRedisClient:
     @pytest.mark.asyncio
     async def test_connect_noop_when_already_connected(self):
         """connect() is a no-op when client already exists."""
-        with patch("torale.core.redis.settings") as mock_settings:
+        with patch("webwhen.core.redis.settings") as mock_settings:
             mock_settings.redis_host = "localhost"
-            from torale.core.redis import RedisClient
+            from webwhen.core.redis import RedisClient
 
             client = RedisClient()
             sentinel = MagicMock()
@@ -185,8 +185,8 @@ class TestRedisClient:
     async def test_connect_failure_sets_client_none(self):
         """connect() sets client to None on RedisError."""
         with (
-            patch("torale.core.redis.settings") as mock_settings,
-            patch("torale.core.redis.redis.Redis") as mock_redis_cls,
+            patch("webwhen.core.redis.settings") as mock_settings,
+            patch("webwhen.core.redis.redis.Redis") as mock_redis_cls,
         ):
             mock_settings.redis_host = "bad-host"
             mock_settings.redis_port = 6379
@@ -194,7 +194,7 @@ class TestRedisClient:
             mock_instance = AsyncMock()
             mock_instance.ping.side_effect = RedisError("refused")
             mock_redis_cls.return_value = mock_instance
-            from torale.core.redis import RedisClient
+            from webwhen.core.redis import RedisClient
 
             client = RedisClient()
             await client.connect()
@@ -203,7 +203,7 @@ class TestRedisClient:
     @pytest.mark.asyncio
     async def test_disconnect_closes_and_clears(self):
         """disconnect() calls aclose() and sets client to None."""
-        from torale.core.redis import RedisClient
+        from webwhen.core.redis import RedisClient
 
         client = RedisClient()
         mock_redis = AsyncMock()
@@ -215,7 +215,7 @@ class TestRedisClient:
     @pytest.mark.asyncio
     async def test_disconnect_noop_when_not_connected(self):
         """disconnect() is a no-op when client is None."""
-        from torale.core.redis import RedisClient
+        from webwhen.core.redis import RedisClient
 
         client = RedisClient()
         await client.disconnect()  # Should not raise

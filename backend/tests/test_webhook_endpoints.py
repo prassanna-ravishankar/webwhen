@@ -6,14 +6,14 @@ from uuid import UUID, uuid4
 import pytest
 from fastapi import HTTPException, Request
 
-from torale.api.routers.webhooks import (
+from webwhen.api.routers.webhooks import (
     WebhookConfig,
     WebhookTestRequest,
     get_user_webhook_config,
     list_webhook_deliveries,
     update_user_webhook_config,
 )
-from torale.api.routers.webhooks import (
+from webwhen.api.routers.webhooks import (
     test_webhook as webhook_test_handler,
 )
 
@@ -112,7 +112,7 @@ class TestUpdateUserWebhookConfig:
         mock_db.execute = AsyncMock()
 
         with patch(
-            "torale.api.routers.webhooks.WebhookSignature.generate_secret",
+            "webwhen.api.routers.webhooks.WebhookSignature.generate_secret",
             return_value="generated_secret_123",
         ):
             result = await update_user_webhook_config(config, mock_user, mock_db)
@@ -191,7 +191,9 @@ class TestTestWebhook:
         mock_service.deliver = AsyncMock(return_value=(True, 200, None, None))
         mock_service.close = AsyncMock()
 
-        with patch("torale.api.routers.webhooks.WebhookDeliveryService", return_value=mock_service):
+        with patch(
+            "webwhen.api.routers.webhooks.WebhookDeliveryService", return_value=mock_service
+        ):
             result = await webhook_test_handler(mock_request, test_req, mock_user)
 
             assert result["success"] is True
@@ -211,7 +213,9 @@ class TestTestWebhook:
         mock_service.deliver = AsyncMock(return_value=(False, 500, "Connection timeout", None))
         mock_service.close = AsyncMock()
 
-        with patch("torale.api.routers.webhooks.WebhookDeliveryService", return_value=mock_service):
+        with patch(
+            "webwhen.api.routers.webhooks.WebhookDeliveryService", return_value=mock_service
+        ):
             with pytest.raises(HTTPException) as exc_info:
                 await webhook_test_handler(mock_request, test_req, mock_user)
 
@@ -241,7 +245,9 @@ class TestTestWebhook:
         mock_service.deliver = AsyncMock(side_effect=capture_deliver)
         mock_service.close = AsyncMock()
 
-        with patch("torale.api.routers.webhooks.WebhookDeliveryService", return_value=mock_service):
+        with patch(
+            "webwhen.api.routers.webhooks.WebhookDeliveryService", return_value=mock_service
+        ):
             await webhook_test_handler(mock_request, test_req, mock_user)
 
 
