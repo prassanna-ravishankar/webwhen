@@ -15,10 +15,10 @@ from webwhen.sdk import (
     ToraleAsync,
     ToraleError,
     ValidationError,
+    WebhooksResource,
     Webwhen,
     WebwhenAsync,
     WebwhenError,
-    WebhooksResource,
     monitor,
 )
 
