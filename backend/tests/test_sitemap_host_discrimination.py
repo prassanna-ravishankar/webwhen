@@ -14,7 +14,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from torale.api.routers.sitemap import router as sitemap_router
+from webwhen.api.routers.sitemap import router as sitemap_router
 
 
 @pytest.fixture

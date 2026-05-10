@@ -14,7 +14,7 @@ import pytest
 from fastapi import HTTPException
 from starlette.background import BackgroundTasks
 
-from torale.api.routers.tasks import start_task_execution
+from webwhen.api.routers.tasks import start_task_execution
 
 TASK_ID = str(uuid4())
 USER_ID = str(uuid4())
@@ -64,7 +64,7 @@ class TestManualRunCoordination:
 
         background_tasks = BackgroundTasks()
 
-        with patch("torale.scheduler.scheduler.get_scheduler", return_value=scheduler_mock):
+        with patch("webwhen.scheduler.scheduler.get_scheduler", return_value=scheduler_mock):
             result = await start_task_execution(
                 task_id=TASK_ID,
                 task_name=TASK_NAME,
@@ -95,7 +95,7 @@ class TestManualRunCoordination:
 
         background_tasks = BackgroundTasks()
 
-        with patch("torale.scheduler.scheduler.get_scheduler", return_value=scheduler_mock):
+        with patch("webwhen.scheduler.scheduler.get_scheduler", return_value=scheduler_mock):
             result = await start_task_execution(
                 task_id=TASK_ID,
                 task_name=TASK_NAME,
@@ -129,7 +129,7 @@ class TestManualRunCoordination:
 
         background_tasks = BackgroundTasks()
 
-        with patch("torale.scheduler.scheduler.get_scheduler", return_value=scheduler_mock):
+        with patch("webwhen.scheduler.scheduler.get_scheduler", return_value=scheduler_mock):
             # First manual run succeeds
             result1 = await start_task_execution(
                 task_id=TASK_ID,
@@ -169,7 +169,7 @@ class TestManualRunCoordination:
 
         background_tasks_mock = MagicMock(spec=BackgroundTasks)
 
-        with patch("torale.scheduler.scheduler.get_scheduler", return_value=scheduler_mock):
+        with patch("webwhen.scheduler.scheduler.get_scheduler", return_value=scheduler_mock):
             await start_task_execution(
                 task_id=TASK_ID,
                 task_name=TASK_NAME,
@@ -205,7 +205,7 @@ class TestManualRunCoordination:
 
         background_tasks = BackgroundTasks()
 
-        with patch("torale.scheduler.scheduler.get_scheduler", return_value=scheduler_mock):
+        with patch("webwhen.scheduler.scheduler.get_scheduler", return_value=scheduler_mock):
             result = await start_task_execution(
                 task_id=TASK_ID,
                 task_name=TASK_NAME,

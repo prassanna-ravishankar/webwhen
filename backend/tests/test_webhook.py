@@ -8,12 +8,12 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from torale.notifications import (
+from webwhen.notifications import (
     WebhookDeliveryService,
     WebhookSignature,
     build_webhook_payload,
 )
-from torale.scheduler.models import EnrichedExecutionResult, GroundingSource
+from webwhen.scheduler.models import EnrichedExecutionResult, GroundingSource
 
 
 @pytest.fixture

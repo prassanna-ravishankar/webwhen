@@ -24,8 +24,8 @@ import uuid
 import httpx
 import pytest
 
-from torale.sdk import Torale
-from torale.sdk.exceptions import NotFoundError, ValidationError
+from webwhen.sdk import Torale
+from webwhen.sdk.exceptions import NotFoundError, ValidationError
 
 # NOTE: These tests create tasks which create APScheduler jobs.
 

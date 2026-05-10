@@ -10,16 +10,16 @@ from uuid import uuid4
 
 import pytest
 
-from torale.scheduler.history import ExecutionRecord
-from torale.scheduler.job import _execute, execute_task_job
-from torale.scheduler.models import MonitoringResponse, NotificationContext
+from webwhen.scheduler.history import ExecutionRecord
+from webwhen.scheduler.job import _execute, execute_task_job
+from webwhen.scheduler.models import MonitoringResponse, NotificationContext
 
 TASK_ID = str(uuid4())
 EXECUTION_ID = str(uuid4())
 USER_ID = str(uuid4())
 TASK_NAME = "Test Monitor"
 
-MODULE = "torale.scheduler.job"
+MODULE = "webwhen.scheduler.job"
 
 FUTURE = "2099-01-01T00:00:00Z"
 

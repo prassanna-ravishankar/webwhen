@@ -2,7 +2,7 @@
 
 import pytest
 
-from torale.notifications.novu_service import _format_confidence
+from webwhen.notifications.novu_service import _format_confidence
 
 
 class TestFormatConfidence:

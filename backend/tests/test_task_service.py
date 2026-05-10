@@ -6,8 +6,8 @@ from uuid import uuid4
 
 import pytest
 
-from torale.tasks import TaskState
-from torale.tasks.service import InvalidTransitionError, TaskService
+from webwhen.tasks import TaskState
+from webwhen.tasks.service import InvalidTransitionError, TaskService
 
 
 @pytest.fixture

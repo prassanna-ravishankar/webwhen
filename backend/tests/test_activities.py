@@ -8,9 +8,9 @@ from uuid import uuid4
 
 import pytest
 
-from torale.scheduler.models import AgentExecutionResult, GroundingSource
+from webwhen.scheduler.models import AgentExecutionResult, GroundingSource
 
-MODULE = "torale.scheduler.activities"
+MODULE = "webwhen.scheduler.activities"
 
 TASK_ID = str(uuid4())
 EXECUTION_ID = str(uuid4())
@@ -51,7 +51,7 @@ class TestPersistExecutionResult:
         """Writes to both task_executions and tasks tables atomically."""
         mock_conn = _setup_db_mock(mock_db)
 
-        from torale.scheduler.activities import persist_execution_result
+        from webwhen.scheduler.activities import persist_execution_result
 
         await persist_execution_result(TASK_ID, EXECUTION_ID, _make_agent_result())
 
@@ -75,7 +75,7 @@ class TestPersistExecutionResult:
             grounding_sources=[GroundingSource(url="https://apple.com", title="Apple")],
         )
 
-        from torale.scheduler.activities import persist_execution_result
+        from webwhen.scheduler.activities import persist_execution_result
 
         await persist_execution_result(TASK_ID, EXECUTION_ID, agent_result)
 
@@ -115,7 +115,7 @@ class TestFetchRecentExecutions:
             ]
         )
 
-        from torale.scheduler.activities import fetch_recent_executions
+        from webwhen.scheduler.activities import fetch_recent_executions
 
         result = await fetch_recent_executions(TASK_ID, limit=5)
 
@@ -142,7 +142,7 @@ class TestFetchRecentExecutions:
             ]
         )
 
-        from torale.scheduler.activities import fetch_recent_executions
+        from webwhen.scheduler.activities import fetch_recent_executions
 
         result = await fetch_recent_executions(TASK_ID)
 
@@ -154,7 +154,7 @@ class TestFetchRecentExecutions:
         """DB failure -> returns empty list instead of crashing."""
         mock_db.fetch_all = AsyncMock(side_effect=Exception("connection refused"))
 
-        from torale.scheduler.activities import fetch_recent_executions
+        from webwhen.scheduler.activities import fetch_recent_executions
 
         result = await fetch_recent_executions(TASK_ID)
         assert result == []
@@ -163,7 +163,7 @@ class TestFetchRecentExecutions:
 class TestExecutionRecordFromDbRow:
     def test_malformed_result_json(self):
         """Corrupt result JSON -> empty defaults."""
-        from torale.scheduler.history import ExecutionRecord
+        from webwhen.scheduler.history import ExecutionRecord
 
         row = {
             "completed_at": datetime(2026, 2, 5, tzinfo=UTC),
@@ -177,7 +177,7 @@ class TestExecutionRecordFromDbRow:
 
     def test_malformed_grounding_sources_json(self):
         """Corrupt grounding_sources JSON -> empty sources list."""
-        from torale.scheduler.history import ExecutionRecord
+        from webwhen.scheduler.history import ExecutionRecord
 
         row = {
             "completed_at": datetime(2026, 2, 5, tzinfo=UTC),
@@ -190,7 +190,7 @@ class TestExecutionRecordFromDbRow:
 
     def test_source_missing_url_key(self):
         """Source dict without 'url' key -> skipped."""
-        from torale.scheduler.history import ExecutionRecord
+        from webwhen.scheduler.history import ExecutionRecord
 
         row = {
             "completed_at": datetime(2026, 2, 5, tzinfo=UTC),
@@ -208,7 +208,7 @@ class TestExecutionRecordFromDbRow:
 
     def test_result_is_none(self):
         """All None columns -> safe empty defaults."""
-        from torale.scheduler.history import ExecutionRecord
+        from webwhen.scheduler.history import ExecutionRecord
 
         row = {
             "completed_at": None,
@@ -224,7 +224,7 @@ class TestExecutionRecordFromDbRow:
 
     def test_result_as_pre_parsed_dict(self):
         """result already deserialized by asyncpg -> works without json.loads."""
-        from torale.scheduler.history import ExecutionRecord
+        from webwhen.scheduler.history import ExecutionRecord
 
         row = {
             "completed_at": datetime(2026, 2, 5, tzinfo=UTC),
@@ -239,7 +239,7 @@ class TestExecutionRecordFromDbRow:
 
     def test_sources_as_plain_string_list(self):
         """grounding_sources is a list of bare URL strings."""
-        from torale.scheduler.history import ExecutionRecord
+        from webwhen.scheduler.history import ExecutionRecord
 
         row = {
             "completed_at": datetime(2026, 2, 5, tzinfo=UTC),
@@ -254,13 +254,13 @@ class TestExecutionRecordFromDbRow:
 class TestFormatExecutionHistory:
     def test_empty_list_returns_empty_string(self):
         """No executions -> empty string."""
-        from torale.scheduler.history import format_execution_history
+        from webwhen.scheduler.history import format_execution_history
 
         assert format_execution_history([]) == ""
 
     def test_single_record_with_all_fields(self):
         """Full record -> includes all fields with safety tags."""
-        from torale.scheduler.history import ExecutionRecord, format_execution_history
+        from webwhen.scheduler.history import ExecutionRecord, format_execution_history
 
         records = [
             ExecutionRecord(
@@ -282,7 +282,7 @@ class TestFormatExecutionHistory:
 
     def test_empty_optional_fields_omitted(self):
         """Record with no evidence/sources/notification -> those lines absent."""
-        from torale.scheduler.history import ExecutionRecord, format_execution_history
+        from webwhen.scheduler.history import ExecutionRecord, format_execution_history
 
         records = [
             ExecutionRecord(

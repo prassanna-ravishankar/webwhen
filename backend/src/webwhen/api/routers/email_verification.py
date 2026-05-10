@@ -1,0 +1,122 @@
+"""Email verification API endpoints."""
+
+from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel, EmailStr
+
+from webwhen.access import CurrentUser
+from webwhen.api.rate_limiter import get_user_or_ip, limiter
+from webwhen.core.database import Database, get_db
+from webwhen.notifications import EmailVerificationService
+from webwhen.notifications.novu_service import novu_service
+
+router = APIRouter(prefix="/email-verification", tags=["email-verification"])
+
+
+class VerificationRequest(BaseModel):
+    """Request to send verification email."""
+
+    email: EmailStr
+
+
+class VerificationConfirm(BaseModel):
+    """Confirm email verification with code."""
+
+    email: EmailStr
+    code: str
+
+
+@router.post("/send")
+@limiter.limit("5/minute", key_func=get_user_or_ip)
+async def send_verification_email(
+    body: VerificationRequest, request: Request, user: CurrentUser, db: Database = Depends(get_db)
+):
+    """
+    Send verification code to email address.
+
+    Required before using custom email for notifications.
+    """
+    async with db.acquire() as conn:
+        # Check if already verified
+        if await EmailVerificationService.is_email_verified(conn, str(user.id), body.email):
+            return {"message": "Email already verified"}
+
+        # Create verification
+        success, code, error = await EmailVerificationService.create_verification(
+            conn, str(user.id), body.email
+        )
+
+        if not success:
+            raise HTTPException(status_code=429, detail=error)
+
+        # Get user name for personalization (use email prefix as fallback)
+        user_row = await conn.fetchrow("SELECT first_name FROM users WHERE id = $1", user.id)
+        user_name = (
+            user_row["first_name"]
+            if user_row and user_row["first_name"]
+            else user.email.split("@")[0]
+        )
+
+        # Send verification email via Novu (or log code if not configured)
+        await novu_service.send_verification_email(email=body.email, code=code, user_name=user_name)
+
+        return {
+            "message": f"Verification code sent to {body.email}",
+            "expires_in_minutes": EmailVerificationService.VERIFICATION_EXPIRY_MINUTES,
+        }
+
+
+@router.post("/verify")
+async def verify_email_code(
+    request: VerificationConfirm, user: CurrentUser, db: Database = Depends(get_db)
+):
+    """Verify email with code."""
+    async with db.acquire() as conn:
+        success, error = await EmailVerificationService.verify_code(
+            conn, str(user.id), request.email, request.code
+        )
+
+        if not success:
+            raise HTTPException(status_code=400, detail=error)
+
+        return {"message": "Email verified successfully"}
+
+
+@router.get("/verified-emails")
+async def list_verified_emails(user: CurrentUser, db: Database = Depends(get_db)):
+    """List user's verified email addresses."""
+    # Get Clerk email (always trusted)
+    user_row = await db.fetch_one(
+        "SELECT email, verified_notification_emails FROM users WHERE id = $1",
+        user.id,
+    )
+
+    clerk_email = user_row["email"]
+    verified_emails = user_row["verified_notification_emails"] or []
+
+    # Always include Clerk email as verified
+    all_verified = list(set([clerk_email] + verified_emails))
+
+    return {"verified_emails": all_verified, "primary_email": clerk_email}
+
+
+@router.delete("/verified-emails/{email}")
+async def remove_verified_email(email: str, user: CurrentUser, db: Database = Depends(get_db)):
+    """Remove email from verified list (cannot remove Clerk email)."""
+    # Get Clerk email
+    clerk_email = await db.fetch_val("SELECT email FROM users WHERE id = $1", user.id)
+
+    if email == clerk_email:
+        raise HTTPException(status_code=400, detail="Cannot remove primary Clerk email")
+
+    # Remove from verified list
+    await db.execute(
+        """
+        UPDATE users
+        SET verified_notification_emails = array_remove(verified_notification_emails, $1)
+        WHERE id = $2
+        """,
+        email,
+        user.id,
+    )
+
+    return {"message": "Email removed from verified list"}

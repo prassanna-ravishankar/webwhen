@@ -5,7 +5,7 @@ import asyncio
 import json
 import time
 
-from torale.core.webhook import WebhookPayload, WebhookSignature
+from webwhen.core.webhook import WebhookPayload, WebhookSignature
 
 
 async def main():

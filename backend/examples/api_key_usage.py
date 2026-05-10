@@ -48,7 +48,7 @@ load_dotenv()
 
 # ruff: noqa: E402
 # SDK must be imported AFTER setting TORALE_DEV environment variable
-from torale.sdk import Torale, ToraleAsync
+from webwhen.sdk import Torale, ToraleAsync
 
 
 def example_1_env_variable():

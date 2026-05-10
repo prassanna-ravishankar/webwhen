@@ -5,9 +5,9 @@ from uuid import uuid4
 import pytest
 from fastapi import Request
 
-from torale.api.routers.public_tasks import get_public_feed
-from torale.api.routers.tasks import get_user_feed
-from torale.tasks import TaskStatus
+from webwhen.api.routers.public_tasks import get_public_feed
+from webwhen.api.routers.tasks import get_user_feed
+from webwhen.tasks import TaskStatus
 
 
 @pytest.mark.asyncio

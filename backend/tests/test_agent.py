@@ -20,13 +20,13 @@ from a2a.types import (
 from pydantic import ValidationError
 
 from tests.conftest import data_artifact, make_a2a_task, poll_success, send_success, text_artifact
-from torale.scheduler.agent import (
+from webwhen.scheduler.agent import (
     _extract_error_details,
     _handle_failed_task,
     _parse_agent_response,
     call_agent,
 )
-from torale.scheduler.models import MonitoringResponse
+from webwhen.scheduler.models import MonitoringResponse
 
 
 class TestParseAgentResponse:
@@ -413,7 +413,7 @@ class TestCallAgent:
     """Tests for call_agent (mock a2a.client.A2AClient)."""
 
     @pytest.mark.asyncio
-    @patch("torale.scheduler.agent.settings")
+    @patch("webwhen.scheduler.agent.settings")
     async def test_happy_path(self, mock_settings):
         mock_settings.agent_url = "http://agent:8000"
 
@@ -440,8 +440,8 @@ class TestCallAgent:
             side_effect=[poll_success(working_task), poll_success(completed_task)]
         )
 
-        with patch("torale.scheduler.agent.A2AClient", return_value=mock_client):
-            with patch("torale.scheduler.agent.asyncio.sleep", new_callable=AsyncMock):
+        with patch("webwhen.scheduler.agent.A2AClient", return_value=mock_client):
+            with patch("webwhen.scheduler.agent.asyncio.sleep", new_callable=AsyncMock):
                 result = await call_agent("test prompt")
 
         assert isinstance(result, MonitoringResponse)
@@ -450,7 +450,7 @@ class TestCallAgent:
         assert result.confidence == 95
 
     @pytest.mark.asyncio
-    @patch("torale.scheduler.agent.settings")
+    @patch("webwhen.scheduler.agent.settings")
     async def test_agent_failed_state_raises(self, mock_settings):
         mock_settings.agent_url = "http://agent:8000"
 
@@ -461,15 +461,15 @@ class TestCallAgent:
         mock_client.send_message = AsyncMock(return_value=send_success(submitted_task))
         mock_client.get_task = AsyncMock(return_value=poll_success(failed_task))
 
-        with patch("torale.scheduler.agent.A2AClient", return_value=mock_client):
-            with patch("torale.scheduler.agent.asyncio.sleep", new_callable=AsyncMock):
+        with patch("webwhen.scheduler.agent.A2AClient", return_value=mock_client):
+            with patch("webwhen.scheduler.agent.asyncio.sleep", new_callable=AsyncMock):
                 with pytest.raises(
                     RuntimeError, match="Agent task task-abc failed without error details"
                 ):
                     await call_agent("test prompt")
 
     @pytest.mark.asyncio
-    @patch("torale.scheduler.agent.settings")
+    @patch("webwhen.scheduler.agent.settings")
     async def test_timeout_raises(self, mock_settings):
         mock_settings.agent_url = "http://agent:8000"
 
@@ -483,9 +483,9 @@ class TestCallAgent:
         # Simulate time passing beyond deadline
         times = iter([0, 0, 999])
 
-        with patch("torale.scheduler.agent.A2AClient", return_value=mock_client):
-            with patch("torale.scheduler.agent.asyncio.sleep", new_callable=AsyncMock):
-                with patch("torale.scheduler.agent.time.monotonic", side_effect=times):
+        with patch("webwhen.scheduler.agent.A2AClient", return_value=mock_client):
+            with patch("webwhen.scheduler.agent.asyncio.sleep", new_callable=AsyncMock):
+                with patch("webwhen.scheduler.agent.time.monotonic", side_effect=times):
                     with pytest.raises(TimeoutError, match="did not complete"):
                         await call_agent("test prompt")
 
@@ -498,19 +498,19 @@ class TestCallAgent:
         ],
         ids=["http_error", "connection_error"],
     )
-    @patch("torale.scheduler.agent.settings")
+    @patch("webwhen.scheduler.agent.settings")
     async def test_send_error_raises_runtime(self, mock_settings, exception):
         mock_settings.agent_url = "http://agent:8000"
 
         mock_client = AsyncMock()
         mock_client.send_message = AsyncMock(side_effect=exception)
 
-        with patch("torale.scheduler.agent.A2AClient", return_value=mock_client):
+        with patch("webwhen.scheduler.agent.A2AClient", return_value=mock_client):
             with pytest.raises(RuntimeError, match="Failed to send task to agent"):
                 await call_agent("test prompt")
 
     @pytest.mark.asyncio
-    @patch("torale.scheduler.agent.settings")
+    @patch("webwhen.scheduler.agent.settings")
     async def test_transient_poll_failure_then_recovery(self, mock_settings):
         mock_settings.agent_url = "http://agent:8000"
 
@@ -539,15 +539,15 @@ class TestCallAgent:
             ]
         )
 
-        with patch("torale.scheduler.agent.A2AClient", return_value=mock_client):
-            with patch("torale.scheduler.agent.asyncio.sleep", new_callable=AsyncMock):
+        with patch("webwhen.scheduler.agent.A2AClient", return_value=mock_client):
+            with patch("webwhen.scheduler.agent.asyncio.sleep", new_callable=AsyncMock):
                 result = await call_agent("test prompt")
 
         assert isinstance(result, MonitoringResponse)
         assert result.confidence == 100
 
     @pytest.mark.asyncio
-    @patch("torale.scheduler.agent.settings")
+    @patch("webwhen.scheduler.agent.settings")
     async def test_consecutive_poll_failures_raises(self, mock_settings):
         mock_settings.agent_url = "http://agent:8000"
 
@@ -563,13 +563,13 @@ class TestCallAgent:
             ]
         )
 
-        with patch("torale.scheduler.agent.A2AClient", return_value=mock_client):
-            with patch("torale.scheduler.agent.asyncio.sleep", new_callable=AsyncMock):
+        with patch("webwhen.scheduler.agent.A2AClient", return_value=mock_client):
+            with patch("webwhen.scheduler.agent.asyncio.sleep", new_callable=AsyncMock):
                 with pytest.raises(RuntimeError, match="poll failed 3 consecutive"):
                     await call_agent("test prompt")
 
     @pytest.mark.asyncio
-    @patch("torale.scheduler.agent.settings")
+    @patch("webwhen.scheduler.agent.settings")
     async def test_send_jsonrpc_error_raises(self, mock_settings):
         mock_settings.agent_url = "http://agent:8000"
 
@@ -583,6 +583,6 @@ class TestCallAgent:
         mock_client = AsyncMock()
         mock_client.send_message = AsyncMock(return_value=error_response)
 
-        with patch("torale.scheduler.agent.A2AClient", return_value=mock_client):
+        with patch("webwhen.scheduler.agent.A2AClient", return_value=mock_client):
             with pytest.raises(RuntimeError, match="Agent returned error"):
                 await call_agent("test prompt")

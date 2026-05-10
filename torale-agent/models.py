@@ -25,7 +25,7 @@ class ToolAnnotations(BaseModel):
 class ActivityStep(BaseModel):
     """A single step the agent took during monitoring.
 
-    SYNC: Keep in sync with backend/src/torale/scheduler/models.py:ActivityStep
+    SYNC: Keep in sync with backend/src/webwhen/scheduler/models.py:ActivityStep
     """
 
     tool: str = Field(
@@ -45,7 +45,7 @@ class ActivityStep(BaseModel):
 class MonitoringResponse(BaseModel):
     """Response from monitoring check.
 
-    SYNC: Keep in sync with backend/src/torale/scheduler/models.py:MonitoringResponse
+    SYNC: Keep in sync with backend/src/webwhen/scheduler/models.py:MonitoringResponse
     """
 
     evidence: str = Field(

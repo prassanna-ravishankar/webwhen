@@ -1,6 +1,6 @@
 """Tests for prompt sanitization utilities."""
 
-from torale.scheduler.prompt_sanitizer import PromptSanitizer
+from webwhen.scheduler.prompt_sanitizer import PromptSanitizer
 
 
 class TestPromptSanitizer:

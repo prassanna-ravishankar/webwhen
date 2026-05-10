@@ -1,0 +1,176 @@
+"""Fluent API builders for Torale SDK."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from webwhen.tasks import Task, TaskState
+
+if TYPE_CHECKING:
+    from webwhen.sdk import Torale
+
+
+class MonitorBuilder:
+    """
+    Fluent builder for creating monitoring tasks with beautiful chaining syntax.
+
+    Example:
+        >>> from webwhen import monitor
+        >>> task = (monitor("iPhone 16 release date")
+        ...     .when("specific date is announced")
+        ...     .notify(email="me@example.com", webhook="https://myapp.com/alert")
+        ...     .create())
+    """
+
+    def __init__(self, client: Torale, search_query: str):
+        self.client = client
+        self._search_query = search_query
+        self._condition_description: str | None = None
+        self._notifications: list[dict] = []
+        self._name: str | None = None
+        self._state: TaskState = TaskState.ACTIVE
+
+    def when(self, condition_description: str) -> MonitorBuilder:
+        """
+        Specify the condition that triggers notifications.
+
+        Args:
+            condition_description: Human-readable condition description
+
+        Returns:
+            Self for chaining
+
+        Example:
+            >>> monitor("Bitcoin price").when("price exceeds $50,000")
+        """
+        self._condition_description = condition_description
+        return self
+
+    def notify(
+        self,
+        email: str | None = None,
+        webhook: str | None = None,
+        **kwargs,
+    ) -> MonitorBuilder:
+        """
+        Configure notifications.
+
+        Args:
+            email: Email address to notify
+            webhook: Webhook URL to call
+            **kwargs: Additional notification configuration
+
+        Returns:
+            Self for chaining
+
+        Example:
+            >>> (monitor("iPhone 16")
+            ...     .when("released")
+            ...     .notify(email="me@example.com", webhook="https://myapp.com/hook"))
+        """
+        # Add email notification
+        if email:
+            self._notifications.append(
+                {
+                    "type": "email",
+                    "address": email,
+                    **{k: v for k, v in kwargs.items() if k.startswith("email_")},
+                }
+            )
+
+        # Add webhook notification
+        if webhook:
+            self._notifications.append(
+                {
+                    "type": "webhook",
+                    "url": webhook,
+                    "method": kwargs.get("webhook_method", "POST"),
+                    "headers": kwargs.get("webhook_headers"),
+                }
+            )
+
+        return self
+
+    def named(self, name: str) -> MonitorBuilder:
+        """
+        Set a custom name for the task.
+
+        Args:
+            name: Task name
+
+        Returns:
+            Self for chaining
+
+        Example:
+            >>> monitor("iPhone 16").when("released").named("iPhone Launch Monitor")
+        """
+        self._name = name
+        return self
+
+    def paused(self) -> MonitorBuilder:
+        """
+        Create task in paused state (not active).
+
+        Returns:
+            Self for chaining
+
+        Example:
+            >>> monitor("Query").when("condition").paused().create()
+        """
+        self._state = TaskState.PAUSED
+        return self
+
+    def create(self) -> Task:
+        """
+        Create the monitoring task.
+
+        Returns:
+            Created Task object
+
+        Raises:
+            ValueError: If required fields are missing
+
+        Example:
+            >>> task = monitor("Query").when("condition").notify(email="me@email.com").create()
+        """
+        if not self._condition_description:
+            raise ValueError("Condition description is required. Use .when() to specify it.")
+
+        # Generate name if not provided
+        name = self._name or f"Monitor: {self._search_query[:50]}"
+
+        # Create task using client
+        return self.client.tasks.create(
+            name=name,
+            search_query=self._search_query,
+            condition_description=self._condition_description,
+            notifications=self._notifications,
+            state=self._state,
+        )
+
+
+def monitor(search_query: str, client: Torale | None = None) -> MonitorBuilder:
+    """
+    Create a monitoring task with fluent API.
+
+    Args:
+        search_query: Query to monitor
+        client: Torale client (optional, will create default if not provided)
+
+    Returns:
+        MonitorBuilder for chaining
+
+    Example:
+        >>> from webwhen import monitor
+        >>> task = (monitor("When is iPhone 16 being released?")
+        ...     .when("A specific date is announced")
+        ...     .notify(email="me@example.com")
+        ...     .create())
+    """
+    if client is None:
+        # Import here to avoid circular dependency
+        from webwhen.sdk import Torale
+
+        client = Torale()
+
+    return MonitorBuilder(client, search_query)

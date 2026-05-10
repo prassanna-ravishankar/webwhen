@@ -19,7 +19,7 @@ from a2a.types import (
     TextPart,
 )
 
-JOB_MODULE = "torale.scheduler.job"
+JOB_MODULE = "webwhen.scheduler.job"
 
 
 # --- A2A test helpers ---
