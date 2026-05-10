@@ -65,10 +65,10 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://webwhen.ai"
-Documentation = "https://github.com/prassanna-ravishankar/torale#readme"
-Repository = "https://github.com/prassanna-ravishankar/torale"
-"Bug Tracker" = "https://github.com/prassanna-ravishankar/torale/issues"
-Changelog = "https://github.com/prassanna-ravishankar/torale/releases"
+Documentation = "https://github.com/prassanna-ravishankar/webwhen#readme"
+Repository = "https://github.com/prassanna-ravishankar/webwhen"
+"Bug Tracker" = "https://github.com/prassanna-ravishankar/webwhen/issues"
+Changelog = "https://github.com/prassanna-ravishankar/webwhen/releases"
 
 [project.optional-dependencies]
 dev = [

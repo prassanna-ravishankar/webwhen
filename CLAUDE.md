@@ -6,7 +6,7 @@ Torale is a **grounded monitoring platform**. Users create tasks that watch for 
 
 **Scale**: Early-stage, small user base. This doc assumes single-developer velocity. Revisit if team or user scale increases significantly.
 
-**Domain**: torale.ai (prod), staging.torale.ai (staging)
+**Domain**: webwhen.ai (prod), staging.webwhen.ai (staging). The legacy `torale.ai` / `staging.torale.ai` hostnames 301-redirect for legacy clients.
 
 **Memory**: `.claude/memory/` stores project context (design decisions, gotchas, legacy data notes) that doesn't belong in git commit history -- read it, keep it current, commit it with your changes.
 
@@ -89,7 +89,7 @@ Workflow:
 
 ### Frontend Auth (common mistake)
 ```typescript
-// WRONG - Breaks in local dev (VITE_TORALE_NOAUTH=1)
+// WRONG - Breaks in local dev (VITE_WEBWHEN_NOAUTH=1)
 import { useUser } from '@clerk/clerk-react'
 
 // CORRECT - Works in both prod and local dev
@@ -121,9 +121,9 @@ This file is:
 1. Edit `backend/static/changelog.json`
 2. Commit
 3. Deploy - all three endpoints update automatically:
-   - https://api.torale.ai/static/changelog.json (JSON)
-   - https://torale.ai/changelog.xml (RSS)
-   - https://torale.ai/changelog (Frontend UI)
+   - https://api.webwhen.ai/static/changelog.json (JSON)
+   - https://webwhen.ai/changelog.xml (RSS)
+   - https://webwhen.ai/changelog (Frontend UI)
 
 **Architecture**: Backend owns the data, frontend consumes it via fetch at runtime.
 
@@ -147,7 +147,7 @@ Use conventional commits (`feat:`, `fix:`, `docs:`, `refactor:`, etc.) with one-
 
 ## Issue Tracking
 
-Issues live in **GitHub Issues** on `prassanna-ravishankar/torale`, organized via [Project #1 (Torale)](https://github.com/users/prassanna-ravishankar/projects/1).
+Issues live in **GitHub Issues** on `prassanna-ravishankar/webwhen`, organized via [Project #1 (webwhen)](https://github.com/users/prassanna-ravishankar/projects/1).
 
 - Use `gh issue` / `gh project` for all task tracking
 - Milestones group themed work (e.g. `Custom Connectors (Composio)`, `SEO`)

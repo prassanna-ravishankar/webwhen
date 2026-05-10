@@ -1,10 +1,10 @@
 <div align="center">
-  <img src="./frontend/public/brand/webwhen-mark.svg" alt="webwhen" width="120" height="120">
+  <img src="https://raw.githubusercontent.com/prassanna-ravishankar/webwhen/main/frontend/public/brand/webwhen-mark.svg" alt="webwhen" width="120" height="120">
   <h1>webwhen</h1>
   <p><strong>The agent that waits for the web.</strong></p>
 
-  [![PyPI version](https://badge.fury.io/py/torale.svg)](https://badge.fury.io/py/torale)
-  [![Deploy](https://github.com/prassanna-ravishankar/torale/actions/workflows/production.yml/badge.svg)](https://github.com/prassanna-ravishankar/torale/actions/workflows/production.yml)
+  [![PyPI version](https://badge.fury.io/py/webwhen.svg)](https://badge.fury.io/py/webwhen)
+  [![Deploy](https://github.com/prassanna-ravishankar/webwhen/actions/workflows/production.yml/badge.svg)](https://github.com/prassanna-ravishankar/webwhen/actions/workflows/production.yml)
   [![App](https://img.shields.io/badge/app-webwhen.ai-green)](https://webwhen.ai)
   [![Documentation](https://img.shields.io/badge/docs-webwhen.ai-blue)](https://docs.webwhen.ai)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -14,7 +14,7 @@
 
 Tell webwhen what to watch for in plain English. It searches the web on a schedule, evaluates the evidence, and tells you the moment your condition is met.
 
-> **Note on naming.** The product is now **webwhen** (rebranded from Torale in 2026-04). The Python SDK package on PyPI is still published as `torale` for backwards compatibility, so `pip install torale` continues to work. Internal code paths (`backend/src/torale/`, the `torale` k8s namespace, `TORALE_*` env vars) also remain unchanged. The GitHub repo will be renamed in a later wave; until then, `prassanna-ravishankar/torale` is canonical.
+> **Note on naming.** The legacy `torale` package on PyPI is frozen at v0.1.0 as a deprecated shim. New releases ship as `webwhen` (`pip install webwhen`). If you have `torale` in requirements.txt, your import statements still work via a deprecation-warned shim, but you'll stop receiving updates until you migrate. The k8s namespace (`torale`) stays put — internal-only.
 
 ## Use Cases
 
@@ -27,7 +27,7 @@ Tell webwhen what to watch for in plain English. It searches the web on a schedu
 ## Installation
 
 ```bash
-pip install torale
+pip install webwhen
 ```
 
 Get started at **[webwhen.ai](https://webwhen.ai)** or see the [Quick Start](#quick-start) guide below.
@@ -56,7 +56,7 @@ Integrate webwhen into your Python applications for programmatic watch managemen
 #### Installation
 
 ```bash
-pip install torale
+pip install webwhen
 ```
 
 #### Authentication
@@ -71,14 +71,14 @@ The SDK requires developer access. To get an API key:
 #### Quick Start - Synchronous Client
 
 ```python
-from torale import Torale
+from webwhen import Webwhen
 
 # Option 1: Environment variable (recommended for development)
-# export TORALE_API_KEY=sk_...
-client = Torale()  # Auto-discovers from environment
+# export WEBWHEN_API_KEY=sk_...
+client = Webwhen()  # Auto-discovers from environment
 
 # Option 2: Explicit API key (useful for testing, not recommended for production)
-client = Torale(api_key="sk_your_api_key_here")
+client = Webwhen(api_key="sk_your_api_key_here")
 
 # Create a monitoring task
 task = client.tasks.create(
@@ -99,10 +99,10 @@ For better performance with concurrent operations:
 
 ```python
 import asyncio
-from torale import ToraleAsync
+from webwhen import WebwhenAsync
 
 async def main():
-    async with ToraleAsync(api_key="sk_...") as client:
+    async with WebwhenAsync(api_key="sk_...") as client:
         # Create multiple tasks concurrently
         task1 = client.tasks.create(
             name="iPhone Monitor",
@@ -167,7 +167,7 @@ for notif in notifications:
 For a more expressive syntax:
 
 ```python
-from torale import monitor
+from webwhen import monitor
 
 task = (monitor("When is iPhone 16 being released?")
     .when("A specific release date is announced")
@@ -216,18 +216,20 @@ task = client.tasks.create(
 
 ```bash
 # Production (default)
-export TORALE_API_KEY=sk_your_api_key_here
+export WEBWHEN_API_KEY=sk_your_api_key_here
 
 # Local development with authentication
-export TORALE_API_KEY=sk_local_key
-export TORALE_DEV=1  # Uses http://localhost:8000
+export WEBWHEN_API_KEY=sk_local_key
+export WEBWHEN_DEV=1  # Uses http://localhost:8000
 
 # Local development without authentication
-export TORALE_NOAUTH=1  # Skips auth, uses localhost
+export WEBWHEN_NOAUTH=1  # Skips auth, uses localhost
 
 # Custom API URL
-export TORALE_API_URL=https://custom.domain.com
+export WEBWHEN_API_URL=https://custom.domain.com
 ```
+
+The legacy `TORALE_*` env vars still work as deprecated aliases.
 
 **Context Managers**
 
@@ -235,18 +237,18 @@ Both sync and async clients support context managers for automatic cleanup:
 
 ```python
 # Synchronous
-with Torale() as client:
+with Webwhen() as client:
     tasks = client.tasks.list()
 
 # Asynchronous
-async with ToraleAsync() as client:
+async with WebwhenAsync() as client:
     tasks = await client.tasks.list()
 ```
 
 **Error Handling**
 
 ```python
-from torale.sdk.exceptions import (
+from webwhen.sdk.exceptions import (
     AuthenticationError,
     NotFoundError,
     ValidationError,
@@ -549,7 +551,7 @@ PERPLEXITY_API_KEY=your-perplexity-api-key
 MEM0_API_KEY=your-mem0-api-key
 
 # Development/Testing (optional)
-TORALE_NOAUTH=1                            # Disable auth for local testing (DO NOT USE IN PRODUCTION)
+WEBWHEN_NOAUTH=1                           # Disable auth for local testing (DO NOT USE IN PRODUCTION)
 ```
 
 ### Frontend (frontend/.env)

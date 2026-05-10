@@ -115,7 +115,7 @@ class WebwhenAsyncClient:
                 return config["api_url"]
 
         # Default to production
-        return "https://api.torale.ai"
+        return "https://api.webwhen.ai"
 
     def _handle_response(self, response: httpx.Response) -> Any:
         """Handle HTTP response and raise appropriate exceptions."""

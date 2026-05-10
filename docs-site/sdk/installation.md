@@ -6,8 +6,8 @@ description: Install the webwhen Python SDK via pip. Requirements, virtual envir
 
 Install the webwhen Python SDK.
 
-::: tip Naming during the transition
-The PyPI package is still `torale` and the import is still `from torale import Torale`. The rename to `webwhen` is a later phase.
+::: tip Note on naming
+The legacy `torale` package on PyPI is frozen at v0.1.0 as a deprecated shim. New releases ship as `webwhen` (`pip install webwhen`). If you have `torale` in requirements.txt, your import statements still work via a deprecation-warned shim, but you'll stop receiving updates until you migrate.
 :::
 
 ## Requirements
@@ -20,36 +20,36 @@ The PyPI package is still `torale` and the import is still `from torale import T
 ### Using pip
 
 ```bash
-pip install torale
+pip install webwhen
 ```
 
 ### Using uv
 
 ```bash
-uv add torale
+uv add webwhen
 ```
 
 ### From source
 
 ```bash
-git clone https://github.com/prassanna-ravishankar/torale
-cd torale/backend
+git clone https://github.com/prassanna-ravishankar/webwhen
+cd webwhen/backend
 uv sync
 ```
 
 ## Verify the install
 
 ```bash
-python -c "import torale; print(torale.__version__)"
+python -c "import webwhen; print(webwhen.__version__)"
 ```
 
 ## Quick test
 
 ```python
-from torale import Torale
+from webwhen import Webwhen
 
 # Initialize the client
-client = Torale(api_key="sk_...")
+client = Webwhen(api_key="sk_...")
 
 # Test the connection by listing watches
 tasks = client.tasks.list()

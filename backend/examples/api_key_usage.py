@@ -310,10 +310,10 @@ def main():
     if args.local:
         api_url = "http://localhost:8000"
     else:
-        api_url = "https://api.torale.ai"
+        api_url = "https://api.webwhen.ai"
 
     print("=" * 60)
-    print("TORALE SDK - API KEY AUTHENTICATION EXAMPLES")
+    print("WEBWHEN SDK - API KEY AUTHENTICATION EXAMPLES")
     print("=" * 60)
     print(f"API URL: {api_url}")
     print("=" * 60)
@@ -322,7 +322,7 @@ def main():
     if not os.getenv("WEBWHEN_API_KEY"):
         print("\n⚠️  WARNING: WEBWHEN_API_KEY not found in environment!")
         print("\nTo use these examples:")
-        print("1. Generate an API key from: https://torale.ai/settings")
+        print("1. Generate an API key from: https://webwhen.ai/settings")
         print("2. Add to your .env file: WEBWHEN_API_KEY=sk_...")
         print("3. Run this script again")
         return

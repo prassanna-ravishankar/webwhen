@@ -81,7 +81,7 @@ export function generateChangelogStructuredData(entries: ChangelogEntry[]) {
         "height": 512
       },
       "sameAs": [
-        "https://github.com/prassanna-ravishankar/torale"
+        "https://github.com/prassanna-ravishankar/webwhen"
       ]
     },
     "mainEntity": {

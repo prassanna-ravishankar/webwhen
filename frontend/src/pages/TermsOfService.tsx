@@ -135,7 +135,7 @@ export function TermsOfService() {
               </p>
               <p>
                 <strong>Open Source:</strong> Portions of the Service are released under the
-                MIT License. See our <a href="https://github.com/prassanna-ravishankar/torale" target="_blank" rel="noopener noreferrer">GitHub repository</a> for details.
+                MIT License. See our <a href="https://github.com/prassanna-ravishankar/webwhen" target="_blank" rel="noopener noreferrer">GitHub repository</a> for details.
               </p>
 
               <h2>8. Beta Access and Pricing</h2>

@@ -34,24 +34,9 @@ Sign up at [webwhen.ai](https://webwhen.ai) and create an API key in Settings.
 
 ### 2. Install the skill
 
-For Claude Code:
-```bash
-/plugin marketplace add prassanna-ravishankar/torale-openclaw
-/plugin install torale@torale
-```
+The OpenClaw plugin is coming soon. In the meantime, integrate via the webwhen API directly using the curl examples below.
 
-For OpenClaw:
-```bash
-openclaw skills install torale
-```
-
-### 3. Configure the API key
-
-```bash
-openclaw config set skills.entries.torale.apiKey "sk_your_key_here"
-```
-
-### 4. Enable webhooks in OpenClaw
+### 3. Enable webhooks in OpenClaw
 
 Make sure hooks are enabled in your `~/.openclaw/openclaw.json`:
 

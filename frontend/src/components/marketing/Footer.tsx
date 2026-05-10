@@ -65,7 +65,7 @@ export const Footer: React.FC = () => {
               <a href="https://docs.webwhen.ai">Docs</a>
             </li>
             <li className={styles.footerListItem}>
-              <a href="https://github.com/prassanna-ravishankar/torale">GitHub</a>
+              <a href="https://github.com/prassanna-ravishankar/webwhen">GitHub</a>
             </li>
           </ul>
         </div>

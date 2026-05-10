@@ -23,7 +23,7 @@ This is a brand + UI design system for **webwhen**, the rebrand of [Torale](http
 
 ## Sources
 
-- **Codebase**: `prassanna-ravishankar/torale` on GitHub (`main` branch)
+- **Codebase**: `prassanna-ravishankar/webwhen` on GitHub (`main` branch)
   - `frontend/` — React 18 + Vite + Tailwind + shadcn/ui app (the previous Torale UI)
   - Reference files extracted: `tailwind.config.js`, `src/index.css`, `src/components/Logo.tsx`, `src/components/Landing.tsx`, `src/components/Dashboard.tsx`, `src/components/TaskCard.tsx`, `src/components/Header.tsx`
   - Self-hosted fonts (woff2) imported into `fonts/`

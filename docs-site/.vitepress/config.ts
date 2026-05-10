@@ -162,9 +162,8 @@ export default withMermaid(
 
     },
 
-    // Repo rename to webwhen is deferred per CLAUDE.md — keep torale URL.
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/prassanna-ravishankar/torale' }
+      { icon: 'github', link: 'https://github.com/prassanna-ravishankar/webwhen' }
     ],
 
     search: {
@@ -175,7 +174,7 @@ export default withMermaid(
     },
 
     editLink: {
-      pattern: 'https://github.com/prassanna-ravishankar/torale/edit/main/docs-site/:path',
+      pattern: 'https://github.com/prassanna-ravishankar/webwhen/edit/main/docs-site/:path',
       text: 'Edit this page on GitHub'
     },
 
