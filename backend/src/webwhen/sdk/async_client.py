@@ -1,4 +1,4 @@
-"""Async Torale SDK client."""
+"""Async webwhen SDK client."""
 
 from __future__ import annotations
 
@@ -13,9 +13,9 @@ import httpx
 from webwhen.sdk.exceptions import APIError, AuthenticationError, NotFoundError, ValidationError
 
 
-class ToraleAsyncClient:
+class WebwhenAsyncClient:
     """
-    Async client for interacting with the Torale API.
+    Async client for interacting with the webwhen API.
 
     Handles authentication, request/response processing, and error handling.
     Supports async/await patterns for non-blocking I/O.
@@ -28,7 +28,7 @@ class ToraleAsyncClient:
         timeout: float = 60.0,
     ):
         """
-        Initialize async Torale client.
+        Initialize async webwhen client.
 
         Args:
             api_key: API key for authentication. If not provided, will try to load from:
@@ -180,3 +180,6 @@ class ToraleAsyncClient:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """Async context manager exit."""
         await self.close()
+
+
+ToraleAsyncClient = WebwhenAsyncClient

@@ -72,7 +72,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info(f"Starting Torale API on {settings.api_host}:{settings.api_port}")
+    logger.info(f"Starting webwhen API on {settings.api_host}:{settings.api_port}")
     await db.connect()
     logger.info("Database connection pool established")
 
@@ -128,11 +128,11 @@ async def lifespan(app: FastAPI):
     shutdown_posthog()
     logger.info("PostHog shut down")
     await db.disconnect()
-    logger.info("Shutting down Torale API")
+    logger.info("Shutting down webwhen API")
 
 
 app = FastAPI(
-    title="Torale API",
+    title="webwhen API",
     description="Platform-agnostic background task manager for AI-powered automation",
     version="0.1.0",
     lifespan=lifespan,

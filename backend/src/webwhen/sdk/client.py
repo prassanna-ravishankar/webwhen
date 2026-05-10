@@ -1,4 +1,4 @@
-"""Torale SDK client."""
+"""webwhen SDK client."""
 
 from __future__ import annotations
 
@@ -13,9 +13,9 @@ import httpx
 from webwhen.sdk.exceptions import APIError, AuthenticationError, NotFoundError, ValidationError
 
 
-class ToraleClient:
+class WebwhenClient:
     """
-    Base client for interacting with the Torale API.
+    Base client for interacting with the webwhen API.
 
     Handles authentication, request/response processing, and error handling.
     """
@@ -27,7 +27,7 @@ class ToraleClient:
         timeout: float = 60.0,
     ):
         """
-        Initialize Torale client.
+        Initialize webwhen client.
 
         Args:
             api_key: API key for authentication. If not provided, will try to load from:
@@ -181,3 +181,6 @@ class ToraleClient:
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Context manager exit."""
         self.close()
+
+
+ToraleClient = WebwhenClient

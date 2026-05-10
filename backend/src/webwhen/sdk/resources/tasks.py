@@ -1,4 +1,4 @@
-"""Tasks resource for Torale SDK."""
+"""Tasks resource for webwhen SDK."""
 
 from __future__ import annotations
 
@@ -8,13 +8,13 @@ from uuid import UUID
 from webwhen.tasks import NotificationConfig, Task, TaskExecution, TaskState
 
 if TYPE_CHECKING:
-    from webwhen.sdk.client import ToraleClient
+    from webwhen.sdk.client import WebwhenClient
 
 
 class TasksResource:
     """Resource for managing tasks."""
 
-    def __init__(self, client: ToraleClient):
+    def __init__(self, client: WebwhenClient):
         self.client = client
 
     def create(

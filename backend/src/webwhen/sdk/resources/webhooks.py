@@ -1,17 +1,17 @@
-"""Webhooks resource for Torale SDK."""
+"""Webhooks resource for webwhen SDK."""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from webwhen.sdk.client import ToraleClient
+    from webwhen.sdk.client import WebwhenClient
 
 
 class WebhooksResource:
     """Resource for managing webhooks."""
 
-    def __init__(self, client: ToraleClient):
+    def __init__(self, client: WebwhenClient):
         self.client = client
 
     def get_config(self) -> dict[str, Any]:

@@ -5,7 +5,7 @@ The seed script is idempotent, so re-running after adding a toolkit is safe.
 
 SYNC: Keep allowed_tools in sync with whatever is configured in the Composio
 dashboard or via the seed script. The registry here is authoritative for
-what Torale exposes; Composio's allowlist is what the agent actually sees.
+what webwhen exposes; Composio's allowlist is what the agent actually sees.
 """
 
 from pydantic import BaseModel, Field

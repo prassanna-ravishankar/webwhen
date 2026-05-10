@@ -1,39 +1,39 @@
 """
-Torale SDK - Python client for the Torale API.
+webwhen SDK - Python client for the webwhen API.
 
 Beautiful, Pythonic API for creating and managing monitoring tasks.
 """
 
 from __future__ import annotations
 
-from webwhen.sdk.async_client import ToraleAsyncClient
+from webwhen.sdk.async_client import WebwhenAsyncClient
 from webwhen.sdk.builders import MonitorBuilder, monitor
-from webwhen.sdk.client import ToraleClient
+from webwhen.sdk.client import WebwhenClient
 from webwhen.sdk.exceptions import (
     APIError,
     AuthenticationError,
     NotFoundError,
     RateLimitError,
-    ToraleError,
     ValidationError,
+    WebwhenError,
 )
 from webwhen.sdk.resources import TasksResource, WebhooksResource
 from webwhen.sdk.resources.async_tasks import AsyncTasksResource
 from webwhen.sdk.resources.async_webhooks import AsyncWebhooksResource
 
 
-class Torale(ToraleClient):
+class Webwhen(WebwhenClient):
     """
-    Main Torale SDK client.
+    Main webwhen SDK client.
 
-    Provides access to all Torale API resources with both traditional
+    Provides access to all webwhen API resources with both traditional
     resource-based API and fluent builder patterns.
 
     Example (Traditional API):
-        >>> from webwhen import Torale
-        >>> client = Torale(api_key="sk_...")
+        >>> from webwhen import Webwhen
+        >>> client = Webwhen(api_key="sk_...")
         >>> task = client.tasks.create(
-        ...     name="iPhone Monitor",
+        ...     name="iPhone watch",
         ...     search_query="When is iPhone 16 being released?",
         ...     condition_description="A specific release date is announced",
         ...     notifications=[{"type": "webhook", "url": "https://myapp.com/alert"}]
@@ -51,7 +51,7 @@ class Torale(ToraleClient):
         self, api_key: str | None = None, api_url: str | None = None, timeout: float = 60.0
     ):
         """
-        Initialize Torale SDK client.
+        Initialize webwhen SDK client.
 
         Args:
             api_key: API key for authentication. If not provided, will try to load from:
@@ -62,13 +62,13 @@ class Torale(ToraleClient):
 
         Example:
             >>> # Using API key from environment
-            >>> client = Torale()
+            >>> client = Webwhen()
             >>> # Or provide explicitly
-            >>> client = Torale(api_key="sk_...")
+            >>> client = Webwhen(api_key="sk_...")
             >>> # Or for local development without auth
             >>> import os
             >>> os.environ["TORALE_NOAUTH"] = "1"
-            >>> client = Torale()
+            >>> client = Webwhen()
         """
         super().__init__(api_key=api_key, api_url=api_url, timeout=timeout)
 
@@ -87,7 +87,7 @@ class Torale(ToraleClient):
             MonitorBuilder for chaining
 
         Example:
-            >>> client = Torale()
+            >>> client = Webwhen()
             >>> task = (client.monitor("Bitcoin price")
             ...     .when("price exceeds $50,000")
             ...     .check_every("5 minutes")
@@ -97,27 +97,27 @@ class Torale(ToraleClient):
         return MonitorBuilder(self, search_query)
 
 
-class ToraleAsync(ToraleAsyncClient):
+class WebwhenAsync(WebwhenAsyncClient):
     """
-    Async Torale SDK client for non-blocking I/O.
+    Async webwhen SDK client for non-blocking I/O.
 
-    Provides access to all Torale API resources with async/await support.
+    Provides access to all webwhen API resources with async/await support.
     Use this client in async contexts for better performance with concurrent operations.
 
     Example:
         >>> import asyncio
-        >>> from webwhen import ToraleAsync
+        >>> from webwhen import WebwhenAsync
         >>>
         >>> async def main():
-        ...     async with ToraleAsync(api_key="sk_...") as client:
+        ...     async with WebwhenAsync(api_key="sk_...") as client:
         ...         # Create tasks concurrently
         ...         task1 = client.tasks.create(
-        ...             name="Monitor 1",
+        ...             name="watch 1",
         ...             search_query="Query 1",
         ...             condition_description="Condition 1"
         ...         )
         ...         task2 = client.tasks.create(
-        ...             name="Monitor 2",
+        ...             name="watch 2",
         ...             search_query="Query 2",
         ...             condition_description="Condition 2"
         ...         )
@@ -131,7 +131,7 @@ class ToraleAsync(ToraleAsyncClient):
         self, api_key: str | None = None, api_url: str | None = None, timeout: float = 60.0
     ):
         """
-        Initialize async Torale SDK client.
+        Initialize async webwhen SDK client.
 
         Args:
             api_key: API key for authentication
@@ -145,16 +145,27 @@ class ToraleAsync(ToraleAsyncClient):
         self.webhooks = AsyncWebhooksResource(self)
 
 
+# Back-compat aliases. The lazy `torale` shim (phase 5) is what fires the
+# DeprecationWarning. Inside the `webwhen` namespace these are silent — calling
+# code that already imports from `webwhen` is on the new path.
+Torale = Webwhen
+ToraleAsync = WebwhenAsync
+ToraleError = WebwhenError
+
+
 __all__ = [
+    "Webwhen",
+    "WebwhenAsync",
+    "WebwhenError",
     "Torale",
     "ToraleAsync",
+    "ToraleError",
     "monitor",
     "MonitorBuilder",
     "TasksResource",
     "AsyncTasksResource",
     "WebhooksResource",
     "AsyncWebhooksResource",
-    "ToraleError",
     "AuthenticationError",
     "NotFoundError",
     "ValidationError",

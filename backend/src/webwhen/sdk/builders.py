@@ -1,4 +1,4 @@
-"""Fluent API builders for Torale SDK."""
+"""Fluent API builders for webwhen SDK."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from webwhen.tasks import Task, TaskState
 
 if TYPE_CHECKING:
-    from webwhen.sdk import Torale
+    from webwhen.sdk import Webwhen
 
 
 class MonitorBuilder:
@@ -22,7 +22,7 @@ class MonitorBuilder:
         ...     .create())
     """
 
-    def __init__(self, client: Torale, search_query: str):
+    def __init__(self, client: Webwhen, search_query: str):
         self.client = client
         self._search_query = search_query
         self._condition_description: str | None = None
@@ -149,13 +149,13 @@ class MonitorBuilder:
         )
 
 
-def monitor(search_query: str, client: Torale | None = None) -> MonitorBuilder:
+def monitor(search_query: str, client: Webwhen | None = None) -> MonitorBuilder:
     """
     Create a monitoring task with fluent API.
 
     Args:
         search_query: Query to monitor
-        client: Torale client (optional, will create default if not provided)
+        client: Webwhen client (optional, will create default if not provided)
 
     Returns:
         MonitorBuilder for chaining
@@ -169,8 +169,8 @@ def monitor(search_query: str, client: Torale | None = None) -> MonitorBuilder:
     """
     if client is None:
         # Import here to avoid circular dependency
-        from webwhen.sdk import Torale
+        from webwhen.sdk import Webwhen
 
-        client = Torale()
+        client = Webwhen()
 
     return MonitorBuilder(client, search_query)

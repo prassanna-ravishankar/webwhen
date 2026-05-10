@@ -1,5 +1,5 @@
 """
-Notification system for Torale.
+Notification system for webwhen.
 
 This module provides validation and sending of notifications when task conditions are met.
 Full implementation will be added in a separate PR.
