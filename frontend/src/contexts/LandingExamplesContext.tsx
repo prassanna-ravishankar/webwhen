@@ -119,17 +119,18 @@ export function LandingExamplesProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (isPrerender()) return;
     let cancelled = false;
-    // Refresh both axes in parallel: feed → fresh evidence per watch,
-    // tasks → fresh total count for the "watching · N conditions" chip.
-    // Either can fail independently; merge whatever lands. Marketing
-    // route must never throw, so both promises catch into a no-op.
-    Promise.all([
-      api.getPublicFeed(100).catch(() => null),
-      api.getPublicTasks({ limit: 1 }).catch(() => null),
-    ]).then(([feed, tasksData]) => {
-      if (cancelled) return;
-      const latestByTask = new Map<string, FeedExecutionLike>();
-      if (Array.isArray(feed)) {
+    // Only refresh the per-watch evidence here. We deliberately do NOT
+    // refresh `totalPublicConditions` post-hydration: the bake is
+    // cross-env (always reads the prod public feed at build, see
+    // sync-landing-examples.mjs), but the runtime API client uses
+    // window.CONFIG.apiUrl — which on staging points at api-staging
+    // (0 public tasks) and would clobber the prod-baked count to 0 on
+    // first interaction. The count chip stays baked-fresh per deploy.
+    api
+      .getPublicFeed(100)
+      .then((feed) => {
+        if (cancelled || !Array.isArray(feed)) return;
+        const latestByTask = new Map<string, FeedExecutionLike>();
         for (const exec of feed as unknown as FeedExecutionLike[]) {
           if (!exec?.task_id || exec.status !== 'success') continue;
           const prior = latestByTask.get(exec.task_id);
@@ -137,16 +138,22 @@ export function LandingExamplesProvider({ children }: { children: ReactNode }) {
             latestByTask.set(exec.task_id, exec);
           }
         }
-      }
-      setSnapshot((prev) => ({
-        ...prev,
-        totalPublicConditions: tasksData?.total ?? prev.totalPublicConditions,
-        examples: prev.examples.map((entry) => {
-          const exec = latestByTask.get(entry.taskId);
-          return exec ? mergeExecution(entry, exec) : entry;
-        }),
-      }));
-    });
+        // Skip the setState if no curated taskId got a live execution —
+        // avoids an identity-change re-render that re-arms Hero's cycle
+        // effect for nothing.
+        if (latestByTask.size === 0) return;
+        setSnapshot((prev) => ({
+          ...prev,
+          examples: prev.examples.map((entry) => {
+            const exec = latestByTask.get(entry.taskId);
+            return exec ? mergeExecution(entry, exec) : entry;
+          }),
+        }));
+      })
+      .catch(() => {
+        // Swallow: snapshot stays as the build-time fallback. The
+        // marketing route must never throw or render an error state.
+      });
     return () => {
       cancelled = true;
     };
