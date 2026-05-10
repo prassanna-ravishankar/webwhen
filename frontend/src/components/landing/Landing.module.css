@@ -443,6 +443,43 @@
   background: var(--ww-success);
 }
 
+/* Receipts: editorial pull-quote register for the agent's evidence text.
+   Italic Instrument Serif lifts real notification prose into the brand
+   voice without adding visual chrome. */
+.caseEvidence {
+  font-family: var(--ww-font-serif);
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--ww-ink-2);
+  margin: 0 0 16px;
+  text-wrap: pretty;
+}
+.caseSources {
+  font-family: var(--ww-font-mono);
+  font-size: 11px;
+  color: var(--ww-ink-3);
+  letter-spacing: -0.01em;
+  margin-bottom: 10px;
+}
+.caseState {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.caseStateDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ww-ink-4);
+}
+.caseStateSettled {
+  color: var(--ww-ember);
+}
+.caseStateSettled .caseStateDot {
+  background: var(--ww-ember);
+}
+
 /* === Manifesto ====================================================== */
 .manifesto {
   display: grid;

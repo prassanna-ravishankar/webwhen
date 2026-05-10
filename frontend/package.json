@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/sync-changelog-fixture.mjs",
+    "prebuild": "node scripts/sync-changelog-fixture.mjs && node scripts/sync-landing-examples.mjs",
     "build": "vite build && node scripts/prerender.mjs && node scripts/generate-sitemap.mjs",
     "build:check": "tsc && vite build",
     "preview": "vite preview",

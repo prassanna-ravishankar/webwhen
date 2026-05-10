@@ -1,0 +1,211 @@
+{
+  "totalPublicConditions": 7,
+  "syncedAt": "2026-05-10T14:15:10.894Z",
+  "examples": [
+    {
+      "taskId": "cfbf0275-77df-4fc2-adbe-c5fb7a6e8e38",
+      "displayPrompt": "Tell me how the multi-agent coding ecosystem is evolving.",
+      "tag": "frontier · ai",
+      "surfaces": [
+        "hero"
+      ],
+      "startedAt": "2026-05-10T13:13:59.361938Z",
+      "state": "active",
+      "evidence": "The multi-agent coding landscape as of May 2026 has converged into three primary layers: 1) Productized harnesses (Claude Code, Cursor) that ship with the agent loop fused in; 2) Orchestration frameworks (LangGraph,…",
+      "sources": [
+        "resources.anthropic.com",
+        "blog.sshh.io",
+        "thenuancedperspective.substack.com"
+      ],
+      "activity": [
+        {
+          "verb": "remembered",
+          "detail": "multi-agent systems coding agent harnesses"
+        },
+        {
+          "verb": "searched",
+          "detail": "developments in multi-agent systems for coding agent harnesses 2026"
+        },
+        {
+          "verb": "checked",
+          "detail": "multi-agent frameworks for autonomous software engineering 2026"
+        }
+      ]
+    },
+    {
+      "taskId": "bac2f3ac-2c7e-43a8-955b-3386303620a7",
+      "displayPrompt": "Tell me what's new in East London saunas.",
+      "tag": "lifestyle · london",
+      "surfaces": [
+        "hero"
+      ],
+      "startedAt": "2026-05-01T10:00:00.283383Z",
+      "state": "active",
+      "evidence": "Researched current sauna offerings in East London. Confirmed that established venues (Rooftop Saunas, Community Sauna Baths, Arc, etc.) remain popular.",
+      "sources": [
+        "timeout.com",
+        "secretldn.com",
+        "thesaunaguide.co.uk"
+      ],
+      "activity": [
+        {
+          "verb": "remembered",
+          "detail": "saunas in east London"
+        },
+        {
+          "verb": "checked",
+          "detail": "new sauna openings East London May 2026"
+        },
+        {
+          "verb": "noted",
+          "detail": "The East London sauna market is rapidly growing. Key development to watch: Sea L"
+        }
+      ]
+    },
+    {
+      "taskId": "33f03646-4097-4861-8aa8-0152f4808d5b",
+      "displayPrompt": "Tell me when public sentiment toward OpenAI shifts.",
+      "tag": "sentiment · ai",
+      "surfaces": [
+        "hero"
+      ],
+      "startedAt": "2026-05-09T10:00:00.105617Z",
+      "state": "active",
+      "evidence": "The Musk v. OpenAI trial continues to be the primary driver of sentiment. Recent testimony from former board member Helen Toner and former CTO Mira Murati has intensified criticism of Sam Altman's leadership,…",
+      "sources": [
+        "indiatoday.in",
+        "youtube.com",
+        "faegredrinker.com"
+      ],
+      "activity": [
+        {
+          "verb": "searched",
+          "detail": "latest news OpenAI public sentiment May 2026 trial"
+        },
+        {
+          "verb": "checked",
+          "detail": "\"OpenAI\" sentiment OR \"Sam Altman\" -is:retweet -min_faves:50"
+        },
+        {
+          "verb": "noted",
+          "detail": "The OpenAI sentiment remains persistently negative, driven by ongoing trial test"
+        }
+      ]
+    },
+    {
+      "taskId": "197d62ff-b605-40eb-92f1-7b6018cf1ae6",
+      "displayPrompt": "Tell me when a major open-weight model is released.",
+      "tag": "open-source · ai",
+      "surfaces": [
+        "hero"
+      ],
+      "startedAt": "2026-03-11T09:45:29.116048Z",
+      "state": "active",
+      "evidence": "Since March 10, 2026, there has been a flurry of significant open-source/open-weight LLM releases. The key findings from April 2026 updates include: 1.",
+      "sources": [
+        "llm-stats.com",
+        "fazm.ai",
+        "till-freitag.com"
+      ],
+      "activity": [
+        {
+          "verb": "remembered",
+          "detail": "open source LLM release search strategy"
+        },
+        {
+          "verb": "searched",
+          "detail": "open source LLM releases after March 10, 2026"
+        },
+        {
+          "verb": "noted",
+          "detail": "For tracking open-source LLM releases, LLM Stats (llm-stats.com/llm-updates) is "
+        }
+      ]
+    },
+    {
+      "taskId": "d74456cd-e9cf-40d7-acb8-2a1606a55f4c",
+      "displayPrompt": "Tell me when webwhen ships a new feature.",
+      "tag": "self · changelog",
+      "surfaces": [
+        "hero"
+      ],
+      "startedAt": "2026-05-07T08:00:00.224441Z",
+      "state": "active",
+      "evidence": "The official changelog for the platform (https://torale.ai/changelog) shows that as of May 5, 2026, the service has rebranded from Torale to webwhen.",
+      "sources": [
+        "torale.ai"
+      ],
+      "activity": [
+        {
+          "verb": "remembered",
+          "detail": "torale.ai changelog monitoring strategy"
+        },
+        {
+          "verb": "read",
+          "detail": "https://torale.ai/changelog"
+        },
+        {
+          "verb": "noted",
+          "detail": "The platform formerly known as Torale.ai has rebranded to webwhen, effective May"
+        }
+      ]
+    },
+    {
+      "taskId": "14d7792c-7b77-4781-8f85-d4980e631e43",
+      "displayPrompt": "Tell me when a frontier AI lab releases a new model.",
+      "tag": "frontier · ai",
+      "surfaces": [
+        "cases"
+      ],
+      "startedAt": "2026-04-23T16:00:00.112106Z",
+      "state": "completed",
+      "evidence": "Since the last check on April 16, 2026, OpenAI has released a significant update to its image generation capabilities within ChatGPT. No new model releases were found from DeepMind, Anthropic, or xAI in this timeframe.",
+      "sources": [
+        "releasebot.io"
+      ],
+      "activity": [
+        {
+          "verb": "remembered",
+          "detail": "AI model release monitoring strategy"
+        },
+        {
+          "verb": "searched",
+          "detail": "AI model releases OpenAI Anthropic DeepMind xAI after April 16 2026"
+        },
+        {
+          "verb": "noted",
+          "detail": "OpenAI updates ChatGPT capabilities frequently (e.g., image generation model rel"
+        }
+      ]
+    },
+    {
+      "taskId": "369e9794-8971-4a21-be64-b9f18009ec55",
+      "displayPrompt": "Tell me when Claude Code developer sentiment shifts.",
+      "tag": "sentiment · devtools",
+      "surfaces": [
+        "cases"
+      ],
+      "startedAt": "2026-04-26T12:00:00.415000Z",
+      "state": "completed",
+      "evidence": "Anthropic has formally acknowledged and resolved the performance regressions (laziness, forgetfulness, and rapid usage limit depletion) that were negatively affecting Claude Code.",
+      "sources": [
+        "anthropic.com",
+        "code.claude.com"
+      ],
+      "activity": [
+        {
+          "verb": "remembered",
+          "detail": "Claude Code sentiment"
+        },
+        {
+          "verb": "searched",
+          "detail": "Claude Code developer sentiment April 2026 updates v2.1.111+ performance stabili"
+        },
+        {
+          "verb": "noted",
+          "detail": "Anthropic has formally addressed performance degradation concerns (laziness, for"
+        }
+      ]
+    }
+  ]
+}

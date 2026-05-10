@@ -5,6 +5,7 @@ import { Steps } from "@/components/landing/Steps";
 import { Cases } from "@/components/landing/Cases";
 import { Manifesto } from "@/components/landing/Manifesto";
 import { CTA } from "@/components/landing/CTA";
+import { LandingExamplesProvider } from "@/contexts/LandingExamplesContext";
 
 /**
  * webwhen marketing landing page.
@@ -46,11 +47,13 @@ export default function Landing() {
           }).replace(/</g, "\\u003c"),
         }}
       />
-      <Hero />
-      <Steps />
-      <Cases />
-      <Manifesto />
-      <CTA />
+      <LandingExamplesProvider>
+        <Hero />
+        <Steps />
+        <Cases />
+        <Manifesto />
+        <CTA />
+      </LandingExamplesProvider>
     </MarketingLayout>
   );
 }
