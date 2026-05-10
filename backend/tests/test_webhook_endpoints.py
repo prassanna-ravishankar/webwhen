@@ -191,7 +191,9 @@ class TestTestWebhook:
         mock_service.deliver = AsyncMock(return_value=(True, 200, None, None))
         mock_service.close = AsyncMock()
 
-        with patch("webwhen.api.routers.webhooks.WebhookDeliveryService", return_value=mock_service):
+        with patch(
+            "webwhen.api.routers.webhooks.WebhookDeliveryService", return_value=mock_service
+        ):
             result = await webhook_test_handler(mock_request, test_req, mock_user)
 
             assert result["success"] is True
@@ -211,7 +213,9 @@ class TestTestWebhook:
         mock_service.deliver = AsyncMock(return_value=(False, 500, "Connection timeout", None))
         mock_service.close = AsyncMock()
 
-        with patch("webwhen.api.routers.webhooks.WebhookDeliveryService", return_value=mock_service):
+        with patch(
+            "webwhen.api.routers.webhooks.WebhookDeliveryService", return_value=mock_service
+        ):
             with pytest.raises(HTTPException) as exc_info:
                 await webhook_test_handler(mock_request, test_req, mock_user)
 
@@ -241,7 +245,9 @@ class TestTestWebhook:
         mock_service.deliver = AsyncMock(side_effect=capture_deliver)
         mock_service.close = AsyncMock()
 
-        with patch("webwhen.api.routers.webhooks.WebhookDeliveryService", return_value=mock_service):
+        with patch(
+            "webwhen.api.routers.webhooks.WebhookDeliveryService", return_value=mock_service
+        ):
             await webhook_test_handler(mock_request, test_req, mock_user)
 
 
