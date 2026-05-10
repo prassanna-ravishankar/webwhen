@@ -1,4 +1,4 @@
-"""Integration tests for Torale Python SDK.
+"""Integration tests for Webwhen Python SDK.
 
 These tests verify the SDK works correctly against a real API instance,
 testing all CRUD operations, notifications, and error handling.
@@ -24,7 +24,7 @@ import uuid
 import httpx
 import pytest
 
-from webwhen.sdk import Torale
+from webwhen.sdk import Webwhen
 from webwhen.sdk.exceptions import NotFoundError, ValidationError
 
 # NOTE: These tests create tasks which create APScheduler jobs.
@@ -56,7 +56,7 @@ def sdk_client():
     if not os.getenv("WEBWHEN_NOAUTH"):
         pytest.skip("WEBWHEN_NOAUTH not set (required for integration tests)")
 
-    client = Torale()
+    client = Webwhen()
     yield client
     client.close()
 
@@ -377,7 +377,7 @@ class TestSDKContextManager:
 
         task_id = None
 
-        with Torale() as client:
+        with Webwhen() as client:
             task = client.tasks.create(
                 name="Context Manager Test",
                 search_query="Test query",
@@ -387,7 +387,7 @@ class TestSDKContextManager:
             assert task.id is not None
 
         # Cleanup (need new client since context manager closed)
-        cleanup_client = Torale()
+        cleanup_client = Webwhen()
         try:
             cleanup_client.tasks.delete(task_id)
         finally:
