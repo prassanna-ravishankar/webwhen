@@ -6,10 +6,13 @@
 // React first paint structurally identical, avoiding hydration mismatches.
 //
 // Post-hydration: the provider fires a single fetch against
-// /api/v1/public/feed (+ /api/v1/public/tasks for the live count) and
-// merges fresher executions into the in-memory snapshot keyed by taskId.
-// Both Hero (rotation) and Cases (Receipts) read from this context so a
-// rogue task on /explore can't surface twice.
+// /api/v1/public/feed and merges fresher executions into the in-memory
+// snapshot keyed by taskId. The "watching · N conditions" count chip
+// stays as whatever the build-time bake captured because the bake
+// reads prod cross-env while the runtime API client is per-env (see
+// the useEffect comment below for the full reasoning). Both Hero
+// (rotation) and Cases (Receipts) read from this context so a rogue
+// task on /explore can't surface twice.
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { LANDING_EXAMPLES, type LandingSnapshot, type LandingExampleSnapshot } from '@/data/landingExamples';
@@ -130,9 +133,14 @@ export function LandingExamplesProvider({ children }: { children: ReactNode }) {
       .getPublicFeed(100)
       .then((feed) => {
         if (cancelled || !Array.isArray(feed)) return;
+        // Narrow the merge to only the curated taskIds. The feed can
+        // contain unrelated public executions; filtering here means the
+        // skip-set guard below reflects the actual "did anything we
+        // care about refresh?" question.
         const latestByTask = new Map<string, FeedExecutionLike>();
         for (const exec of feed as unknown as FeedExecutionLike[]) {
           if (!exec?.task_id || exec.status !== 'success') continue;
+          if (!CONFIG_BY_ID.has(exec.task_id)) continue;
           const prior = latestByTask.get(exec.task_id);
           if (!prior || new Date(exec.started_at || 0) > new Date(prior.started_at || 0)) {
             latestByTask.set(exec.task_id, exec);
