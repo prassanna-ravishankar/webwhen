@@ -1,10 +1,10 @@
 {
-  "totalPublicConditions": 7,
-  "syncedAt": "2026-05-10T19:25:14.060Z",
+  "totalPublicConditions": 9,
+  "syncedAt": "2026-05-10T20:10:56.584Z",
   "examples": [
     {
       "taskId": "cfbf0275-77df-4fc2-adbe-c5fb7a6e8e38",
-      "displayPrompt": "Tell me how the multi-agent coding ecosystem is evolving.",
+      "displayPrompt": "the multi-agent coding ecosystem",
       "tag": "frontier · ai",
       "surfaces": [
         "hero"
@@ -34,7 +34,7 @@
     },
     {
       "taskId": "bac2f3ac-2c7e-43a8-955b-3386303620a7",
-      "displayPrompt": "Tell me what's new in East London saunas.",
+      "displayPrompt": "what's new in East London saunas",
       "tag": "lifestyle · london",
       "surfaces": [
         "hero"
@@ -64,7 +64,7 @@
     },
     {
       "taskId": "33f03646-4097-4861-8aa8-0152f4808d5b",
-      "displayPrompt": "Tell me when public sentiment toward OpenAI shifts.",
+      "displayPrompt": "public sentiment toward OpenAI",
       "tag": "sentiment · ai",
       "surfaces": [
         "hero"
@@ -94,7 +94,7 @@
     },
     {
       "taskId": "197d62ff-b605-40eb-92f1-7b6018cf1ae6",
-      "displayPrompt": "Tell me when a major open-weight model is released.",
+      "displayPrompt": "open-weight model releases",
       "tag": "open-source · ai",
       "surfaces": [
         "hero"
@@ -124,7 +124,7 @@
     },
     {
       "taskId": "d74456cd-e9cf-40d7-acb8-2a1606a55f4c",
-      "displayPrompt": "Tell me when webwhen ships a new feature.",
+      "displayPrompt": "new features shipped by webwhen",
       "tag": "self · changelog",
       "surfaces": [
         "hero"
@@ -152,7 +152,7 @@
     },
     {
       "taskId": "14d7792c-7b77-4781-8f85-d4980e631e43",
-      "displayPrompt": "Tell me when a frontier AI lab releases a new model.",
+      "displayPrompt": "frontier AI lab model releases",
       "tag": "frontier · ai",
       "surfaces": [
         "cases"
@@ -180,7 +180,7 @@
     },
     {
       "taskId": "369e9794-8971-4a21-be64-b9f18009ec55",
-      "displayPrompt": "Tell me when Claude Code developer sentiment shifts.",
+      "displayPrompt": "Claude Code developer sentiment",
       "tag": "sentiment · devtools",
       "surfaces": [
         "cases"
@@ -204,6 +204,34 @@
         {
           "verb": "noted",
           "detail": "Anthropic has formally addressed performance degradation concerns (laziness, for"
+        }
+      ]
+    },
+    {
+      "taskId": "62f9774b-ccab-4d28-b5de-bb12f97339f2",
+      "displayPrompt": "recent funding rounds for YC-backed companies",
+      "tag": "funding · yc",
+      "surfaces": [
+        "cases"
+      ],
+      "startedAt": "2026-05-10T20:04:11.696558Z",
+      "state": "active",
+      "evidence": "Searched for recent funding rounds involving YC-backed startups. Found multiple recent funding events from May 2026, including Corvera, which raised $4.2 million in seed funding, and Hightouch, which raised $150…",
+      "sources": [
+        "thefashionlaw.com"
+      ],
+      "activity": [
+        {
+          "verb": "searched",
+          "detail": "recent funding rounds YC backed companies May 2026"
+        },
+        {
+          "verb": "noted",
+          "detail": "Y Combinator funding news can be reliably found in recent tech news trackers lik"
+        },
+        {
+          "verb": "settled",
+          "detail": ""
         }
       ]
     }

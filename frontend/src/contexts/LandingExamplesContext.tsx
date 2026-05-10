@@ -6,16 +6,24 @@
 // React first paint structurally identical, avoiding hydration mismatches.
 //
 // Post-hydration: the provider fires a single fetch against
-// /api/v1/public/feed and merges fresher executions into the in-memory
-// snapshot keyed by taskId. Both Hero (rotation) and Cases (Receipts)
-// read from this context so a rogue task on /explore can't surface twice.
+// /api/v1/public/feed (+ /api/v1/public/tasks for the live count) and
+// merges fresher executions into the in-memory snapshot keyed by taskId.
+// Both Hero (rotation) and Cases (Receipts) read from this context so a
+// rogue task on /explore can't surface twice.
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { LANDING_EXAMPLES, type LandingSnapshot, type LandingExampleSnapshot } from '@/data/landingExamples';
 import fallbackJson from '@/data/landingExamples.fallback.json';
+import { hostOf, paraphraseTool, trimEvidence } from '@/utils/landingExamples';
 import { api } from '@/lib/api';
 
 const FALLBACK = fallbackJson as LandingSnapshot;
+
+// Build once at module init for O(1) lookup inside mergeExecution (which
+// itself runs inside a map() loop). Was a .find() per merge — fine for 7
+// entries but cleaner this way and removes a future-scale footgun
+// (gemini #uN).
+const CONFIG_BY_ID = new Map(LANDING_EXAMPLES.map((cfg) => [cfg.taskId, cfg]));
 
 type ExampleBySurface = {
   hero: LandingExampleSnapshot[];
@@ -37,41 +45,17 @@ function partition(snapshot: LandingSnapshot): ExampleBySurface {
   };
 }
 
-const TOOL_TO_VERB: Record<string, string> = {
-  search_memories: 'remembered',
-  perplexity_search: 'searched',
-  add_memory: 'noted',
-  final_result: 'settled',
-  fetch_url: 'read',
-  google_search: 'searched',
-  web_search: 'searched',
-};
-
-function hostOf(url: string): string {
-  try {
-    return new URL(url).host.replace(/^www\./, '');
-  } catch {
-    return url;
-  }
-}
-
-function trimEvidence(text: string | undefined): string {
-  if (!text) return '';
-  const cleaned = text.replace(/\s+/g, ' ').trim();
-  if (cleaned.length <= 220) return cleaned;
-  const slice = cleaned.slice(0, 220);
-  const lastTerm = Math.max(slice.lastIndexOf('. '), slice.lastIndexOf('! '), slice.lastIndexOf('? '));
-  if (lastTerm > 80) return slice.slice(0, lastTerm + 1);
-  const lastSpace = slice.lastIndexOf(' ');
-  return slice.slice(0, lastSpace > 0 ? lastSpace : 220) + '…';
-}
-
 /**
- * Merge a fresh execution into a baked snapshot entry. Mirrors the field
- * extraction the build script does so live + baked entries have identical
- * shape. Returns the original entry untouched if the live fetch yielded
- * nothing useful.
+ * Inside scripts/prerender.mjs Playwright sets window.__PRERENDER__ = true
+ * before navigating. Skip the runtime revalidation fetch under prerender
+ * so the captured HTML is always the build-time bake — no race between
+ * the in-flight fetch resolving and `page.content()` capturing.
  */
+function isPrerender(): boolean {
+  if (typeof window === 'undefined') return false;
+  return window.__PRERENDER__ === true;
+}
+
 interface FeedExecutionLike {
   task_id: string;
   status?: string;
@@ -86,11 +70,17 @@ interface FeedExecutionLike {
   grounding_sources?: { url: string; title?: string }[];
 }
 
+/**
+ * Merge a fresh execution into a baked snapshot entry. Mirrors the field
+ * extraction the build script does so live + baked entries have identical
+ * shape. Returns the baked entry untouched if the live fetch yielded
+ * nothing useful for a slot.
+ */
 function mergeExecution(
   baked: LandingExampleSnapshot,
   exec: FeedExecutionLike,
 ): LandingExampleSnapshot {
-  const cfg = LANDING_EXAMPLES.find((c) => c.taskId === baked.taskId);
+  const cfg = CONFIG_BY_ID.get(baked.taskId);
   const liveEvidence = exec.result?.evidence || exec.notification || '';
   const evidence = trimEvidence(cfg?.displayEvidenceOverride || liveEvidence) || baked.evidence;
 
@@ -98,7 +88,7 @@ function mergeExecution(
     .filter((a) => a.tool)
     .slice(0, 3)
     .map((a) => ({
-      verb: TOOL_TO_VERB[a.tool || ''] || 'checked',
+      verb: paraphraseTool(a.tool),
       detail: (a.detail || '').replace(/\s+/g, ' ').trim().slice(0, 80),
     }));
 
@@ -106,7 +96,7 @@ function mergeExecution(
   const seen = new Set<string>();
   const sources: string[] = [];
   for (const s of sourceList) {
-    const h = hostOf(s.url);
+    const h = hostOf(s);
     if (h && !seen.has(h)) {
       seen.add(h);
       sources.push(h);
@@ -123,28 +113,23 @@ function mergeExecution(
   };
 }
 
-/**
- * Inside scripts/prerender.mjs Playwright sets window.__PRERENDER__ = true
- * before navigating. Skip the runtime revalidation fetch under prerender
- * so the captured HTML is always the build-time bake — no race between
- * the in-flight fetch resolving and `page.content()` capturing.
- */
-function isPrerender(): boolean {
-  if (typeof window === 'undefined') return false;
-  return window.__PRERENDER__ === true;
-}
-
 export function LandingExamplesProvider({ children }: { children: ReactNode }) {
   const [snapshot, setSnapshot] = useState<LandingSnapshot>(FALLBACK);
 
   useEffect(() => {
     if (isPrerender()) return;
     let cancelled = false;
-    api
-      .getPublicFeed(100)
-      .then((feed) => {
-        if (cancelled || !Array.isArray(feed)) return;
-        const latestByTask = new Map<string, FeedExecutionLike>();
+    // Refresh both axes in parallel: feed → fresh evidence per watch,
+    // tasks → fresh total count for the "watching · N conditions" chip.
+    // Either can fail independently; merge whatever lands. Marketing
+    // route must never throw, so both promises catch into a no-op.
+    Promise.all([
+      api.getPublicFeed(100).catch(() => null),
+      api.getPublicTasks({ limit: 1 }).catch(() => null),
+    ]).then(([feed, tasksData]) => {
+      if (cancelled) return;
+      const latestByTask = new Map<string, FeedExecutionLike>();
+      if (Array.isArray(feed)) {
         for (const exec of feed as unknown as FeedExecutionLike[]) {
           if (!exec?.task_id || exec.status !== 'success') continue;
           const prior = latestByTask.get(exec.task_id);
@@ -152,18 +137,16 @@ export function LandingExamplesProvider({ children }: { children: ReactNode }) {
             latestByTask.set(exec.task_id, exec);
           }
         }
-        setSnapshot((prev) => ({
-          ...prev,
-          examples: prev.examples.map((entry) => {
-            const exec = latestByTask.get(entry.taskId);
-            return exec ? mergeExecution(entry, exec) : entry;
-          }),
-        }));
-      })
-      .catch(() => {
-        // Swallow: snapshot stays as the build-time fallback. The marketing
-        // page must never throw or render an error state.
-      });
+      }
+      setSnapshot((prev) => ({
+        ...prev,
+        totalPublicConditions: tasksData?.total ?? prev.totalPublicConditions,
+        examples: prev.examples.map((entry) => {
+          const exec = latestByTask.get(entry.taskId);
+          return exec ? mergeExecution(entry, exec) : entry;
+        }),
+      }));
+    });
     return () => {
       cancelled = true;
     };

@@ -24,6 +24,7 @@ import { loadTsModule } from './_lib/load-ts.mjs';
 
 const PROJECT_ROOT = join(import.meta.dirname, '..');
 const CONFIG_TS = join(PROJECT_ROOT, 'src/data/landingExamples.ts');
+const UTILS_TS = join(PROJECT_ROOT, 'src/utils/landingExamples.ts');
 // The React tree imports this path at module init, so this is what we
 // must write. Vite's resolveJsonModule + bundler resolution turn it into
 // a static import that prerender then bakes into dist HTML.
@@ -52,44 +53,11 @@ const API_ORIGIN = process.env.LANDING_EXAMPLES_API_ORIGIN || 'https://api.webwh
 const FEED_URL = `${API_ORIGIN}/api/v1/public/feed?limit=100`;
 const TASKS_URL = `${API_ORIGIN}/api/v1/public/tasks?limit=100`;
 
-// Editorial paraphrase of the agent's tool sequence. Hero composer log
-// shows verbs from this map; anything not mapped falls back to a sensible
-// default so a new tool slug doesn't crash the build.
-const TOOL_TO_VERB = {
-  search_memories: 'remembered',
-  perplexity_search: 'searched',
-  add_memory: 'noted',
-  final_result: 'settled',
-  fetch_url: 'read',
-  google_search: 'searched',
-  web_search: 'searched',
-};
-
-function paraphraseTool(tool) {
-  return TOOL_TO_VERB[tool] || 'checked';
-}
-
-function hostOf(url) {
-  try {
-    return new URL(url).host.replace(/^www\./, '');
-  } catch {
-    return url;
-  }
-}
-
-/** Trim evidence to a single sentence, max 220 chars, no orphan clauses. */
-function trimEvidence(text) {
-  if (!text) return '';
-  const cleaned = text.replace(/\s+/g, ' ').trim();
-  if (cleaned.length <= 220) return cleaned;
-  // Prefer the first sentence terminator inside the budget.
-  const slice = cleaned.slice(0, 220);
-  const lastTerm = Math.max(slice.lastIndexOf('. '), slice.lastIndexOf('! '), slice.lastIndexOf('? '));
-  if (lastTerm > 80) return slice.slice(0, lastTerm + 1);
-  // No clean break — fall back to soft truncation at last space.
-  const lastSpace = slice.lastIndexOf(' ');
-  return slice.slice(0, lastSpace > 0 ? lastSpace : 220) + '…';
-}
+// Shared helpers live in src/utils/landingExamples.ts so the React tree
+// and this build script can't drift apart on verb mapping, host parsing,
+// or evidence-trim budget (gemini #uM). Loaded via esbuild→data-URL so
+// the .mjs build script can consume the .ts module.
+const { paraphraseTool, hostOf, trimEvidence } = await loadTsModule(UTILS_TS);
 
 /** Pick the 3 most-prominent source hosts from the execution. */
 function topHosts(execution) {
@@ -101,7 +69,7 @@ function topHosts(execution) {
   const seen = new Set();
   const hosts = [];
   for (const s of sources) {
-    const h = hostOf(s.url || s);
+    const h = hostOf(s);
     if (h && !seen.has(h)) {
       seen.add(h);
       hosts.push(h);

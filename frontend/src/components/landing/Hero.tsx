@@ -189,12 +189,17 @@ export const Hero: React.FC = () => {
               <div>
                 <span className={styles.chip}>{current?.tag ?? 'nothing to tune'}</span>
               </div>
-              <button
+              {/* Watch button deep-links to /explore where the visitor can
+                  see the public feed in real time. We can't link to a
+                  per-task page because /tasks/:id requires auth; /explore
+                  is the public surface for "what webwhen is doing now". */}
+              <Link
+                to="/explore"
                 className={cn(styles.btn, styles.btnPrimary)}
                 style={{ padding: '8px 14px' }}
               >
                 Watch <span style={{ fontFamily: 'var(--ww-font-mono)' }}>→</span>
-              </button>
+              </Link>
             </div>
           </div>
           <div className={styles.log}>

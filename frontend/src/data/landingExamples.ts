@@ -3,7 +3,8 @@
 // `taskId` references a row in /api/v1/public/tasks. The build-time script
 // scripts/sync-landing-examples.mjs joins each entry with the latest
 // successful execution from /api/v1/public/feed and writes the result to
-// .landing-examples-snapshot.json, which prerender bakes into dist/index.html.
+// src/data/landingExamples.fallback.json (the file the React tree imports),
+// which prerender bakes into dist/index.html.
 //
 // At runtime, LandingExamplesContext reads the snapshot for first paint and
 // re-fetches /api/v1/public/feed once after hydration to refresh evidence.
@@ -15,16 +16,17 @@
 // Hero and cases sets are deliberately disjoint here so the page reads as
 // breadth (hero cycle) followed by depth (Receipts).
 //
-// `displayPrompt` overrides the raw task name with imperative-voice copy
-// fit for the composer ("Tell me when X..."). The real task names are
-// noun-phrases ("Frontier AI Model Releases") and don't read in-character.
+// `displayPrompt` is the bare topic the watch tracks. The composer chrome
+// already says "new watch · plain english · no rules" so the prompt itself
+// doesn't need an imperative wrapper. Lowercase sentence-style without
+// trailing period, matching the "Topic of the watch" register.
 
 export type LandingExampleSurface = 'hero' | 'cases';
 
 export interface LandingExampleConfig {
   /** Public task id (UUID). */
   taskId: string;
-  /** Imperative-voice prompt rendered in the composer. */
+  /** Bare topic shown inside the composer. No "Tell me X" prefix, no period. */
   displayPrompt: string;
   /** Eyebrow tag rendered above the prompt; mono, dot-separated. */
   tag: string;
@@ -46,63 +48,83 @@ export const LANDING_EXAMPLES: LandingExampleConfig[] = [
   // deterministic and avoid hydration mismatch.
   {
     taskId: 'cfbf0275-77df-4fc2-adbe-c5fb7a6e8e38',
-    displayPrompt: 'Tell me how the multi-agent coding ecosystem is evolving.',
+    displayPrompt: 'the multi-agent coding ecosystem',
     tag: 'frontier · ai',
     surfaces: ['hero'],
   },
   {
     taskId: 'bac2f3ac-2c7e-43a8-955b-3386303620a7',
-    displayPrompt: "Tell me what's new in East London saunas.",
+    displayPrompt: "what's new in East London saunas",
     tag: 'lifestyle · london',
     surfaces: ['hero'],
   },
   {
     taskId: '33f03646-4097-4861-8aa8-0152f4808d5b',
-    displayPrompt: 'Tell me when public sentiment toward OpenAI shifts.',
+    displayPrompt: 'public sentiment toward OpenAI',
     tag: 'sentiment · ai',
     surfaces: ['hero'],
   },
   {
     taskId: '197d62ff-b605-40eb-92f1-7b6018cf1ae6',
-    displayPrompt: 'Tell me when a major open-weight model is released.',
+    displayPrompt: 'open-weight model releases',
     tag: 'open-source · ai',
     surfaces: ['hero'],
   },
   {
     taskId: 'd74456cd-e9cf-40d7-acb8-2a1606a55f4c',
-    displayPrompt: 'Tell me when webwhen ships a new feature.',
+    displayPrompt: 'new features shipped by webwhen',
     tag: 'self · changelog',
     surfaces: ['hero'],
   },
 
   // === Receipts cards ================================================
-  // Three watches deliberately not in the hero rotation. Hand-picked
-  // so the page reads as breadth (hero cycle) → depth (Receipts).
+  // Three watches deliberately not in the hero rotation: two settled
+  // (showing the agent retiring a watch) and one currently watching
+  // (showing the agent actively reading the web).
   {
     taskId: '14d7792c-7b77-4781-8f85-d4980e631e43',
-    displayPrompt: 'Tell me when a frontier AI lab releases a new model.',
+    displayPrompt: 'frontier AI lab model releases',
     tag: 'frontier · ai',
     surfaces: ['cases'],
   },
   {
     taskId: '369e9794-8971-4a21-be64-b9f18009ec55',
-    displayPrompt: 'Tell me when Claude Code developer sentiment shifts.',
+    displayPrompt: 'Claude Code developer sentiment',
     tag: 'sentiment · devtools',
     surfaces: ['cases'],
   },
-];
+  {
+    taskId: '62f9774b-ccab-4d28-b5de-bb12f97339f2',
+    displayPrompt: 'recent funding rounds for YC-backed companies',
+    tag: 'funding · yc',
+    surfaces: ['cases'],
+  },
 
-// Note: there are currently 7 public watches and we use 7 here (5 hero,
-// 2 cases). The third Receipts card slot is intentionally empty until
-// another high-quality public watch lands; Cases.tsx renders only the
-// entries it finds rather than padding with invented copy.
+  // === Parked ========================================================
+  // Public watches kept here for future rotation. Left out of `surfaces`
+  // either because they don't yet have rich enough evidence or because
+  // the curated slate is already full. To enable, add a surface and
+  // redeploy.
+  // {
+  //   taskId: 'c3f20127-7319-49e1-b78a-d3767895c480',
+  //   displayPrompt: 'European Central Bank rate decisions',
+  //   tag: 'regulatory · finance',
+  //   surfaces: [],
+  // },
+  // {
+  //   taskId: '9302833f-2e54-4f2b-97dd-3a256e39603b',
+  //   displayPrompt: 'YC dev-tools Series A raises',
+  //   tag: 'funding · devtools',
+  //   surfaces: [],
+  // },
+];
 
 // === Snapshot shape ===================================================
 //
-// Written to .landing-examples-snapshot.json by the prebuild script and
-// read at module init by LandingExamplesContext. Mirrors the shape the
-// runtime fetch produces, so snapshot-vs-live merging is a simple keyed
-// merge by taskId.
+// Written to src/data/landingExamples.fallback.json by the prebuild
+// script and read at module init by LandingExamplesContext. Mirrors the
+// shape the runtime fetch produces, so snapshot-vs-live merging is a
+// simple keyed merge by taskId.
 
 export interface LandingExampleSnapshot {
   taskId: string;
