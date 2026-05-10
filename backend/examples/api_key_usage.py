@@ -5,9 +5,9 @@ Torale API Key Usage Examples
 This file demonstrates how to authenticate and use the Torale SDK with API keys.
 
 Prerequisites:
-1. Generate an API key from the Torale web dashboard (Settings > API Access)
+1. Generate an API key from the webwhen web dashboard (Settings > API Access)
 2. Add the API key to your root .env file: WEBWHEN_API_KEY=sk_...
-3. Install the SDK: pip install torale (or use uv in this repo)
+3. Install the SDK: pip install webwhen (or use uv in this repo)
 
 Run this file:
     python backend/examples/api_key_usage.py --local  # Use local dev server

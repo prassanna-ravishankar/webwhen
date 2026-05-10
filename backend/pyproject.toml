@@ -1,5 +1,5 @@
 [project]
-name = "torale"
+name = "webwhen"
 version = "0.1.0"
 description = "Grounded search monitoring platform for AI-powered conditional automation"
 requires-python = ">=3.11"

@@ -1968,94 +1968,6 @@ wheels = [
 ]
 
 [[package]]
-name = "torale"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "a2a-sdk" },
-    { name = "alembic" },
-    { name = "anthropic" },
-    { name = "apscheduler" },
-    { name = "asyncpg" },
-    { name = "bcrypt" },
-    { name = "clerk-backend-api" },
-    { name = "composio" },
-    { name = "cron-descriptor" },
-    { name = "fastapi" },
-    { name = "httpx" },
-    { name = "markdown" },
-    { name = "novu-py" },
-    { name = "openai" },
-    { name = "posthog" },
-    { name = "psycopg2-binary" },
-    { name = "pydantic", extra = ["email"] },
-    { name = "pydantic-settings" },
-    { name = "pypika-tortoise" },
-    { name = "python-dotenv" },
-    { name = "redis", extra = ["hiredis"] },
-    { name = "slowapi" },
-    { name = "sqlalchemy" },
-    { name = "uvicorn", extra = ["standard"] },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "pytest-cov" },
-    { name = "ruff" },
-]
-research = [
-    { name = "langfuse" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "httpx" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "a2a-sdk", specifier = ">=0.3.22" },
-    { name = "alembic", specifier = ">=1.13.0" },
-    { name = "anthropic", specifier = ">=0.34.0" },
-    { name = "apscheduler", specifier = ">=3.11.0,<4.0" },
-    { name = "asyncpg", specifier = ">=0.29.0" },
-    { name = "bcrypt", specifier = ">=4.0.0" },
-    { name = "clerk-backend-api", specifier = ">=1.0.0" },
-    { name = "composio", specifier = ">=0.8.0" },
-    { name = "cron-descriptor", specifier = ">=1.4.0" },
-    { name = "fastapi", specifier = ">=0.115.0" },
-    { name = "httpx", specifier = ">=0.27.0" },
-    { name = "langfuse", marker = "extra == 'research'", specifier = ">=2.0.0" },
-    { name = "markdown", specifier = ">=3.10" },
-    { name = "novu-py", specifier = ">=1.3.0" },
-    { name = "openai", specifier = ">=1.45.0" },
-    { name = "posthog", specifier = ">=7.8.3" },
-    { name = "psycopg2-binary", specifier = ">=2.9.0" },
-    { name = "pydantic", extras = ["email"], specifier = ">=2.9.0" },
-    { name = "pydantic-settings", specifier = ">=2.4.0" },
-    { name = "pypika-tortoise", specifier = ">=0.1.6" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.0" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24.0" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=5.0.0" },
-    { name = "python-dotenv", specifier = ">=1.0.0" },
-    { name = "redis", extras = ["hiredis"], specifier = ">=5.0.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6.0" },
-    { name = "slowapi", specifier = ">=0.1.9" },
-    { name = "sqlalchemy", specifier = ">=2.0.0" },
-    { name = "uvicorn", extras = ["standard"], specifier = ">=0.30.0" },
-]
-provides-extras = ["dev", "research"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "httpx", specifier = ">=0.28.1" },
-    { name = "ruff", specifier = ">=0.14.4" },
-]
-
-[[package]]
 name = "tqdm"
 version = "4.67.3"
 source = { registry = "https://pypi.org/simple" }
@@ -2333,6 +2245,94 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/a5/8f/aea9c71cc92bf9b6cc0f7f70df8f0b420636b6c96ef4feee1e16f80f75dd/websockets-16.0-pp311-pypy311_pp73-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:0298d07ee155e2e9fda5be8a9042200dd2e3bb0b8a38482156576f863a9d457c", size = 176968, upload-time = "2026-01-10T09:23:41.031Z" },
     { url = "https://files.pythonhosted.org/packages/9a/3f/f70e03f40ffc9a30d817eef7da1be72ee4956ba8d7255c399a01b135902a/websockets-16.0-pp311-pypy311_pp73-win_amd64.whl", hash = "sha256:a653aea902e0324b52f1613332ddf50b00c06fdaf7e92624fbf8c77c78fa5767", size = 178735, upload-time = "2026-01-10T09:23:42.259Z" },
     { url = "https://files.pythonhosted.org/packages/6f/28/258ebab549c2bf3e64d2b0217b973467394a9cea8c42f70418ca2c5d0d2e/websockets-16.0-py3-none-any.whl", hash = "sha256:1637db62fad1dc833276dded54215f2c7fa46912301a24bd94d45d46a011ceec", size = 171598, upload-time = "2026-01-10T09:23:45.395Z" },
+]
+
+[[package]]
+name = "webwhen"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "a2a-sdk" },
+    { name = "alembic" },
+    { name = "anthropic" },
+    { name = "apscheduler" },
+    { name = "asyncpg" },
+    { name = "bcrypt" },
+    { name = "clerk-backend-api" },
+    { name = "composio" },
+    { name = "cron-descriptor" },
+    { name = "fastapi" },
+    { name = "httpx" },
+    { name = "markdown" },
+    { name = "novu-py" },
+    { name = "openai" },
+    { name = "posthog" },
+    { name = "psycopg2-binary" },
+    { name = "pydantic", extra = ["email"] },
+    { name = "pydantic-settings" },
+    { name = "pypika-tortoise" },
+    { name = "python-dotenv" },
+    { name = "redis", extra = ["hiredis"] },
+    { name = "slowapi" },
+    { name = "sqlalchemy" },
+    { name = "uvicorn", extra = ["standard"] },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "pytest-cov" },
+    { name = "ruff" },
+]
+research = [
+    { name = "langfuse" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "httpx" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "a2a-sdk", specifier = ">=0.3.22" },
+    { name = "alembic", specifier = ">=1.13.0" },
+    { name = "anthropic", specifier = ">=0.34.0" },
+    { name = "apscheduler", specifier = ">=3.11.0,<4.0" },
+    { name = "asyncpg", specifier = ">=0.29.0" },
+    { name = "bcrypt", specifier = ">=4.0.0" },
+    { name = "clerk-backend-api", specifier = ">=1.0.0" },
+    { name = "composio", specifier = ">=0.8.0" },
+    { name = "cron-descriptor", specifier = ">=1.4.0" },
+    { name = "fastapi", specifier = ">=0.115.0" },
+    { name = "httpx", specifier = ">=0.27.0" },
+    { name = "langfuse", marker = "extra == 'research'", specifier = ">=2.0.0" },
+    { name = "markdown", specifier = ">=3.10" },
+    { name = "novu-py", specifier = ">=1.3.0" },
+    { name = "openai", specifier = ">=1.45.0" },
+    { name = "posthog", specifier = ">=7.8.3" },
+    { name = "psycopg2-binary", specifier = ">=2.9.0" },
+    { name = "pydantic", extras = ["email"], specifier = ">=2.9.0" },
+    { name = "pydantic-settings", specifier = ">=2.4.0" },
+    { name = "pypika-tortoise", specifier = ">=0.1.6" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.0" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24.0" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=5.0.0" },
+    { name = "python-dotenv", specifier = ">=1.0.0" },
+    { name = "redis", extras = ["hiredis"], specifier = ">=5.0.0" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6.0" },
+    { name = "slowapi", specifier = ">=0.1.9" },
+    { name = "sqlalchemy", specifier = ">=2.0.0" },
+    { name = "uvicorn", extras = ["standard"], specifier = ">=0.30.0" },
+]
+provides-extras = ["dev", "research"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "httpx", specifier = ">=0.28.1" },
+    { name = "ruff", specifier = ">=0.14.4" },
 ]
 
 [[package]]
