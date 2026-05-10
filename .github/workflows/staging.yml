@@ -75,6 +75,12 @@ jobs:
           provenance: false
           # Stage origin baked into prerendered JSON-LD / RSS / etc. for the
           # frontend image only. Other components ignore the arg.
+          # Note: LANDING_EXAMPLES_API_ORIGIN is intentionally NOT set
+          # here. Marketing snapshot data is brand-curated and lives in
+          # the production public feed; staging builds bake from prod by
+          # design so stakeholders eyeballing the landing on staging see
+          # real watches, not an empty staging-API. See
+          # frontend/scripts/sync-landing-examples.mjs for the rationale.
           build-args: |
             PRERENDER_ORIGIN=https://staging.webwhen.ai
           tags: |

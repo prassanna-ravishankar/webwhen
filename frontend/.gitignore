@@ -14,6 +14,11 @@ node_modules
 # at build time. See scripts/prerender.mjs for the why.
 /.changelog-fixture.json
 
+# Synced from /api/v1/public/feed by scripts/sync-landing-examples.mjs at
+# build time. The committed src/data/landingExamples.fallback.json is the
+# safety net when the live fetch fails in CI.
+/.landing-examples-snapshot.json
+
 # Misc
 .DS_Store
 .env.local
