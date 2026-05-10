@@ -32,12 +32,18 @@ const BAKE_TARGET = join(PROJECT_ROOT, 'src/data/landingExamples.fallback.json')
 // committed JSON.
 const DEBUG_OUT = join(PROJECT_ROOT, '.landing-examples-snapshot.json');
 
-// Explicit env var only. Earlier we tried to derive this by string-
-// replacing PRERENDER_ORIGIN, but the staging API host is
-// `api-staging.webwhen.ai` (dash), not `api.staging.webwhen.ai` (dot),
-// so the derivation silently fell back and staging builds saw prod.
-// staging.yml passes LANDING_EXAMPLES_API_ORIGIN=https://api-staging.webwhen.ai;
-// production builds rely on the default below.
+// Marketing snapshot data is brand-curated and lives in the production
+// public feed. Both staging and production images bake from prod by
+// design — the alternative (staging builds reading staging-API) showed
+// stakeholders an empty hero on staging because curated taskIds are
+// prod-only UUIDs. Same shape as the changelog fixture: one source of
+// truth, no per-env split.
+//
+// LANDING_EXAMPLES_API_ORIGIN remains an env var so a developer can
+// override locally (e.g. point at a fork of the API for testing), and
+// so the explicit-env-var mechanism is preserved (no string-replace
+// heuristics on PRERENDER_ORIGIN — that fell back silently when the
+// staging API host turned out to be `api-staging` not `api.staging`).
 const API_ORIGIN = process.env.LANDING_EXAMPLES_API_ORIGIN || 'https://api.webwhen.ai';
 
 // Public endpoints cap limit at 100. The feed already returns the most-

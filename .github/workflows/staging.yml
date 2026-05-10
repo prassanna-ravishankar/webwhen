@@ -74,13 +74,15 @@ jobs:
           push: true
           provenance: false
           # Stage origin baked into prerendered JSON-LD / RSS / etc. for the
-          # frontend image only. Other components ignore the args.
-          # LANDING_EXAMPLES_API_ORIGIN points the prebuild snapshot fetch
-          # at the staging API (note: dash, not dot — the staging host is
-          # api-staging.webwhen.ai, not api.staging.webwhen.ai).
+          # frontend image only. Other components ignore the arg.
+          # Note: LANDING_EXAMPLES_API_ORIGIN is intentionally NOT set
+          # here. Marketing snapshot data is brand-curated and lives in
+          # the production public feed; staging builds bake from prod by
+          # design so stakeholders eyeballing the landing on staging see
+          # real watches, not an empty staging-API. See
+          # frontend/scripts/sync-landing-examples.mjs for the rationale.
           build-args: |
             PRERENDER_ORIGIN=https://staging.webwhen.ai
-            LANDING_EXAMPLES_API_ORIGIN=https://api-staging.webwhen.ai
           tags: |
             gcr.io/${{ env.GCP_PROJECT_ID }}/torale-${{ matrix.component }}:${{ env.IMAGE_TAG }}
             gcr.io/${{ env.GCP_PROJECT_ID }}/torale-${{ matrix.component }}:staging
