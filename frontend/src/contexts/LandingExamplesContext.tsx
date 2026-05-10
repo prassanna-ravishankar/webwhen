@@ -123,10 +123,22 @@ function mergeExecution(
   };
 }
 
+/**
+ * Inside scripts/prerender.mjs Playwright sets window.__PRERENDER__ = true
+ * before navigating. Skip the runtime revalidation fetch under prerender
+ * so the captured HTML is always the build-time bake — no race between
+ * the in-flight fetch resolving and `page.content()` capturing.
+ */
+function isPrerender(): boolean {
+  if (typeof window === 'undefined') return false;
+  return window.__PRERENDER__ === true;
+}
+
 export function LandingExamplesProvider({ children }: { children: ReactNode }) {
   const [snapshot, setSnapshot] = useState<LandingSnapshot>(FALLBACK);
 
   useEffect(() => {
+    if (isPrerender()) return;
     let cancelled = false;
     api
       .getPublicFeed(100)

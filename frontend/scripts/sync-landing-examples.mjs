@@ -35,10 +35,9 @@ const DEBUG_OUT = join(PROJECT_ROOT, '.landing-examples-snapshot.json');
 // Explicit env var only. Earlier we tried to derive this by string-
 // replacing PRERENDER_ORIGIN, but the staging API host is
 // `api-staging.webwhen.ai` (dash), not `api.staging.webwhen.ai` (dot),
-// so the derivation silently fell back to the default and CI builds
-// always saw production. CI workflows now set this explicitly per env:
-// staging.yml → https://api-staging.webwhen.ai
-// production.yml → https://api.webwhen.ai
+// so the derivation silently fell back and staging builds saw prod.
+// staging.yml passes LANDING_EXAMPLES_API_ORIGIN=https://api-staging.webwhen.ai;
+// production builds rely on the default below.
 const API_ORIGIN = process.env.LANDING_EXAMPLES_API_ORIGIN || 'https://api.webwhen.ai';
 
 // Public endpoints cap limit at 100. The feed already returns the most-
@@ -118,10 +117,30 @@ function paraphraseActivity(execution) {
     }));
 }
 
+// Bare fetch() inherits Node's 10-minute socket timeout, which would
+// stretch every Docker build by minutes if the API is slow or down.
+// 15s is comfortably more than the API needs in healthy state and short
+// enough to fail fast into the committed-snapshot fallback path.
+const FETCH_TIMEOUT_MS = 15000;
+
 async function fetchJson(url) {
-  const res = await fetch(url, { headers: { accept: 'application/json' } });
-  if (!res.ok) throw new Error(`${url} → HTTP ${res.status}`);
-  return res.json();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  try {
+    const res = await fetch(url, {
+      headers: { accept: 'application/json' },
+      signal: controller.signal,
+    });
+    if (!res.ok) throw new Error(`${url} → HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    if (err?.name === 'AbortError') {
+      throw new Error(`${url} → timed out after ${FETCH_TIMEOUT_MS}ms`);
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 async function main() {
@@ -138,9 +157,10 @@ async function main() {
     ]);
     totalPublicConditions = tasks?.total ?? (Array.isArray(tasks?.tasks) ? tasks.tasks.length : 0);
   } catch (err) {
-    // Fetch failed. The committed bake target stays untouched — Vite will
-    // import the last-known-good snapshot. Write the debug mirror anyway
-    // so we know the script ran but bailed.
+    // Fetch failed. The committed bake target stays untouched — Vite
+    // will import the last-known-good snapshot. The debug mirror at
+    // DEBUG_OUT is intentionally not refreshed; if you need to know what
+    // CI saw, the warn line below is the audit trail.
     console.warn(`[sync-landing-examples] live fetch failed (${err.message}); using committed snapshot at ${BAKE_TARGET}.`);
     if (!existsSync(BAKE_TARGET)) {
       // No committed snapshot to fall back to — write an empty one so
