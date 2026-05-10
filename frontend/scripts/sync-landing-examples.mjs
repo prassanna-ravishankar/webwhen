@@ -2,28 +2,44 @@
 //
 // For each entry in src/data/landingExamples.ts, hits /api/v1/public/feed
 // for the latest successful execution, joins it with the curated config,
-// and writes .landing-examples-snapshot.json. The snapshot is consumed by
-// LandingExamplesContext at module-init so prerender bakes real evidence
-// into dist/index.html (and component first-paint matches hydration).
+// and overwrites src/data/landingExamples.fallback.json — the JSON the
+// React tree actually imports at module init. So the file plays two
+// roles depending on context:
+//   - In CI: it is the *bake target*. Fresh data overwrites it before
+//     `vite build` reads the import.
+//   - In git: the committed copy is the *fallback*. If CI's fetch ever
+//     fails, the build still ships the last-known-good snapshot rather
+//     than blowing up.
 //
-// Failure mode mirrors sync-changelog-fixture.mjs: if the fetch fails or
-// returns an empty feed, fall back to the committed
-// landingExamples.fallback.json so builds never break on an API blip. CI
-// surfaces a warning so we know it happened.
+// .landing-examples-snapshot.json is also written as a debug artefact at
+// the repo root (gitignored). Useful for inspecting what the script saw
+// without diffing the committed JSON.
+//
+// Failure mode mirrors sync-changelog-fixture.mjs: if the fetch fails,
+// the existing committed JSON stays put and we exit cleanly with a warn.
 
-import { writeFileSync, existsSync, copyFileSync } from 'node:fs';
+import { writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadTsModule } from './_lib/load-ts.mjs';
 
 const PROJECT_ROOT = join(import.meta.dirname, '..');
 const CONFIG_TS = join(PROJECT_ROOT, 'src/data/landingExamples.ts');
-const FALLBACK = join(PROJECT_ROOT, 'src/data/landingExamples.fallback.json');
-const OUT = join(PROJECT_ROOT, '.landing-examples-snapshot.json');
+// The React tree imports this path at module init, so this is what we
+// must write. Vite's resolveJsonModule + bundler resolution turn it into
+// a static import that prerender then bakes into dist HTML.
+const BAKE_TARGET = join(PROJECT_ROOT, 'src/data/landingExamples.fallback.json');
+// Debug-only mirror, gitignored. Inspect this without git-diffing the
+// committed JSON.
+const DEBUG_OUT = join(PROJECT_ROOT, '.landing-examples-snapshot.json');
 
-const API_ORIGIN =
-  process.env.LANDING_EXAMPLES_API_ORIGIN ||
-  process.env.PRERENDER_ORIGIN?.replace('://', '://api.').replace('https://api.https://', 'https://') ||
-  'https://api.webwhen.ai';
+// Explicit env var only. Earlier we tried to derive this by string-
+// replacing PRERENDER_ORIGIN, but the staging API host is
+// `api-staging.webwhen.ai` (dash), not `api.staging.webwhen.ai` (dot),
+// so the derivation silently fell back to the default and CI builds
+// always saw production. CI workflows now set this explicitly per env:
+// staging.yml → https://api-staging.webwhen.ai
+// production.yml → https://api.webwhen.ai
+const API_ORIGIN = process.env.LANDING_EXAMPLES_API_ORIGIN || 'https://api.webwhen.ai';
 
 // Public endpoints cap limit at 100. The feed already returns the most-
 // recent executions first, so 100 is enough to cover a curated set of ~10
@@ -122,18 +138,17 @@ async function main() {
     ]);
     totalPublicConditions = tasks?.total ?? (Array.isArray(tasks?.tasks) ? tasks.tasks.length : 0);
   } catch (err) {
-    console.warn(`[sync-landing-examples] live fetch failed (${err.message}); falling back to committed snapshot.`);
-    if (existsSync(FALLBACK)) {
-      copyFileSync(FALLBACK, OUT);
-      console.warn(`[sync-landing-examples] copied ${FALLBACK} → ${OUT}`);
-      return;
+    // Fetch failed. The committed bake target stays untouched — Vite will
+    // import the last-known-good snapshot. Write the debug mirror anyway
+    // so we know the script ran but bailed.
+    console.warn(`[sync-landing-examples] live fetch failed (${err.message}); using committed snapshot at ${BAKE_TARGET}.`);
+    if (!existsSync(BAKE_TARGET)) {
+      // No committed snapshot to fall back to — write an empty one so
+      // the import resolves rather than crashing the build.
+      const empty = { totalPublicConditions: 0, syncedAt: new Date().toISOString(), examples: [] };
+      writeFileSync(BAKE_TARGET, JSON.stringify(empty, null, 2), 'utf-8');
+      console.warn(`[sync-landing-examples] no committed snapshot existed; wrote empty placeholder.`);
     }
-    console.warn(`[sync-landing-examples] no fallback at ${FALLBACK}; writing empty snapshot.`);
-    writeFileSync(
-      OUT,
-      JSON.stringify({ totalPublicConditions: 0, syncedAt: new Date().toISOString(), examples: [] }, null, 2),
-      'utf-8',
-    );
     return;
   }
 
@@ -182,18 +197,23 @@ async function main() {
     examples,
   };
 
-  writeFileSync(OUT, JSON.stringify(snapshot, null, 2), 'utf-8');
+  const serialized = JSON.stringify(snapshot, null, 2);
+  // Bake target = the import the React tree resolves at module init.
+  // Overwriting this makes the live fetch visible to vite build (and
+  // therefore to prerender's baked HTML).
+  writeFileSync(BAKE_TARGET, serialized, 'utf-8');
+  // Debug mirror at repo root, gitignored. Inspect this to see what the
+  // script saw without producing a noisy git diff on every CI run.
+  writeFileSync(DEBUG_OUT, serialized, 'utf-8');
   console.log(
-    `[sync-landing-examples] baked ${examples.length}/${LANDING_EXAMPLES.length} watches → ${OUT} (total public: ${totalPublicConditions})`,
+    `[sync-landing-examples] baked ${examples.length}/${LANDING_EXAMPLES.length} watches → ${BAKE_TARGET} (total public: ${totalPublicConditions}, origin: ${API_ORIGIN})`,
   );
 }
 
 main().catch((err) => {
+  // Don't tear down the build on a partial failure — leave the committed
+  // bake target alone so the React tree still has *something* to import.
   console.error(`[sync-landing-examples] FAIL: ${err.stack || err.message}`);
-  if (existsSync(FALLBACK)) {
-    copyFileSync(FALLBACK, OUT);
-    console.warn(`[sync-landing-examples] copied fallback after fatal error.`);
-    process.exit(0);
-  }
-  process.exit(1);
+  console.warn(`[sync-landing-examples] leaving committed snapshot at ${BAKE_TARGET} untouched.`);
+  process.exit(0);
 });

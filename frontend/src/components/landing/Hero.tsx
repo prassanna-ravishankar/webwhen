@@ -21,6 +21,19 @@ function prefersReducedMotion(): boolean {
   return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
 }
 
+/**
+ * Inside scripts/prerender.mjs Playwright sets `window.__PRERENDER__ = true`
+ * before navigating. Gating the cycle effect on this flag stops the state
+ * machine from advancing during prerender — so the captured HTML is
+ * always idle/full-prompt-#0, regardless of how long Playwright takes to
+ * settle on `networkidle`. Defence-in-depth alongside the deterministic
+ * first-paint state.
+ */
+function isPrerender(): boolean {
+  if (typeof window === 'undefined') return false
+  return window.__PRERENDER__ === true
+}
+
 /** Render a date as "May 9" — absolute, deterministic across SSR/CSR. */
 function shortDate(iso: string): string {
   if (!iso) return ''
@@ -47,8 +60,16 @@ export const Hero: React.FC = () => {
   useEffect(() => {
     if (hero.length <= 1) return
     if (paused) return
+    // Don't run the typewriter while Playwright is capturing the prerender
+    // shell — keeps captured HTML deterministic regardless of settle time.
+    if (isPrerender()) return
     if (prefersReducedMotion()) {
-      // Reduced motion: instant swap on the same 4.5s cadence (IDLE+a bit).
+      // Reduced motion: instant swap, no character animation. The cadence
+      // here is intentionally a touch longer than IDLE_MS alone (since the
+      // animated path eats real seconds typing/deleting on top of IDLE_MS,
+      // a pure idle dwell would feel rushed). 4500ms was chosen as a
+      // reasonable approximation of the perceived rhythm without being
+      // load-bearing — tune freely.
       // Use the ref as source of truth for "where we are" so this effect
       // doesn't need `index` in its deps (which would re-arm on every tick).
       const id = window.setTimeout(() => {
@@ -137,22 +158,29 @@ export const Hero: React.FC = () => {
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
-          <div className={styles.composer} aria-live="polite">
+          <div className={styles.composer}>
             <div className={styles.composerHead}>
               <span>new watch</span>
               <span>plain english · no rules</span>
             </div>
             <div className={styles.composerBody}>
-              <p className={styles.composerPrompt}>
+              {/* The animated text itself is aria-hidden — character-level
+                  mutation would otherwise spam screen readers with one
+                  announcement per keystroke. The sr-only mirror below
+                  carries aria-live and only updates with the settled
+                  prompt, so SR users hear each prompt once per cycle. */}
+              <p className={styles.composerPrompt} aria-hidden="true">
                 {typed}
                 <span
                   className={cn(
                     styles.composerCursor,
                     isAnimating && styles.composerCursorWorking,
                   )}
-                  aria-hidden="true"
                 ></span>
               </p>
+              <span className={styles.srOnly} aria-live="polite" aria-atomic="true">
+                {phase === 'idle' ? current?.displayPrompt ?? '' : ''}
+              </span>
               <p className={styles.composerSub}>
                 webwhen will sit with this and decide when to check.
               </p>

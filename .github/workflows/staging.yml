@@ -74,9 +74,13 @@ jobs:
           push: true
           provenance: false
           # Stage origin baked into prerendered JSON-LD / RSS / etc. for the
-          # frontend image only. Other components ignore the arg.
+          # frontend image only. Other components ignore the args.
+          # LANDING_EXAMPLES_API_ORIGIN points the prebuild snapshot fetch
+          # at the staging API (note: dash, not dot — the staging host is
+          # api-staging.webwhen.ai, not api.staging.webwhen.ai).
           build-args: |
             PRERENDER_ORIGIN=https://staging.webwhen.ai
+            LANDING_EXAMPLES_API_ORIGIN=https://api-staging.webwhen.ai
           tags: |
             gcr.io/${{ env.GCP_PROJECT_ID }}/torale-${{ matrix.component }}:${{ env.IMAGE_TAG }}
             gcr.io/${{ env.GCP_PROJECT_ID }}/torale-${{ matrix.component }}:staging

@@ -13,6 +13,13 @@ WORKDIR /app
 ARG PRERENDER_ORIGIN
 ENV PRERENDER_ORIGIN=${PRERENDER_ORIGIN}
 
+# API origin used by scripts/sync-landing-examples.mjs at prebuild to fetch
+# the landing-page snapshot from /api/v1/public/feed. Defaults to the
+# production API; staging.yml overrides to https://api-staging.webwhen.ai
+# so staging builds bake staging-API watch evidence rather than prod's.
+ARG LANDING_EXAMPLES_API_ORIGIN
+ENV LANDING_EXAMPLES_API_ORIGIN=${LANDING_EXAMPLES_API_ORIGIN}
+
 # Copy package files
 COPY package*.json ./
 

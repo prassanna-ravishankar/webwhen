@@ -219,6 +219,21 @@
   background: var(--ww-ink-3);
   animation: none;
 }
+/* Accessibility-only mirror of the settled composer prompt. The visible
+   prompt is aria-hidden because per-character DOM mutation would spam
+   screen readers; this element carries aria-live and only updates when
+   the typewriter settles, so SR users hear each prompt once per cycle. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 .composerSub {
   font-family: var(--ww-font-sans);
   font-size: 13px;
