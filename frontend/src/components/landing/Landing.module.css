@@ -210,6 +210,14 @@
   margin-left: 2px;
   vertical-align: -3px;
   animation: blink 1.05s steps(2, start) infinite;
+  transition: background var(--ww-dur-fast) var(--ww-ease-out);
+}
+/* While the typewriter is actively chewing through chars the cursor
+   stops blinking and shifts to ink-3 — reads as "working" rather than
+   "ready". Returns to ember + blink the moment the prompt settles. */
+.composerCursorWorking {
+  background: var(--ww-ink-3);
+  animation: none;
 }
 .composerSub {
   font-family: var(--ww-font-sans);

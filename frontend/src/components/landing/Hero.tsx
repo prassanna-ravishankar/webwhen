@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { useLandingExamples } from '@/contexts/LandingExamplesContext'
@@ -6,7 +6,15 @@ import { cn } from '@/lib/utils'
 
 import styles from './Landing.module.css'
 
-const CYCLE_MS = 4500
+// === Cycle pacing ====================================================
+// `IDLE_MS` is the dwell after a prompt is fully typed — the time the
+// reader actually sees the full sentence. Type/delete chew through their
+// own time on top.
+const IDLE_MS = 3000
+const TYPE_MS_PER_CHAR = 28
+const DELETE_MS_PER_CHAR = 18
+
+type Phase = 'idle' | 'deleting' | 'typing'
 
 function prefersReducedMotion(): boolean {
   if (typeof window === 'undefined') return false
@@ -23,24 +31,87 @@ function shortDate(iso: string): string {
 
 export const Hero: React.FC = () => {
   const { hero, snapshot } = useLandingExamples()
-  // Deterministic first paint: always start at index 0 regardless of how
-  // the snapshot was generated. Cycling is opt-in via useEffect, so the
-  // SSR/prerender HTML and the React first paint render identical content.
+
+  // Deterministic first paint: index 0, full prompt, idle phase. The
+  // cycle starts only inside useEffect so the SSR/prerender HTML and the
+  // React first paint render identical content.
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
+  const [phase, setPhase] = useState<Phase>('idle')
+  const [typed, setTyped] = useState<string>(() => hero[0]?.displayPrompt ?? '')
+
+  // Track the prompt the typewriter is animating toward. Lets us cleanly
+  // start a delete-then-type sequence each cycle without racing setState.
+  const targetIndexRef = useRef(0)
 
   useEffect(() => {
     if (hero.length <= 1) return
-    if (prefersReducedMotion()) return
     if (paused) return
-    const id = window.setTimeout(() => {
-      setIndex((i) => (i + 1) % hero.length)
-    }, CYCLE_MS)
-    return () => window.clearTimeout(id)
-  }, [index, paused, hero.length])
+    if (prefersReducedMotion()) {
+      // Reduced motion: instant swap on the same 4.5s cadence (IDLE+a bit).
+      // Use the ref as source of truth for "where we are" so this effect
+      // doesn't need `index` in its deps (which would re-arm on every tick).
+      const id = window.setTimeout(() => {
+        const next = (targetIndexRef.current + 1) % hero.length
+        targetIndexRef.current = next
+        setIndex(next)
+        setTyped(hero[next]?.displayPrompt ?? '')
+      }, IDLE_MS + 1500)
+      return () => window.clearTimeout(id)
+    }
+
+    let cancelled = false
+    let timeoutId: number | undefined
+
+    const tickDelete = () => {
+      if (cancelled) return
+      setTyped((prev) => {
+        if (prev.length <= 1) {
+          // Last char deleted — flip to typing the next prompt.
+          const next = (targetIndexRef.current + 1) % hero.length
+          targetIndexRef.current = next
+          setIndex(next)
+          setPhase('typing')
+          return ''
+        }
+        timeoutId = window.setTimeout(tickDelete, DELETE_MS_PER_CHAR)
+        return prev.slice(0, -1)
+      })
+    }
+
+    const tickType = () => {
+      if (cancelled) return
+      const target = hero[targetIndexRef.current]?.displayPrompt ?? ''
+      setTyped((prev) => {
+        if (prev.length >= target.length) {
+          setPhase('idle')
+          return target
+        }
+        timeoutId = window.setTimeout(tickType, TYPE_MS_PER_CHAR)
+        return target.slice(0, prev.length + 1)
+      })
+    }
+
+    if (phase === 'idle') {
+      timeoutId = window.setTimeout(() => {
+        if (cancelled) return
+        setPhase('deleting')
+      }, IDLE_MS)
+    } else if (phase === 'deleting') {
+      timeoutId = window.setTimeout(tickDelete, DELETE_MS_PER_CHAR)
+    } else if (phase === 'typing') {
+      timeoutId = window.setTimeout(tickType, TYPE_MS_PER_CHAR)
+    }
+
+    return () => {
+      cancelled = true
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId)
+    }
+  }, [phase, paused, hero])
 
   const current = hero[index] ?? hero[0]
   const liveCount = snapshot.totalPublicConditions
+  const isAnimating = phase !== 'idle'
 
   return (
     <section className={styles.hero}>
@@ -73,8 +144,14 @@ export const Hero: React.FC = () => {
             </div>
             <div className={styles.composerBody}>
               <p className={styles.composerPrompt}>
-                {current?.displayPrompt ?? 'Tell webwhen what to watch for.'}
-                <span className={styles.composerCursor}></span>
+                {typed}
+                <span
+                  className={cn(
+                    styles.composerCursor,
+                    isAnimating && styles.composerCursorWorking,
+                  )}
+                  aria-hidden="true"
+                ></span>
               </p>
               <p className={styles.composerSub}>
                 webwhen will sit with this and decide when to check.
