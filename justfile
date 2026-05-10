@@ -9,7 +9,7 @@ default:
 # === Development ===
 
 # Start all services (API + PostgreSQL)
-# Use TORALE_NOAUTH=1 for no-auth mode
+# Use WEBWHEN_NOAUTH=1 for no-auth mode
 dev: build
     docker compose up
 
@@ -26,8 +26,8 @@ dev-full: build
 # Start all services + frontend in no-auth mode
 dev-noauth: build
     #!/usr/bin/env bash
-    TORALE_NOAUTH=1 docker compose up -d
-    cd frontend && npm install && VITE_TORALE_NOAUTH=1 npm run dev
+    WEBWHEN_NOAUTH=1 docker compose up -d
+    cd frontend && npm install && VITE_WEBWHEN_NOAUTH=1 npm run dev
 
 # Start specific service (api, workers)
 dev-service service: build

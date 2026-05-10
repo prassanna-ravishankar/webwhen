@@ -79,8 +79,8 @@ async def lifespan(app: FastAPI):
     await redis_client.connect()
 
     # Initialize Auth Provider
-    if settings.torale_noauth:
-        logger.info("⚠️  TORALE_NOAUTH mode enabled - using NoAuthProvider")
+    if settings.webwhen_noauth:
+        logger.info("⚠️  WEBWHEN_NOAUTH mode enabled - using NoAuthProvider")
         provider = NoAuthProvider()
         set_auth_provider(provider)
         await provider.setup(db)
@@ -136,9 +136,9 @@ app = FastAPI(
     description="Platform-agnostic background task manager for AI-powered automation",
     version="0.1.0",
     lifespan=lifespan,
-    docs_url="/docs" if settings.torale_noauth else None,
-    redoc_url="/redoc" if settings.torale_noauth else None,
-    openapi_url="/openapi.json" if settings.torale_noauth else None,
+    docs_url="/docs" if settings.webwhen_noauth else None,
+    redoc_url="/redoc" if settings.webwhen_noauth else None,
+    openapi_url="/openapi.json" if settings.webwhen_noauth else None,
 )
 
 _CORS_ORIGINS = [

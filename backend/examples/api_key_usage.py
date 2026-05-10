@@ -6,7 +6,7 @@ This file demonstrates how to authenticate and use the Torale SDK with API keys.
 
 Prerequisites:
 1. Generate an API key from the Torale web dashboard (Settings > API Access)
-2. Add the API key to your root .env file: TORALE_API_KEY=sk_...
+2. Add the API key to your root .env file: WEBWHEN_API_KEY=sk_...
 3. Install the SDK: pip install torale (or use uv in this repo)
 
 Run this file:
@@ -41,13 +41,13 @@ args = parser.parse_args()
 
 # Set dev mode BEFORE importing SDK
 if args.local:
-    os.environ["TORALE_DEV"] = "1"
+    os.environ["WEBWHEN_DEV"] = "1"
 
 # Load environment variables from root .env file
 load_dotenv()
 
 # ruff: noqa: E402
-# SDK must be imported AFTER setting TORALE_DEV environment variable
+# SDK must be imported AFTER setting WEBWHEN_DEV environment variable
 from webwhen.sdk import Torale, ToraleAsync
 
 
@@ -56,11 +56,11 @@ def example_1_env_variable():
     Method 1: Authentication via Environment Variable (RECOMMENDED)
 
     This is the recommended approach for production use.
-    Add TORALE_API_KEY=sk_... to your .env file or environment.
+    Add WEBWHEN_API_KEY=sk_... to your .env file or environment.
     """
     print("\n=== Example 1: Authentication via Environment Variable ===")
 
-    # The SDK automatically reads TORALE_API_KEY from environment
+    # The SDK automatically reads WEBWHEN_API_KEY from environment
     client = Torale()
 
     # List all tasks
@@ -87,10 +87,10 @@ def example_2_explicit_api_key():
     print("\n=== Example 2: Explicit API Key ===")
 
     # Get API key from environment (in real code, you might hardcode for testing)
-    api_key = os.getenv("TORALE_API_KEY")
+    api_key = os.getenv("WEBWHEN_API_KEY")
 
     if not api_key:
-        print("⚠️  TORALE_API_KEY not found in environment")
+        print("⚠️  WEBWHEN_API_KEY not found in environment")
         return None
 
     # Pass API key explicitly
@@ -319,11 +319,11 @@ def main():
     print("=" * 60)
 
     # Check if API key is configured
-    if not os.getenv("TORALE_API_KEY"):
-        print("\n⚠️  WARNING: TORALE_API_KEY not found in environment!")
+    if not os.getenv("WEBWHEN_API_KEY"):
+        print("\n⚠️  WARNING: WEBWHEN_API_KEY not found in environment!")
         print("\nTo use these examples:")
         print("1. Generate an API key from: https://torale.ai/settings")
-        print("2. Add to your .env file: TORALE_API_KEY=sk_...")
+        print("2. Add to your .env file: WEBWHEN_API_KEY=sk_...")
         print("3. Run this script again")
         return
 

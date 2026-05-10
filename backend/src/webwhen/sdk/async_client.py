@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 import json
-import os
 from json import JSONDecodeError
-from pathlib import Path
 from typing import Any
 
 import httpx
 
+from webwhen.core.env import config_paths, getenv, warn_legacy_config_path
 from webwhen.sdk.exceptions import APIError, AuthenticationError, NotFoundError, ValidationError
 
 
@@ -32,19 +31,19 @@ class WebwhenAsyncClient:
 
         Args:
             api_key: API key for authentication. If not provided, will try to load from:
-                1. TORALE_API_KEY environment variable
-                2. ~/.torale/config.json file
-            api_url: Base URL for API. Defaults to https://api.torale.ai or value from config.
-                     For local development, set TORALE_DEV=1 to use http://localhost:8000
+                1. WEBWHEN_API_KEY environment variable (TORALE_API_KEY also accepted, deprecated)
+                2. ~/.webwhen/config.json file (~/.torale/config.json also read, deprecated)
+            api_url: Base URL for API. Defaults to the webwhen production API or value from config.
+                     For local development, set WEBWHEN_DEV=1 to use http://localhost:8000.
             timeout: Request timeout in seconds. Defaults to 60.
 
         Raises:
-            AuthenticationError: If no API key can be found and TORALE_NOAUTH is not set.
+            AuthenticationError: If no API key can be found and WEBWHEN_NOAUTH is not set.
         """
         # Check for no-auth mode (local development)
-        self.noauth_mode = os.getenv("TORALE_NOAUTH") == "1"
+        self.noauth_mode = getenv("WEBWHEN_NOAUTH") == "1"
         # Check for dev mode (local development with auth)
-        self.dev_mode = os.getenv("TORALE_DEV") == "1"
+        self.dev_mode = getenv("WEBWHEN_DEV") == "1"
 
         if not self.noauth_mode:
             # Try to get API key from various sources
@@ -52,7 +51,7 @@ class WebwhenAsyncClient:
 
             if not self.api_key:
                 raise AuthenticationError(
-                    "No API key provided. Set TORALE_API_KEY environment variable "
+                    "No API key provided. Set WEBWHEN_API_KEY environment variable "
                     "or pass api_key parameter."
                 )
         else:
@@ -72,27 +71,28 @@ class WebwhenAsyncClient:
 
     def _load_api_key(self) -> str | None:
         """Load API key from environment or config file."""
-        # Try environment variable first
-        api_key = os.getenv("TORALE_API_KEY")
+        api_key = getenv("WEBWHEN_API_KEY")
         if api_key:
             return api_key
 
-        # Try config file
-        config_path = Path.home() / ".torale" / "config.json"
-        if config_path.exists():
+        for config_path in config_paths():
+            if not config_path.exists():
+                continue
             try:
                 with open(config_path) as f:
                     config = json.load(f)
-                    return config.get("api_key")
             except (OSError, JSONDecodeError):
-                pass
+                continue
+            if config_path.parent.name == ".torale":
+                warn_legacy_config_path(config_path)
+            if config.get("api_key"):
+                return config["api_key"]
 
         return None
 
     def _load_api_url(self) -> str:
         """Load API URL from environment or config file."""
-        # Try environment variable first (highest priority)
-        api_url = os.getenv("TORALE_API_URL")
+        api_url = getenv("WEBWHEN_API_URL")
         if api_url:
             return api_url
 
@@ -101,16 +101,18 @@ class WebwhenAsyncClient:
         if self.dev_mode or self.noauth_mode:
             return "http://localhost:8000"
 
-        # Try config file (lower priority than dev mode)
-        config_path = Path.home() / ".torale" / "config.json"
-        if config_path.exists():
+        for config_path in config_paths():
+            if not config_path.exists():
+                continue
             try:
                 with open(config_path) as f:
                     config = json.load(f)
-                    if "api_url" in config:
-                        return config["api_url"]
             except (OSError, JSONDecodeError):
-                pass
+                continue
+            if config_path.parent.name == ".torale":
+                warn_legacy_config_path(config_path)
+            if "api_url" in config:
+                return config["api_url"]
 
         # Default to production
         return "https://api.torale.ai"

@@ -1,5 +1,8 @@
+import os
+import warnings
 from pathlib import Path
 
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Project root directory (used for locating static files, templates, etc.)
@@ -58,9 +61,16 @@ class Settings(BaseSettings):
     # Path to changelog.json file (relative to project root or absolute path)
     changelog_json_path: str = "static/changelog.json"
 
-    # Development/testing mode - disable authentication
-    torale_noauth: bool = False
-    torale_noauth_email: str = "test@example.com"
+    # Development/testing mode - disable authentication.
+    # Reads WEBWHEN_NOAUTH (preferred) or TORALE_NOAUTH (deprecated, see warning below).
+    webwhen_noauth: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("WEBWHEN_NOAUTH", "TORALE_NOAUTH"),
+    )
+    webwhen_noauth_email: str = Field(
+        default="test@example.com",
+        validation_alias=AliasChoices("WEBWHEN_NOAUTH_EMAIL", "TORALE_NOAUTH_EMAIL"),
+    )
 
     # Platform capacity limits
     max_users: int = 100
@@ -78,3 +88,27 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+def _warn_on_legacy_torale_env() -> None:
+    """Emit a one-time DeprecationWarning when TORALE_* env vars are providing values
+    that WEBWHEN_* could be providing instead.
+
+    Pydantic's AliasChoices does not surface which alias was used, so we re-check
+    os.environ at startup. Same once-per-process semantics as webwhen.core.env.
+    """
+    legacy_to_new = {
+        "TORALE_NOAUTH": "WEBWHEN_NOAUTH",
+        "TORALE_NOAUTH_EMAIL": "WEBWHEN_NOAUTH_EMAIL",
+    }
+    for legacy, new in legacy_to_new.items():
+        if os.environ.get(new) is None and os.environ.get(legacy) is not None:
+            warnings.warn(
+                f"Environment variable {legacy!r} is deprecated, use {new!r} instead. "
+                "The torale-prefixed env vars will be removed in a future release.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
+
+_warn_on_legacy_torale_env()

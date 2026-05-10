@@ -608,7 +608,7 @@ async def update_user_role(
             "note": "Test user - role not persisted to Clerk",
         }
 
-    if settings.torale_noauth:
+    if settings.webwhen_noauth:
         return {
             "status": "updated",
             "user_id": str(user_id),
@@ -687,7 +687,7 @@ async def bulk_update_user_roles(
         clerk_ids = list(user_map.values())
         clerk_ids_to_fetch = [cid for cid in clerk_ids if cid != "test_user_noauth"]
 
-        if clerk_ids_to_fetch and not settings.torale_noauth:
+        if clerk_ids_to_fetch and not settings.webwhen_noauth:
             try:
                 clerk_users_response = await clerk_client.users.list_async(
                     user_id=clerk_ids_to_fetch, limit=100
@@ -717,7 +717,7 @@ async def bulk_update_user_roles(
                 errors.append({"user_id": user_id, "error": "Cannot change own role"})
                 continue
 
-            if target_clerk_user_id == "test_user_noauth" or settings.torale_noauth:
+            if target_clerk_user_id == "test_user_noauth" or settings.webwhen_noauth:
                 updated_count += 1
                 continue
 

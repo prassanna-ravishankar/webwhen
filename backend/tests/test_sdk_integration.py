@@ -5,7 +5,7 @@ testing all CRUD operations, notifications, and error handling.
 
 Prerequisites:
 - Local dev environment running (`just dev`)
-- TORALE_NOAUTH=1 environment variable set
+- WEBWHEN_NOAUTH=1 environment variable set
 
 Run with:
     # Run all tests (will auto-skip if API not available)
@@ -32,7 +32,7 @@ from webwhen.sdk.exceptions import NotFoundError, ValidationError
 
 def check_api_available() -> bool:
     """Check if the API server is available."""
-    api_url = os.getenv("TORALE_API_URL", "http://localhost:8000")
+    api_url = os.getenv("WEBWHEN_API_URL", "http://localhost:8000")
     try:
         # Try to connect to the API (any response means it's up)
         httpx.get(f"{api_url}/api/v1/tasks", timeout=2.0, follow_redirects=True)
@@ -52,9 +52,9 @@ def sdk_client():
     if not check_api_available():
         pytest.skip("API server not available (start with `just dev`)")
 
-    # Use TORALE_NOAUTH=1 for local testing
-    if not os.getenv("TORALE_NOAUTH"):
-        pytest.skip("TORALE_NOAUTH not set (required for integration tests)")
+    # Use WEBWHEN_NOAUTH=1 for local testing
+    if not os.getenv("WEBWHEN_NOAUTH"):
+        pytest.skip("WEBWHEN_NOAUTH not set (required for integration tests)")
 
     client = Torale()
     yield client
@@ -372,8 +372,8 @@ class TestSDKContextManager:
         # Skip if API not available or NOAUTH not set
         if not check_api_available():
             pytest.skip("API server not available (start with `just dev`)")
-        if not os.getenv("TORALE_NOAUTH"):
-            pytest.skip("TORALE_NOAUTH not set (required for integration tests)")
+        if not os.getenv("WEBWHEN_NOAUTH"):
+            pytest.skip("WEBWHEN_NOAUTH not set (required for integration tests)")
 
         task_id = None
 

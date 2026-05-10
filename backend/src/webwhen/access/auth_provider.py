@@ -348,7 +348,7 @@ class NoAuthProvider(AuthProvider):
         """Initialize with test user definition."""
         self.test_user = User(
             user_id=TEST_USER_NOAUTH_ID,
-            email=settings.torale_noauth_email,
+            email=settings.webwhen_noauth_email,
             email_verified=True,
             db_user_id=NOAUTH_TEST_USER_ID,
         )

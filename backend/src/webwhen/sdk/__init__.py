@@ -55,8 +55,8 @@ class Webwhen(WebwhenClient):
 
         Args:
             api_key: API key for authentication. If not provided, will try to load from:
-                1. TORALE_API_KEY environment variable
-                2. ~/.torale/config.json file
+                1. WEBWHEN_API_KEY environment variable (TORALE_API_KEY also accepted, deprecated)
+                2. ~/.webwhen/config.json file (~/.torale/config.json also read, deprecated)
             api_url: Base URL for API. Defaults to http://localhost:8000 or value from config.
             timeout: Request timeout in seconds. Defaults to 60.
 
@@ -67,7 +67,7 @@ class Webwhen(WebwhenClient):
             >>> client = Webwhen(api_key="sk_...")
             >>> # Or for local development without auth
             >>> import os
-            >>> os.environ["TORALE_NOAUTH"] = "1"
+            >>> os.environ["WEBWHEN_NOAUTH"] = "1"
             >>> client = Webwhen()
         """
         super().__init__(api_key=api_key, api_url=api_url, timeout=timeout)
@@ -135,7 +135,7 @@ class WebwhenAsync(WebwhenAsyncClient):
 
         Args:
             api_key: API key for authentication
-            api_url: Base URL for API (defaults to https://api.torale.ai)
+            api_url: Base URL for API (defaults to the webwhen production API)
             timeout: Request timeout in seconds
         """
         super().__init__(api_key=api_key, api_url=api_url, timeout=timeout)
