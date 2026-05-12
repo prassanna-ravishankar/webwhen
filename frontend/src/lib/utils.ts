@@ -121,6 +121,6 @@ export function formatTimeAgo(dateString: string): string {
   if (diffMins < 1) return 'Just now';
   if (diffMins < MINS_IN_HOUR) return `${diffMins}m ago`;
   if (diffMins < MINS_IN_DAY) return `${Math.floor(diffMins / MINS_IN_HOUR)}h ago`;
-  if (diffMins < MINS_IN_WEEK) return `${Math.floor(diffMins / MINS_IN_DAY)}d ago`;
+  if (diffMins <= MINS_IN_WEEK) return `${Math.floor(diffMins / MINS_IN_DAY)}d ago`;
   return date.toLocaleDateString();
 }
