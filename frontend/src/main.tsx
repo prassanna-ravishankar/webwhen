@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import { AuthProvider } from './contexts/AuthContext'
+import { RootErrorBoundary } from './components/RootErrorBoundary'
 import App from './App'
 import './index.css'
 
@@ -11,13 +12,15 @@ import './index.css'
 // without a Clerk session cookie skip the lazy import entirely.
 const app = (
   <React.StrictMode>
-    <HelmetProvider>
-      <BrowserRouter>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </BrowserRouter>
-    </HelmetProvider>
+    <RootErrorBoundary>
+      <HelmetProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </BrowserRouter>
+      </HelmetProvider>
+    </RootErrorBoundary>
   </React.StrictMode>
 )
 

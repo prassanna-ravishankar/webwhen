@@ -111,14 +111,22 @@ function isAuthRequiredPath(pathname: string): boolean {
 }
 
 // Clerk sets `__client_uat` (user authenticated timestamp) on the app domain.
-// It's JS-readable by design — Clerk uses it client-side to detect "is this
-// browser signed in" before paying the cost of loading the full SDK. We use
-// the same probe so logged-in users on / still get the "Dashboard" nav.
-// Note: `__session` is the JWT and is HttpOnly under Clerk's defaults, so it
-// can't be read from JS. Only `__client_uat` works as a cheap signal here.
+// It may also leave `__client_uat=0` behind as a signed-out state marker, so
+// presence alone is not enough to infer an active session.
+export function hasActiveClerkSessionCookie(cookieString: string): boolean {
+  const cookies = cookieString.split(';')
+  return cookies.some((cookie) => {
+    const [rawName, rawValue] = cookie.trim().split('=')
+    const name = rawName.trim()
+    if (!name || !/^__client_uat(?:_|$)/.test(name)) return false
+    const value = Number(rawValue)
+    return Number.isFinite(value) && value > 0
+  })
+}
+
 function hasClerkSession(): boolean {
   if (typeof document === 'undefined') return false
-  return /(?:^|;\s*)__client_uat=/.test(document.cookie)
+  return hasActiveClerkSessionCookie(document.cookie)
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
@@ -128,6 +136,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // order stays stable in practice — but reading the location up front keeps
   // the dependency obvious and lint-clean.
   const { pathname } = useLocation()
+  const authRequired = isAuthRequiredPath(pathname)
+  const [shouldHydrateMarketingClerk, setShouldHydrateMarketingClerk] = useState(false)
+
+  useEffect(() => {
+    setShouldHydrateMarketingClerk(hasClerkSession())
+  }, [pathname])
 
   // VITE_WEBWHEN_NOAUTH is the local-dev escape hatch — runs against a mocked
   // user end-to-end. NoAuthProvider returns a stable mock user so dev flows
@@ -146,12 +160,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return <PendingAuthProvider>{children}</PendingAuthProvider>
   }
 
-  // Anonymous visitor on a marketing route: skip the Clerk lazy import so
-  // /, /changelog, /compare/*, /use-cases/*, /concepts/*, /terms, /privacy
-  // never trigger ~250 KiB of Clerk SDK + 2 auth XHRs during the LCP window.
-  // Logged-in users (cookie present) still get Clerk hydrated so Nav can
-  // swap "Sign in" → "Dashboard".
-  if (!isAuthRequiredPath(pathname) && !hasClerkSession()) {
+  // Marketing routes are prerendered with anonymous auth state. Keep the first
+  // client render identical, then hydrate Clerk after mount only when Clerk's
+  // active-session timestamp says there is a real signed-in browser session.
+  if (!authRequired && !shouldHydrateMarketingClerk) {
     return <MarketingAuthProvider>{children}</MarketingAuthProvider>
   }
 
