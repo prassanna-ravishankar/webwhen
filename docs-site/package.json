@@ -13,14 +13,15 @@
     "@iconify-json/logos": "^1.2.10",
     "@iconify-json/mdi": "^1.2.3",
     "esbuild": "^0.25.0",
-    "mermaid": "^11.15.0",
+    "mermaid": "^11.16.1",
     "vitepress": "^1.5.0",
     "vitepress-plugin-mermaid": "^2.0.17",
     "vue": "^3.5.13"
   },
   "overrides": {
     "esbuild": "^0.25.0",
-    "lodash-es": "^4.17.23"
+    "lodash-es": "^4.17.23",
+    "vite": "^6.4.5"
   },
   "keywords": [
     "documentation",
