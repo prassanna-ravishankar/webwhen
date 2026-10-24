@@ -88,17 +88,14 @@ async def list_users(
             offset = 0
 
             while True:
-                clerk_users_response = await clerk_client.users.list_async(
-                    limit=limit, offset=offset
+                clerk_users = await clerk_client.users.list_async(
+                    request={"limit": limit, "offset": offset}
                 )
 
-                if not clerk_users_response or not clerk_users_response.data:
-                    break
-
-                for user in clerk_users_response.data:
+                for user in clerk_users:
                     role_map[user.id] = (user.public_metadata or {}).get("role")
 
-                if len(clerk_users_response.data) < limit:
+                if len(clerk_users) < limit:
                     break
 
                 offset += limit
@@ -326,10 +323,10 @@ async def bulk_update_user_roles(
 
         if clerk_ids_to_fetch and not settings.webwhen_noauth:
             try:
-                clerk_users_response = await clerk_client.users.list_async(
-                    user_id=clerk_ids_to_fetch, limit=100
+                clerk_users = await clerk_client.users.list_async(
+                    request={"user_id": clerk_ids_to_fetch, "limit": 100}
                 )
-                clerk_users_map = {user.id: user for user in clerk_users_response.data}
+                clerk_users_map = {user.id: user for user in clerk_users}
             except Exception as exc:
                 logger.exception("Clerk batch user fetch failed")
                 raise HTTPException(
