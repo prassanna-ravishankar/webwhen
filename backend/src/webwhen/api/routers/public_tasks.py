@@ -2,6 +2,7 @@
 
 import xml.etree.ElementTree as ET
 from email.utils import format_datetime
+from typing import Literal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
@@ -54,7 +55,7 @@ async def list_public_tasks(
     request: Request,
     offset: int = Query(0, ge=0, description="Number of tasks to skip"),
     limit: int = Query(20, ge=1, le=100, description="Number of tasks to return"),
-    sort_by: str = Query("recent", enum=["recent", "popular"], description="Sort order"),
+    sort_by: Literal["recent", "popular"] = Query("recent", description="Sort order"),
     db: Database = Depends(get_db),
 ):
     """
