@@ -6,6 +6,7 @@ from uuid import uuid4
 
 import pytest
 from fastapi import HTTPException
+from fastapi.routing import iter_route_contexts
 
 from webwhen.api.routers.admin import (
     AdminTaskStateUpdateRequest,
@@ -20,7 +21,9 @@ from webwhen.tasks.service import InvalidTransitionError, TaskService
 def test_admin_router_preserves_routes():
     """Domain router composition must not change the admin HTTP contract."""
     actual_routes = {
-        (method, route.path) for route in router.routes for method in route.methods or set()
+        (method, route.path)
+        for route in iter_route_contexts(router.routes)
+        for method in route.methods or set()
     }
     assert actual_routes == {
         ("GET", "/admin/stats"),
