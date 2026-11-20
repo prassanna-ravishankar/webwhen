@@ -55,7 +55,7 @@
     "input-otp": "^1.4.2",
     "lucide-react": "^0.441.0",
     "motion": "^12.23.25",
-    "next": "^15.5.24",
+    "next": "^15.5.29",
     "picomatch": "^4.0.4",
     "posthog-js": "^1.342.1",
     "react": "^18.3.1",
@@ -73,7 +73,7 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^15.5.24",
+    "@next/bundle-analyzer": "^15.5.29",
     "@types/node": "^20.19.0",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
@@ -81,7 +81,7 @@
     "@typescript-eslint/parser": "^7.18.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.1",
-    "eslint-config-next": "^15.5.24",
+    "eslint-config-next": "^15.5.29",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.12",
     "postcss": "^8.5.31",
@@ -92,6 +92,9 @@
   },
   "overrides": {
     "postcss": "$postcss",
-    "postcss-selector-parser": "^7.1.6"
+    "postcss-selector-parser": "^7.1.6",
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.1"
+    }
   }
 }
