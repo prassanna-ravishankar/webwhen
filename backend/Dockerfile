@@ -47,4 +47,6 @@ ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
 
 # Default command (can be overridden)
-CMD ["uvicorn", "webwhen.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-server-header"]
+# Keep-alive outlives the Google load balancer's 600s backend timeout; uvicorn's
+# 5s default lets the LB reuse closed connections and return 503s.
+CMD ["uvicorn", "webwhen.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-server-header", "--timeout-keep-alive", "620"]

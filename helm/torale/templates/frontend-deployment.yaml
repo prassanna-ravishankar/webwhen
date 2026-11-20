@@ -59,6 +59,10 @@ spec:
           value: production
         - name: HOSTNAME
           value: "0.0.0.0"
+        # Outlive the Google load balancer's 600s backend keep-alive so the LB
+        # never reuses a connection Node already closed (default 5s -> 503s).
+        - name: KEEP_ALIVE_TIMEOUT
+          value: "620000"
         - name: PORT
           value: "3000"
         - name: NEXT_PUBLIC_API_BASE_URL
