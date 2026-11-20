@@ -114,7 +114,7 @@ test:
 # Run tests with coverage
 test-cov:
     @echo "Running tests with coverage..."
-    cd backend && uv run --all-extras pytest tests/ --cov=src/torale --cov-report=term-missing
+    cd backend && uv run --all-extras pytest tests/ --cov=src/webwhen --cov-report=term-missing
 
 # === Logs ===
 

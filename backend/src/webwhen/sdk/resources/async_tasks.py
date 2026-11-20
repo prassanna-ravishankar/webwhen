@@ -39,7 +39,7 @@ class AsyncTasksResource:
             Created Task object
 
         Example:
-            >>> async with ToraleAsync() as client:
+            >>> async with WebwhenAsync() as client:
             ...     task = await client.tasks.create(
             ...         name="iPhone Monitor",
             ...         search_query="When is iPhone 16 being released?",

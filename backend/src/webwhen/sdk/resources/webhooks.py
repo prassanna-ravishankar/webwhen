@@ -50,7 +50,7 @@ class WebhooksResource:
 
         Example:
             >>> config = client.webhooks.update_config(
-            ...     url="https://myapp.com/webhooks/torale",
+            ...     url="https://myapp.com/webhooks/webwhen",
             ...     enabled=True
             ... )
             >>> print(f"Webhook configured: {config['url']}")

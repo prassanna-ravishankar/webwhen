@@ -14,7 +14,7 @@
 
 Tell webwhen what to watch for in plain English. It searches the web on a schedule, evaluates the evidence, and tells you the moment your condition is met.
 
-> **Note on naming.** The legacy `torale` package on PyPI is frozen at v0.1.0 as a deprecated shim. New releases ship as `webwhen` (`pip install webwhen`). If you have `torale` in requirements.txt, your import statements still work via a deprecation-warned shim, but you'll stop receiving updates until you migrate. The k8s namespace (`torale`) stays put — internal-only.
+> **Note on naming.** The SDK ships as `webwhen`. The old `torale` package on PyPI (0.0.2) predates the rename and is no longer maintained. The `torale` import, `TORALE_*` environment variable and `~/.torale/config.json` fallbacks were removed in November 2026. The k8s namespace (`torale`) stays put; it is internal-only.
 
 ## Use Cases
 
@@ -228,8 +228,6 @@ export WEBWHEN_NOAUTH=1  # Skips auth, uses localhost
 # Custom API URL
 export WEBWHEN_API_URL=https://custom.domain.com
 ```
-
-The legacy `TORALE_*` env vars still work as deprecated aliases.
 
 **Context Managers**
 

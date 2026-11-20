@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 
-import json
-from json import JSONDecodeError
 from typing import Any
 
 import httpx
 
-from webwhen.core.env import config_paths, getenv, warn_legacy_config_path
+from webwhen.sdk.credentials import env_flag, resolve_api_key, resolve_api_url
 from webwhen.sdk.exceptions import APIError, AuthenticationError, NotFoundError, ValidationError
 
 
@@ -30,8 +28,8 @@ class WebwhenClient:
 
         Args:
             api_key: API key for authentication. If not provided, will try to load from:
-                1. WEBWHEN_API_KEY environment variable (TORALE_API_KEY also accepted, deprecated)
-                2. ~/.webwhen/config.json file (~/.torale/config.json also read, deprecated)
+                1. WEBWHEN_API_KEY environment variable
+                2. ~/.webwhen/config.json file
             api_url: Base URL for API. Defaults to the webwhen production API or value from config.
                      For local development, set WEBWHEN_DEV=1 to use http://localhost:8000.
             timeout: Request timeout in seconds. Defaults to 60.
@@ -40,13 +38,13 @@ class WebwhenClient:
             AuthenticationError: If no API key can be found and WEBWHEN_NOAUTH is not set.
         """
         # Check for no-auth mode (local development)
-        self.noauth_mode = getenv("WEBWHEN_NOAUTH") == "1"
+        self.noauth_mode = env_flag("WEBWHEN_NOAUTH")
         # Check for dev mode (local development with auth)
-        self.dev_mode = getenv("WEBWHEN_DEV") == "1"
+        self.dev_mode = env_flag("WEBWHEN_DEV")
 
         if not self.noauth_mode:
             # Try to get API key from various sources
-            self.api_key = api_key or self._load_api_key()
+            self.api_key = api_key or resolve_api_key()
 
             if not self.api_key:
                 raise AuthenticationError(
@@ -57,7 +55,7 @@ class WebwhenClient:
             self.api_key = None
 
         # Get API URL
-        self.api_url = api_url or self._load_api_url()
+        self.api_url = api_url or resolve_api_url(local=self.dev_mode or self.noauth_mode)
 
         # Create HTTP client
         headers = {}
@@ -67,55 +65,6 @@ class WebwhenClient:
         self.http_client = httpx.Client(
             base_url=self.api_url, headers=headers, timeout=timeout, follow_redirects=True
         )
-
-    def _load_api_key(self) -> str | None:
-        """Load API key from environment or config file."""
-        api_key = getenv("WEBWHEN_API_KEY")
-        if api_key:
-            return api_key
-
-        for config_path in config_paths():
-            if not config_path.exists():
-                continue
-            try:
-                with open(config_path) as f:
-                    config = json.load(f)
-            except (OSError, JSONDecodeError):
-                # Config file is optional; skip on missing/malformed/unreadable.
-                continue
-            if config_path.parent.name == ".torale":
-                warn_legacy_config_path(config_path)
-            if config.get("api_key"):
-                return config["api_key"]
-
-        return None
-
-    def _load_api_url(self) -> str:
-        """Load API URL from environment or config file."""
-        api_url = getenv("WEBWHEN_API_URL")
-        if api_url:
-            return api_url
-
-        # Dev/NoAuth mode takes precedence over config file
-        # This allows --local flag to override saved config
-        if self.dev_mode or self.noauth_mode:
-            return "http://localhost:8000"
-
-        for config_path in config_paths():
-            if not config_path.exists():
-                continue
-            try:
-                with open(config_path) as f:
-                    config = json.load(f)
-            except (OSError, JSONDecodeError):
-                continue
-            if config_path.parent.name == ".torale":
-                warn_legacy_config_path(config_path)
-            if "api_url" in config:
-                return config["api_url"]
-
-        # Default to production
-        return "https://api.webwhen.ai"
 
     def _handle_response(self, response: httpx.Response) -> Any:
         """Handle HTTP response and raise appropriate exceptions."""
@@ -178,6 +127,3 @@ class WebwhenClient:
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Context manager exit."""
         self.close()
-
-
-ToraleClient = WebwhenClient

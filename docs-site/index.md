@@ -25,12 +25,10 @@ webwhen runs scheduled grounded-search executions, evaluates the results against
 
 ## Example
 
-The Python package and REST endpoints are still published under the `torale` name today; the rename to `webwhen` lands in a later phase.
-
 ```python
-from torale import ToraleClient
+from webwhen import Webwhen
 
-client = ToraleClient()
+client = Webwhen()
 
 # Create a watch
 task = client.tasks.create(

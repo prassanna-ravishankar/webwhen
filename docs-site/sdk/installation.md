@@ -7,7 +7,7 @@ description: Install the webwhen Python SDK via pip. Requirements, virtual envir
 Install the webwhen Python SDK.
 
 ::: tip Note on naming
-The legacy `torale` package on PyPI is frozen at v0.1.0 as a deprecated shim. New releases ship as `webwhen` (`pip install webwhen`). If you have `torale` in requirements.txt, your import statements still work via a deprecation-warned shim, but you'll stop receiving updates until you migrate.
+The SDK ships as `webwhen`. The old `torale` package on PyPI (0.0.2) predates the rename and is no longer maintained, and the `torale` import, `TORALE_*` environment variable and `~/.torale/config.json` fallbacks were removed in November 2026. Until the first `webwhen` release reaches PyPI, install from source.
 :::
 
 ## Requirements

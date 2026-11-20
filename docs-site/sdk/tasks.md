@@ -25,7 +25,7 @@ task = client.tasks.create(
 **With every option:**
 
 ```python
-from torale.tasks import TaskState
+from webwhen.tasks import TaskState
 
 task = client.tasks.create(
     name="iPhone Release Watch",
@@ -83,7 +83,7 @@ task = (client.monitor("Bitcoin price")
 Or use the standalone `monitor()` function:
 
 ```python
-from torale import monitor
+from webwhen import monitor
 
 task = (monitor("Bitcoin price")
     .when("price exceeds $100,000")
@@ -91,7 +91,7 @@ task = (monitor("Bitcoin price")
     .create())
 ```
 
-The standalone `monitor()` creates a default `Torale` client automatically (using env vars or config file for authentication). The method names come from the current SDK surface and stay until the SDK rename.
+The standalone `monitor()` creates a default `Webwhen` client automatically (using env vars or config file for authentication). The method names come from the current SDK surface and stay until the SDK rename.
 
 ### Builder methods
 

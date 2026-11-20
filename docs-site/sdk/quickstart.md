@@ -6,14 +6,10 @@ description: webwhen Python SDK quickstart. Install the SDK, authenticate, and c
 
 Get started with the webwhen Python SDK in minutes.
 
-::: tip Naming during the transition
-The package on PyPI is still `torale` and the client classes are still `Torale` / `ToraleAsync`. The rename to `webwhen` is a later phase — code samples below use the current shipping names.
-:::
-
 ## Installation
 
 ```bash
-pip install torale
+pip install webwhen
 ```
 
 ## Get an API key
@@ -28,9 +24,9 @@ pip install torale
 ### Initialize the client
 
 ```python
-from torale import Torale
+from webwhen import Webwhen
 
-client = Torale(api_key="sk_...")
+client = Webwhen(api_key="sk_...")
 ```
 
 ### Create a watch
@@ -38,9 +34,9 @@ client = Torale(api_key="sk_...")
 ::: code-group
 
 ```python [Sync]
-from torale import Torale
+from webwhen import Webwhen
 
-client = Torale(api_key="sk_...")
+client = Webwhen(api_key="sk_...")
 
 task = client.tasks.create(
     name="iPhone Release Watch",                                       # [!code highlight]
@@ -53,10 +49,10 @@ print(f"Created: {task.id}")
 
 ```python [Async]
 import asyncio
-from torale import ToraleAsync
+from webwhen import WebwhenAsync
 
 async def create_task():
-    async with ToraleAsync(api_key="sk_...") as client:
+    async with WebwhenAsync(api_key="sk_...") as client:
         task = await client.tasks.create(
             name="iPhone Release Watch",                                       # [!code highlight]
             search_query="When is the iPhone 17 being released?",              # [!code highlight]
@@ -74,9 +70,9 @@ asyncio.run(create_task())
 The SDK provides a fluent builder for a more readable syntax:
 
 ```python
-from torale import Torale
+from webwhen import Webwhen
 
-client = Torale(api_key="sk_...")
+client = Webwhen(api_key="sk_...")
 
 task = (client.monitor("When is the iPhone 17 being released?")
     .when("Apple has announced a specific release date")
@@ -88,7 +84,7 @@ task = (client.monitor("When is the iPhone 17 being released?")
 Or use the standalone `monitor()` function (creates a default client automatically):
 
 ```python
-from torale import monitor
+from webwhen import monitor
 
 task = (monitor("When is the iPhone 17 being released?")
     .when("Apple has announced a specific release date")
@@ -171,10 +167,10 @@ for trigger in triggers:
 ## Complete example
 
 ```python
-from torale import Torale
+from webwhen import Webwhen
 
 # Initialize
-client = Torale(api_key="sk_...")
+client = Webwhen(api_key="sk_...")
 
 # Create a watch
 task = client.tasks.create(
@@ -206,41 +202,41 @@ for t in client.tasks.list():
 
 ```python
 import os
-from torale import Torale
+from webwhen import Webwhen
 
 # Set the environment variable
-os.environ["TORALE_API_KEY"] = "sk_..."
+os.environ["WEBWHEN_API_KEY"] = "sk_..."
 
 # The client reads it automatically
-client = Torale()  # No api_key needed
+client = Webwhen()  # No api_key needed
 ```
 
 Or use a `.env` file:
 
 ```bash
 # .env
-TORALE_API_KEY=sk_...
+WEBWHEN_API_KEY=sk_...
 ```
 
 ```python
 from dotenv import load_dotenv
-from torale import Torale
+from webwhen import Webwhen
 
 load_dotenv()
-client = Torale()
+client = Webwhen()
 ```
 
 ## Error handling
 
 ```python
-from torale import Torale
-from torale.sdk.exceptions import (
+from webwhen import Webwhen
+from webwhen.sdk.exceptions import (
     AuthenticationError,
     ValidationError,
     NotFoundError,
 )
 
-client = Torale(api_key="sk_...")
+client = Webwhen(api_key="sk_...")
 
 try:
     task = client.tasks.create(

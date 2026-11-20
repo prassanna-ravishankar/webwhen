@@ -25,7 +25,7 @@ class AsyncWebhooksResource:
             - enabled: Whether webhooks are enabled
 
         Example:
-            >>> async with ToraleAsync() as client:
+            >>> async with WebwhenAsync() as client:
             ...     config = await client.webhooks.get_config()
             ...     print(f"Webhook URL: {config['url']}")
         """
@@ -48,9 +48,9 @@ class AsyncWebhooksResource:
             Updated webhook config with url, secret, and enabled status
 
         Example:
-            >>> async with ToraleAsync() as client:
+            >>> async with WebwhenAsync() as client:
             ...     config = await client.webhooks.update_config(
-            ...         url="https://myapp.com/webhooks/torale",
+            ...         url="https://myapp.com/webhooks/webwhen",
             ...         enabled=True
             ...     )
             ...     print(f"Webhook configured: {config['url']}")
@@ -84,7 +84,7 @@ class AsyncWebhooksResource:
             Exception: If webhook delivery fails
 
         Example:
-            >>> async with ToraleAsync() as client:
+            >>> async with WebwhenAsync() as client:
             ...     result = await client.webhooks.test(
             ...         url="https://webhook.site/unique-id",
             ...         secret="your-webhook-secret"
@@ -114,7 +114,7 @@ class AsyncWebhooksResource:
             List of webhook delivery records with status, timestamps, and errors
 
         Example:
-            >>> async with ToraleAsync() as client:
+            >>> async with WebwhenAsync() as client:
             ...     deliveries = await client.webhooks.list_deliveries(limit=5)
             ...     for delivery in deliveries:
             ...         print(f"{delivery['created_at']}: {delivery['status']}")

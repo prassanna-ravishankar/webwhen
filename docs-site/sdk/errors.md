@@ -6,14 +6,10 @@ description: Handle errors in the webwhen Python SDK. Exception types, error res
 
 Handle errors gracefully in the webwhen Python SDK.
 
-::: tip Naming during the transition
-Exception class names still use `Torale` (`ToraleError`). The rename to `webwhen` is a later phase.
-:::
-
 ## Exception hierarchy
 
 ```
-ToraleError (base)
+WebwhenError (base)
 ├── AuthenticationError (401)
 ├── NotFoundError (404)
 ├── ValidationError (400, 422)
@@ -23,15 +19,15 @@ ToraleError (base)
     └── response: dict | None
 ```
 
-All exceptions live in `torale.sdk.exceptions`.
+All exceptions live in `webwhen.sdk.exceptions`.
 
 ## Basic error handling
 
 ```python
-from torale import Torale
-from torale.sdk.exceptions import ToraleError
+from webwhen import Webwhen
+from webwhen.sdk.exceptions import WebwhenError
 
-client = Torale(api_key="sk_...")
+client = Webwhen(api_key="sk_...")
 
 try:
     task = client.tasks.create(
@@ -39,7 +35,7 @@ try:
         search_query="...",
         condition_description="...",
     )
-except ToraleError as e:
+except WebwhenError as e:
     print(f"API error: {e}")
 ```
 
@@ -50,10 +46,10 @@ except ToraleError as e:
 Raised when the API key is missing, invalid, or expired (HTTP 401). Also raised at client init if no API key can be resolved.
 
 ```python
-from torale.sdk.exceptions import AuthenticationError
+from webwhen.sdk.exceptions import AuthenticationError
 
 try:
-    client = Torale(api_key="sk_invalid")
+    client = Webwhen(api_key="sk_invalid")
     tasks = client.tasks.list()
 except AuthenticationError as e:
     print(f"Auth failed: {e}")
@@ -64,7 +60,7 @@ except AuthenticationError as e:
 Raised for invalid request data (HTTP 400 or 422).
 
 ```python
-from torale.sdk.exceptions import ValidationError
+from webwhen.sdk.exceptions import ValidationError
 
 try:
     task = client.tasks.create(
@@ -81,7 +77,7 @@ except ValidationError as e:
 Raised when a resource doesn't exist (HTTP 404).
 
 ```python
-from torale.sdk.exceptions import NotFoundError
+from webwhen.sdk.exceptions import NotFoundError
 
 try:
     task = client.tasks.get("non-existent-id")
@@ -94,7 +90,7 @@ except NotFoundError:
 Raised when rate limits are exceeded.
 
 ```python
-from torale.sdk.exceptions import RateLimitError
+from webwhen.sdk.exceptions import RateLimitError
 
 try:
     task = client.tasks.create(...)
@@ -107,7 +103,7 @@ except RateLimitError:
 Catch-all for other HTTP errors. Has `status_code` and `response` attributes.
 
 ```python
-from torale.sdk.exceptions import APIError
+from webwhen.sdk.exceptions import APIError
 
 try:
     task = client.tasks.create(...)
@@ -123,7 +119,7 @@ except APIError as e:
 
 ```python
 import time
-from torale.sdk.exceptions import APIError
+from webwhen.sdk.exceptions import APIError
 
 def create_task_with_retry(client, max_retries=3, **kwargs):
     retry_delay = 1
@@ -157,7 +153,7 @@ from tenacity import (
     wait_exponential,
     retry_if_exception_type,
 )
-from torale.sdk.exceptions import APIError
+from webwhen.sdk.exceptions import APIError
 
 @retry(
     stop=stop_after_attempt(3),
@@ -172,8 +168,8 @@ def create_task(client, **kwargs):
 
 ```python
 import asyncio
-from torale import ToraleAsync
-from torale.sdk.exceptions import ValidationError, APIError
+from webwhen import WebwhenAsync
+from webwhen.sdk.exceptions import ValidationError, APIError
 
 async def safe_create_task(client, max_retries=3, **kwargs):
     retry_delay = 1
@@ -191,7 +187,7 @@ async def safe_create_task(client, max_retries=3, **kwargs):
             retry_delay *= 2
 
 async def main():
-    async with ToraleAsync(api_key="sk_...") as client:
+    async with WebwhenAsync(api_key="sk_...") as client:
         task = await safe_create_task(
             client,
             name="My Watch",
@@ -206,13 +202,13 @@ asyncio.run(main())
 
 ```python
 import logging
-from torale import Torale
-from torale.sdk.exceptions import ToraleError
+from webwhen import Webwhen
+from webwhen.sdk.exceptions import WebwhenError
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-client = Torale(api_key="sk_...")
+client = Webwhen(api_key="sk_...")
 
 try:
     task = client.tasks.create(
@@ -221,7 +217,7 @@ try:
         condition_description="...",
     )
     logger.info(f"Created watch: {task.id}")
-except ToraleError as e:
+except WebwhenError as e:
     logger.error(f"Watch creation failed: {e}")
     raise
 ```
@@ -231,7 +227,7 @@ except ToraleError as e:
 **Catch specific exceptions first.** Handle each error type differently:
 
 ```python
-from torale.sdk.exceptions import (
+from webwhen.sdk.exceptions import (
     AuthenticationError,
     ValidationError,
     NotFoundError,
