@@ -36,11 +36,13 @@ from webwhen.core.redis import redis_client
 from webwhen.core.views import flush_views_to_postgres
 from webwhen.lib.posthog import shutdown as shutdown_posthog
 from webwhen.scheduler import get_scheduler
+from webwhen.scheduler.leader import SchedulerLeader
 from webwhen.scheduler.migrate import reap_stale_executions, sync_jobs_from_database
 
 logger = logging.getLogger(__name__)
 
 _startup_sync_ok = False
+_scheduler_leader: SchedulerLeader | None = None
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
@@ -88,10 +90,14 @@ async def lifespan(app: FastAPI):
         logger.info("🔒 Using ProductionAuthProvider (Clerk + API Keys)")
         set_auth_provider(ProductionAuthProvider())
 
-    # Start scheduler
+    # Start paused: every pod writes to the shared job store, but only the
+    # advisory-lock holder runs jobs (see webwhen.scheduler.leader).
     scheduler = get_scheduler()
-    scheduler.start()
-    logger.info("APScheduler started")
+    scheduler.start(paused=True)
+    logger.info("APScheduler started (paused until this pod holds the scheduler lock)")
+    global _scheduler_leader
+    _scheduler_leader = SchedulerLeader(scheduler)
+    _scheduler_leader.start()
 
     global _startup_sync_ok
     try:
@@ -121,6 +127,7 @@ async def lifespan(app: FastAPI):
 
     yield
 
+    await _scheduler_leader.stop()
     scheduler.shutdown(wait=False)
     logger.info("APScheduler shut down")
     await flush_views_to_postgres()
@@ -223,7 +230,8 @@ async def health_check():
                 "startup_sync_ok": _startup_sync_ok,
             },
         )
-    return {"status": "healthy"}
+    leader = _scheduler_leader is not None and _scheduler_leader.is_leader
+    return {"status": "healthy", "scheduler_leader": leader}
 
 
 @app.get("/public/stats")

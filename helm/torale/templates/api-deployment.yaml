@@ -9,6 +9,9 @@ spec:
   {{- if not .Values.api.autoscaling.enabled }}
   replicas: {{ .Values.api.replicaCount }}
   {{- end }}
+  # Hold the old pod until the Gateway health check has marked the new one
+  # healthy (see frontend-deployment.yaml).
+  minReadySeconds: 15
   selector:
     matchLabels:
       {{- include "torale.api.selectorLabels" . | nindent 6 }}
@@ -36,9 +39,41 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 
+      {{- if .Values.cloudsql.enabled }}
+      initContainers:
+      # Cloud SQL Proxy as a native sidecar: it is up before the api starts and
+      # is stopped only after the api has drained and exited.
+      - name: cloud-sql-proxy
+        image: {{ .Values.cloudsql.image }}
+        restartPolicy: Always
+        args:
+        - "--structured-logs"
+        - "--port={{ .Values.database.port }}"
+        - "--health-check"
+        - "--http-address=0.0.0.0"
+        - "--http-port=9801"
+        - "{{ .Values.database.connectionName }}"
+        startupProbe:
+          httpGet:
+            path: /startup
+            port: 9801
+          periodSeconds: 1
+          failureThreshold: 60
+        securityContext:
+          runAsNonRoot: true
+        resources:
+          {{- toYaml .Values.cloudsql.resources | nindent 10 }}
+      {{- end }}
+
       containers:
       # Application container
       - name: api
+        # Keep serving while the load balancer deprograms this pod (see
+        # frontend-deployment.yaml). The scheduler lock is released on exit.
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "15"]
         image: {{ include "torale.api.image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
@@ -75,17 +110,4 @@ spec:
         resources:
           {{- toYaml .Values.api.resources | nindent 10 }}
 
-      {{- if .Values.cloudsql.enabled }}
-      # Cloud SQL Proxy sidecar
-      - name: cloud-sql-proxy
-        image: {{ .Values.cloudsql.image }}
-        args:
-        - "--structured-logs"
-        - "--port={{ .Values.database.port }}"
-        - "{{ .Values.database.connectionName }}"
-        securityContext:
-          runAsNonRoot: true
-        resources:
-          {{- toYaml .Values.cloudsql.resources | nindent 10 }}
-      {{- end }}
 {{- end }}
