@@ -198,6 +198,23 @@ class TestExecute:
         assert any("retrying" in str(call) or "failed" in str(call) for call in execute_calls)
 
     @pytest.mark.asyncio
+    async def test_exhausted_retries_keep_the_watch_scheduled(self, job_mocks):
+        """After the last retry the execution is FAILED but the watch gets its 24h fallback run."""
+        job_mocks.db.fetch_one = AsyncMock(return_value=_make_task_row())
+        job_mocks.agent.side_effect = RuntimeError("Agent unreachable")
+        mock_sched = MagicMock()
+        job_mocks.scheduler.return_value = mock_sched
+
+        before = datetime.now(UTC)
+        await _execute(TASK_ID, EXECUTION_ID, USER_ID, TASK_NAME, retry_count=10)
+
+        assert any("failed" in str(call) for call in job_mocks.db.execute.call_args_list)
+        mock_sched.add_job.assert_called_once()
+        kwargs = mock_sched.add_job.call_args.kwargs
+        assert kwargs["trigger"].run_date >= before + timedelta(hours=24)
+        assert kwargs["args"] == [TASK_ID, USER_ID, TASK_NAME, 0, None]
+
+    @pytest.mark.asyncio
     async def test_double_failure_logged(self, job_mocks):
         """Agent raises + DB update raises -> DB error propagates, execution update fails."""
         job_mocks.db.fetch_one = AsyncMock(return_value=_make_task_row())

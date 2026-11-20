@@ -5,7 +5,8 @@ from unittest.mock import AsyncMock, create_autospec, patch
 import pytest
 from apscheduler.schedulers.base import BaseScheduler
 
-from webwhen.scheduler.leader import SCHEDULER_LOCK_KEY, SchedulerLeader
+from webwhen.scheduler import leader as leader_module
+from webwhen.scheduler.leader import SCHEDULER_LOCK_KEY, SchedulerLeader, record_heartbeat
 
 
 def make_conn(lock_granted: bool) -> AsyncMock:
@@ -83,3 +84,20 @@ async def test_stop_pauses_before_releasing_the_lock(scheduler):
 
     assert order == ["pause", "release"]
     assert not leader.is_leader
+
+
+async def test_stalled_only_when_leading_without_heartbeats(scheduler, monkeypatch):
+    leader = SchedulerLeader(scheduler, dsn="postgresql://test")
+    clock = [1000.0]
+    monkeypatch.setattr(leader_module.time, "monotonic", lambda: clock[0])
+    assert not leader.stalled  # not leading
+
+    await tick_with(leader, make_conn(lock_granted=True))
+    clock[0] += leader_module.STALL_SECONDS - 1
+    assert not leader.stalled  # grace after taking the lock
+
+    clock[0] += 2
+    assert leader.stalled  # leading, no heartbeat for > STALL_SECONDS
+
+    record_heartbeat()
+    assert not leader.stalled

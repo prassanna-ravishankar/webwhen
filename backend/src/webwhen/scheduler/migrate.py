@@ -1,4 +1,5 @@
 import logging
+import random
 from datetime import UTC, datetime, timedelta
 
 from apscheduler.triggers.date import DateTrigger
@@ -32,15 +33,23 @@ async def reap_stale_executions() -> None:
 async def sync_jobs_from_database() -> None:
     """Ensure APScheduler jobs match active/paused tasks in the database.
 
-    Runs on every startup as a consistency check. Creates missing jobs,
-    removes orphaned jobs.
+    Runs on startup and every 15 minutes on the scheduler leader. Creates
+    missing jobs, removes orphaned jobs. A watch whose job is gone (lost after
+    exhausted retries, a reaped execution, or a dead scheduler loop) is
+    rescheduled within minutes rather than left active but never running.
+    Tasks with an execution in flight are skipped: their date job has already
+    fired and the execution schedules the next run itself.
     """
     scheduler = get_scheduler()
 
     rows = await db.fetch_all(
-        """SELECT id, user_id, name, next_run, state
-           FROM tasks
-           WHERE state IN ('active', 'paused')"""
+        """SELECT t.id, t.user_id, t.name, t.next_run, t.state,
+                  EXISTS (
+                      SELECT 1 FROM task_executions e
+                      WHERE e.task_id = t.id AND e.status IN ('pending', 'running')
+                  ) AS in_flight
+           FROM tasks t
+           WHERE t.state IN ('active', 'paused')"""
     )
 
     expected_job_ids = set()
@@ -56,12 +65,32 @@ async def sync_jobs_from_database() -> None:
 
             existing_job = scheduler.get_job(job_id)
 
-            # Use next_run from DB; fallback to now + 24h if null
-            next_run = row["next_run"]
-            if next_run is None or next_run <= now:
-                next_run = now + timedelta(hours=24)
+            if existing_job is None and row["in_flight"]:
+                continue
 
-            if existing_job is None:
+            next_run = row["next_run"]
+            overdue = next_run is None or next_run <= now
+            # A job parked well past an overdue next_run (earlier syncs used a
+            # silent +24h fallback) is pulled in like a missing one.
+            parked = (
+                existing_job is not None
+                and overdue
+                and row["state"] == "active"
+                and not row["in_flight"]
+                and existing_job.next_run_time is not None
+                and existing_job.next_run_time > now + timedelta(minutes=15)
+            )
+            if overdue and (existing_job is None or parked):
+                # Run soon, spread out so a backlog doesn't fire at once.
+                next_run = now + timedelta(seconds=random.uniform(60, 600))
+                await db.execute(
+                    "UPDATE tasks SET next_run = $1 WHERE id = $2", next_run, row["id"]
+                )
+
+            if parked:
+                scheduler.reschedule_job(job_id, trigger=DateTrigger(run_date=next_run))
+                logger.info(f"Pulled in overdue job {job_id} to {next_run.isoformat()}")
+            elif existing_job is None:
                 scheduler.add_job(
                     JOB_FUNC_REF,
                     trigger=DateTrigger(run_date=next_run),
