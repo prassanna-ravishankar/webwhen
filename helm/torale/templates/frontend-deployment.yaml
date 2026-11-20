@@ -15,6 +15,9 @@ spec:
   {{- if not .Values.frontend.autoscaling.enabled }}
   replicas: {{ .Values.frontend.replicaCount }}
   {{- end }}
+  # Hold the old pod until the Gateway health check (2 x 5s) has marked the
+  # new one healthy; Kubernetes readiness alone is ahead of the load balancer.
+  minReadySeconds: 15
   selector:
     matchLabels:
       {{- include "torale.frontend.selectorLabels" . | nindent 6 }}
@@ -34,6 +37,13 @@ spec:
 
       containers:
       - name: frontend
+        # Keep serving while the load balancer deprograms this pod. Without the
+        # pause, SIGTERM lands before the Gateway stops routing here and
+        # rollouts return brief 503s.
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "15"]
         image: {{ include "torale.frontend.image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
@@ -49,6 +59,10 @@ spec:
           value: production
         - name: HOSTNAME
           value: "0.0.0.0"
+        # Outlive the Google load balancer's 600s backend keep-alive so the LB
+        # never reuses a connection Node already closed (default 5s -> 503s).
+        - name: KEEP_ALIVE_TIMEOUT
+          value: "620000"
         - name: PORT
           value: "3000"
         - name: NEXT_PUBLIC_API_BASE_URL

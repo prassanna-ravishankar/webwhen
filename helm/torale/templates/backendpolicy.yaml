@@ -1,0 +1,27 @@
+{{- /*
+Connection draining for Gateway backends. When a pod leaves the NEG during a
+rollout, the load balancer finishes in-flight requests for up to
+drainingTimeoutSec instead of cutting them (the default is 0). Pairs with the
+15s preStop sleep on these pods, which keeps them serving through the window.
+*/ -}}
+{{- range $component := list "frontend" "docs" }}
+{{- if (index $.Values $component).enabled }}
+---
+apiVersion: networking.gke.io/v1
+kind: GCPBackendPolicy
+metadata:
+  name: {{ include "torale.fullname" $ }}-{{ $component }}-backend
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "torale.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $component }}
+spec:
+  default:
+    connectionDraining:
+      drainingTimeoutSec: 10
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ include "torale.fullname" $ }}-{{ $component }}
+{{- end }}
+{{- end }}
