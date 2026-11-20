@@ -1,5 +1,6 @@
 """Tests for email verification API endpoints."""
 
+from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
@@ -95,6 +96,9 @@ class TestSendVerificationEmail:
 
                     assert "Verification code sent" in result["message"]
                     assert result["expires_in_minutes"] == 15
+                    expires_at = datetime.fromisoformat(result["expires_at"])
+                    remaining = expires_at - datetime.now(UTC)
+                    assert timedelta(minutes=14) < remaining <= timedelta(minutes=15)
                     mock_novu.assert_called_once()
 
     @pytest.mark.asyncio
@@ -163,7 +167,7 @@ class TestVerifyEmailCode:
     """Tests for verify_email_code endpoint."""
 
     @pytest.mark.asyncio
-    async def test_successful_verification(self, mock_user, mock_db):
+    async def test_successful_verification(self, mock_user, mock_db, mock_request):
         """Test successful email verification with correct code."""
         request = VerificationConfirm(email="test@example.com", code="123456")
 
@@ -172,12 +176,12 @@ class TestVerifyEmailCode:
             "webwhen.api.routers.email_verification.EmailVerificationService.verify_code",
             return_value=(True, None),
         ):
-            result = await verify_email_code(request, mock_user, mock_db)
+            result = await verify_email_code(request, mock_request, mock_user, mock_db)
 
             assert result["message"] == "Email verified successfully"
 
     @pytest.mark.asyncio
-    async def test_invalid_code(self, mock_user, mock_db):
+    async def test_invalid_code(self, mock_user, mock_db, mock_request):
         """Test verification with incorrect code."""
         request = VerificationConfirm(email="test@example.com", code="999999")
 
@@ -187,13 +191,13 @@ class TestVerifyEmailCode:
             return_value=(False, "Invalid verification code"),
         ):
             with pytest.raises(HTTPException) as exc_info:
-                await verify_email_code(request, mock_user, mock_db)
+                await verify_email_code(request, mock_request, mock_user, mock_db)
 
             assert exc_info.value.status_code == 400
             assert "Invalid" in exc_info.value.detail
 
     @pytest.mark.asyncio
-    async def test_expired_code(self, mock_user, mock_db):
+    async def test_expired_code(self, mock_user, mock_db, mock_request):
         """Test verification with expired code."""
         request = VerificationConfirm(email="test@example.com", code="123456")
 
@@ -203,13 +207,13 @@ class TestVerifyEmailCode:
             return_value=(False, "Verification code has expired"),
         ):
             with pytest.raises(HTTPException) as exc_info:
-                await verify_email_code(request, mock_user, mock_db)
+                await verify_email_code(request, mock_request, mock_user, mock_db)
 
             assert exc_info.value.status_code == 400
             assert "expired" in exc_info.value.detail.lower()
 
     @pytest.mark.asyncio
-    async def test_no_attempts_remaining(self, mock_user, mock_db):
+    async def test_no_attempts_remaining(self, mock_user, mock_db, mock_request):
         """Test verification when max attempts exceeded."""
         request = VerificationConfirm(email="test@example.com", code="123456")
 
@@ -219,7 +223,7 @@ class TestVerifyEmailCode:
             return_value=(False, "No verification attempts remaining"),
         ):
             with pytest.raises(HTTPException) as exc_info:
-                await verify_email_code(request, mock_user, mock_db)
+                await verify_email_code(request, mock_request, mock_user, mock_db)
 
             assert exc_info.value.status_code == 400
             assert "attempts" in exc_info.value.detail.lower()
