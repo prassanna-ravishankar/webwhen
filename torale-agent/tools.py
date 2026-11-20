@@ -7,6 +7,8 @@ from ipaddress import ip_address
 from urllib.parse import urlparse
 
 import httpx
+import parallel
+import perplexity
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.messages import ModelResponse, ToolCallPart
 
@@ -24,6 +26,19 @@ from models import (
 
 _NO_CLIENTS = json.dumps({"error": "No context available"})
 _NO_CLIENTS_ERROR = ToolError(error="No context available")
+
+
+def _provider_error(provider: str, e: Exception) -> ToolError:
+    """Report a search provider failure to the model instead of failing the run.
+
+    A provider outage or exhausted quota should cost one tool call, not the
+    whole watch execution; the model can still use the other search tools.
+    """
+    status = getattr(e, "status_code", None)
+    detail = f"HTTP {status}" if status else type(e).__name__
+    return ToolError(
+        error=f"{provider} search is unavailable ({detail}). Use another search tool."
+    )
 
 
 def _get_clients(ctx: RunContext[MonitoringDeps]) -> Clients | None:
@@ -173,7 +188,10 @@ def register_tools(agent: Agent[MonitoringDeps, MonitoringResponse]) -> None:
         """Search the web using Perplexity for current information. Include the current year in queries for time-sensitive topics."""
         if (clients := _get_clients(ctx)) is None:
             return _NO_CLIENTS_ERROR
-        response = await clients.perplexity.search.create(query=query)
+        try:
+            response = await clients.perplexity.search.create(query=query)
+        except perplexity.APIError as e:
+            return _provider_error("Perplexity", e)
         return [
             PerplexitySearchResult(
                 title=r.title,
@@ -192,13 +210,16 @@ def register_tools(agent: Agent[MonitoringDeps, MonitoringResponse]) -> None:
         """Search the web using Parallel for current information. Returns structured results with URLs, titles, and content excerpts. Often finds different authoritative sources than Perplexity."""
         if (clients := _get_clients(ctx)) is None:
             return _NO_CLIENTS_ERROR
-        result = await clients.parallel.beta.search(
-            objective=query,
-            search_queries=[query],
-            max_results=PARALLEL_SEARCH_MAX_RESULTS,
-            max_chars_per_result=PARALLEL_SEARCH_MAX_CHARS,
-            betas=PARALLEL_SEARCH_BETAS,
-        )
+        try:
+            result = await clients.parallel.beta.search(
+                objective=query,
+                search_queries=[query],
+                max_results=PARALLEL_SEARCH_MAX_RESULTS,
+                max_chars_per_result=PARALLEL_SEARCH_MAX_CHARS,
+                betas=PARALLEL_SEARCH_BETAS,
+            )
+        except parallel.APIError as e:
+            return _provider_error("Parallel", e)
         return [
             ParallelSearchResult(
                 title=r.title or r.url,
