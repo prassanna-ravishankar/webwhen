@@ -34,6 +34,13 @@ spec:
 
       containers:
       - name: frontend
+        # Keep serving while the load balancer deprograms this pod. Without the
+        # pause, SIGTERM lands before the Gateway stops routing here and
+        # rollouts return brief 503s.
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "15"]
         image: {{ include "torale.frontend.image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
