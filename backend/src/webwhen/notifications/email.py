@@ -1,8 +1,14 @@
 """Email verification service to prevent spam and validate email ownership."""
 
-import random
-from datetime import datetime, timedelta
+import hmac
+import secrets
+from datetime import UTC, datetime, timedelta
 from uuid import UUID
+
+# Verification sends are logged in notification_sends (append-only). Counting
+# email_verifications rows instead let a resend to the same address, which
+# replaces its pending row, slip under the hourly limit indefinitely.
+VERIFICATION_NOTIFICATION_TYPE = "email_verification"
 
 
 class EmailVerificationService:
@@ -13,32 +19,49 @@ class EmailVerificationService:
     MAX_VERIFICATION_ATTEMPTS = 5
     RATE_LIMIT_WINDOW_MINUTES = 60
     MAX_VERIFICATIONS_PER_HOUR = 3
+    MAX_VERIFICATIONS_PER_RECIPIENT_PER_HOUR = 3
 
     @staticmethod
     def generate_code() -> str:
         """Generate 6-digit verification code."""
-        return "".join([str(random.randint(0, 9)) for _ in range(6)])
+        return f"{secrets.randbelow(10**6):06d}"
 
     @staticmethod
-    async def can_send_verification(conn, user_id: str) -> tuple[bool, str | None]:
+    async def can_send_verification(conn, user_id: str, email: str) -> tuple[bool, str | None]:
         """
         Check if user can request another verification email.
 
+        Limits sends per user and per recipient address, so neither one
+        account nor several accounts can flood an inbox.
+
         Returns: (can_send, error_message)
         """
-        # Check rate limit: max 3 verifications per hour
-        hour_ago = datetime.utcnow() - timedelta(minutes=60)
-        recent_count = await conn.fetchval(
+        window_start = datetime.now(UTC) - timedelta(
+            minutes=EmailVerificationService.RATE_LIMIT_WINDOW_MINUTES
+        )
+        counts = await conn.fetchrow(
             """
-            SELECT COUNT(*) FROM email_verifications
-            WHERE user_id = $1 AND created_at > $2
+            SELECT
+                COUNT(*) FILTER (WHERE user_id = $1) AS by_user,
+                COUNT(*) FILTER (WHERE recipient_email = $2) AS by_recipient
+            FROM notification_sends
+            WHERE notification_type = $3
+              AND created_at > $4
+              AND (user_id = $1 OR recipient_email = $2)
             """,
             UUID(user_id),
-            hour_ago,
+            email,
+            VERIFICATION_NOTIFICATION_TYPE,
+            window_start,
         )
 
-        if recent_count >= 3:
+        if counts["by_user"] >= EmailVerificationService.MAX_VERIFICATIONS_PER_HOUR:
             return False, "Too many verification requests. Please try again later."
+        if (
+            counts["by_recipient"]
+            >= EmailVerificationService.MAX_VERIFICATIONS_PER_RECIPIENT_PER_HOUR
+        ):
+            return False, "Too many verification emails to this address. Please try again later."
 
         return True, None
 
@@ -49,38 +72,53 @@ class EmailVerificationService:
 
         Returns: (success, code_or_error, error_message)
         """
-        # Check rate limit
-        can_send, error = await EmailVerificationService.can_send_verification(conn, user_id)
-        if not can_send:
-            return False, "", error
+        async with conn.transaction():
+            # Serialize sends per user so concurrent requests can't both pass the limit.
+            await conn.execute(
+                "SELECT pg_advisory_xact_lock(hashtext('email-verification:' || $1))",
+                user_id,
+            )
 
-        # Delete any existing unverified verification for this email
-        await conn.execute(
-            """
-            DELETE FROM email_verifications
-            WHERE user_id = $1 AND email = $2 AND verified = false
-            """,
-            UUID(user_id),
-            email,
-        )
+            can_send, error = await EmailVerificationService.can_send_verification(
+                conn, user_id, email
+            )
+            if not can_send:
+                return False, "", error
 
-        # Generate code and expiry
-        code = EmailVerificationService.generate_code()
-        expires_at = datetime.utcnow() + timedelta(
-            minutes=EmailVerificationService.VERIFICATION_EXPIRY_MINUTES
-        )
+            # Only one pending code per address; a resend replaces it.
+            await conn.execute(
+                """
+                DELETE FROM email_verifications
+                WHERE user_id = $1 AND email = $2 AND verified = false
+                """,
+                UUID(user_id),
+                email,
+            )
 
-        # Insert verification record
-        await conn.execute(
-            """
-            INSERT INTO email_verifications (user_id, email, verification_code, expires_at)
-            VALUES ($1, $2, $3, $4)
-            """,
-            UUID(user_id),
-            email,
-            code,
-            expires_at,
-        )
+            code = EmailVerificationService.generate_code()
+            expires_at = datetime.now(UTC) + timedelta(
+                minutes=EmailVerificationService.VERIFICATION_EXPIRY_MINUTES
+            )
+
+            await conn.execute(
+                """
+                INSERT INTO email_verifications (user_id, email, verification_code, expires_at)
+                VALUES ($1, $2, $3, $4)
+                """,
+                UUID(user_id),
+                email,
+                code,
+                expires_at,
+            )
+            await conn.execute(
+                """
+                INSERT INTO notification_sends (user_id, recipient_email, notification_type)
+                VALUES ($1, $2, $3)
+                """,
+                UUID(user_id),
+                email,
+                VERIFICATION_NOTIFICATION_TYPE,
+            )
 
         return True, code, None
 
@@ -110,7 +148,7 @@ class EmailVerificationService:
                 return False, "No verification pending for this email"
 
             # Check if expired
-            if datetime.utcnow() > record["expires_at"]:
+            if datetime.now(UTC) > record["expires_at"]:
                 return False, "Verification code expired. Request a new one."
 
             # Check attempts
@@ -118,7 +156,7 @@ class EmailVerificationService:
                 return False, "Too many failed attempts. Request a new code."
 
             # Check code
-            if record["verification_code"] != code:
+            if not hmac.compare_digest(record["verification_code"].encode(), code.encode()):
                 # Increment attempts
                 await conn.execute(
                     "UPDATE email_verifications SET attempts = attempts + 1 WHERE id = $1",
@@ -199,7 +237,7 @@ class EmailVerificationService:
         Returns: (allowed, error_message)
         """
         # Check daily limit per user
-        day_ago = datetime.utcnow() - timedelta(days=1)
+        day_ago = datetime.now(UTC) - timedelta(days=1)
         daily_count = await conn.fetchval(
             """
             SELECT COUNT(*) FROM notification_sends
@@ -213,7 +251,7 @@ class EmailVerificationService:
             return False, "Daily notification limit reached (100/day)"
 
         # Check hourly limit per email
-        hour_ago = datetime.utcnow() - timedelta(hours=1)
+        hour_ago = datetime.now(UTC) - timedelta(hours=1)
         hourly_count = await conn.fetchval(
             """
             SELECT COUNT(*) FROM notification_sends

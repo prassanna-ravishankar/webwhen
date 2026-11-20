@@ -1,5 +1,7 @@
 """Email verification API endpoints."""
 
+from datetime import UTC, datetime, timedelta
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, EmailStr
 
@@ -59,20 +61,23 @@ async def send_verification_email(
         # Send verification email via Novu (or log code if not configured)
         await novu_service.send_verification_email(email=body.email, code=code, user_name=user_name)
 
+        expiry_minutes = EmailVerificationService.VERIFICATION_EXPIRY_MINUTES
         return {
             "message": f"Verification code sent to {body.email}",
-            "expires_in_minutes": EmailVerificationService.VERIFICATION_EXPIRY_MINUTES,
+            "expires_in_minutes": expiry_minutes,
+            "expires_at": (datetime.now(UTC) + timedelta(minutes=expiry_minutes)).isoformat(),
         }
 
 
 @router.post("/verify")
+@limiter.limit("10/minute", key_func=get_user_or_ip)
 async def verify_email_code(
-    request: VerificationConfirm, user: CurrentUser, db: Database = Depends(get_db)
+    body: VerificationConfirm, request: Request, user: CurrentUser, db: Database = Depends(get_db)
 ):
     """Verify email with code."""
     async with db.acquire() as conn:
         success, error = await EmailVerificationService.verify_code(
-            conn, str(user.id), request.email, request.code
+            conn, str(user.id), body.email, body.code
         )
 
         if not success:

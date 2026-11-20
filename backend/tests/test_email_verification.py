@@ -1,6 +1,6 @@
 """Tests for email verification service."""
 
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
@@ -24,7 +24,7 @@ def _make_verification_record(sample_user, *, expires_delta=timedelta(minutes=10
         "user_id": sample_user.id,
         "email": "test@example.com",
         "verification_code": "123456",
-        "expires_at": datetime.utcnow() + expires_delta,
+        "expires_at": datetime.now(UTC) + expires_delta,
         "attempts": attempts,
         "verified": False,
     }
@@ -35,33 +35,58 @@ class TestCanSendVerification:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
-        "count,expected_allowed",
-        [(0, True), (2, True), (3, False)],
-        ids=["first_request", "under_limit", "at_limit"],
+        "by_user,by_recipient,expected_error",
+        [
+            (0, 0, None),
+            (2, 2, None),
+            (3, 0, "Too many verification requests"),
+            (0, 3, "Too many verification emails to this address"),
+        ],
+        ids=["first_request", "under_limits", "user_at_limit", "recipient_at_limit"],
     )
-    async def test_rate_limit_enforcement(self, mock_conn, sample_user, count, expected_allowed):
-        """Rate limit allows < 3 requests/hour and blocks at 3."""
-        mock_conn.fetchval = AsyncMock(return_value=count)
-
-        can_send, error = await EmailVerificationService.can_send_verification(
-            mock_conn, str(sample_user.id)
+    async def test_rate_limit_enforcement(
+        self, mock_conn, sample_user, by_user, by_recipient, expected_error
+    ):
+        """At most 3 sends/hour per user and per recipient address."""
+        mock_conn.fetchrow = AsyncMock(
+            return_value={"by_user": by_user, "by_recipient": by_recipient}
         )
 
-        assert can_send is expected_allowed
-        if expected_allowed:
+        can_send, error = await EmailVerificationService.can_send_verification(
+            mock_conn, str(sample_user.id), "test@example.com"
+        )
+
+        assert can_send is (expected_error is None)
+        if expected_error is None:
             assert error is None
         else:
-            assert "Too many verification requests" in error
+            assert expected_error in error
+
+    @pytest.mark.asyncio
+    async def test_counts_the_append_only_send_log(self, mock_conn, sample_user):
+        """Counting replaced pending rows let resends to one address bypass the limit."""
+        mock_conn.fetchrow = AsyncMock(return_value={"by_user": 0, "by_recipient": 0})
+
+        await EmailVerificationService.can_send_verification(
+            mock_conn, str(sample_user.id), "test@example.com"
+        )
+
+        sql = mock_conn.fetchrow.call_args.args[0]
+        assert "FROM notification_sends" in sql
+        assert "email_verifications" not in sql
 
 
 class TestCreateVerification:
     """Tests for create_verification method."""
 
-    @pytest.mark.asyncio
-    async def test_creates_verification_record(self, mock_conn, sample_user):
-        """Test that verification record is created successfully."""
-        mock_conn.fetchval = AsyncMock(return_value=0)
+    def _mock_allowed(self, mock_conn):
+        mock_conn.transaction = MagicMock(return_value=MockTransaction())
+        mock_conn.fetchrow = AsyncMock(return_value={"by_user": 0, "by_recipient": 0})
         mock_conn.execute = AsyncMock()
+
+    @pytest.mark.asyncio
+    async def test_creates_verification_record_and_logs_the_send(self, mock_conn, sample_user):
+        self._mock_allowed(mock_conn)
 
         success, code, error = await EmailVerificationService.create_verification(
             mock_conn, str(sample_user.id), "test@example.com"
@@ -71,19 +96,31 @@ class TestCreateVerification:
         assert len(code) == 6
         assert code.isdigit()
         assert error is None
-        assert mock_conn.execute.call_count == 2  # DELETE + INSERT
+        statements = [call.args[0] for call in mock_conn.execute.call_args_list]
+        assert "pg_advisory_xact_lock" in statements[0]
+        assert any("INSERT INTO email_verifications" in sql for sql in statements)
+        assert any("INSERT INTO notification_sends" in sql for sql in statements)
 
     @pytest.mark.asyncio
-    async def test_sets_expiration_15_minutes(self, mock_conn, sample_user):
-        """Test that verification uses 15 minute expiry (constant is 15)."""
-        mock_conn.fetchval = AsyncMock(return_value=0)
-        mock_conn.execute = AsyncMock()
+    async def test_rejected_send_writes_nothing(self, mock_conn, sample_user):
+        self._mock_allowed(mock_conn)
+        mock_conn.fetchrow = AsyncMock(return_value={"by_user": 3, "by_recipient": 0})
 
         success, code, error = await EmailVerificationService.create_verification(
             mock_conn, str(sample_user.id), "test@example.com"
         )
 
-        assert success is True
+        assert success is False
+        assert code == ""
+        statements = [call.args[0] for call in mock_conn.execute.call_args_list]
+        assert not any("INSERT" in sql or "DELETE" in sql for sql in statements)
+
+    def test_codes_are_six_digits_from_a_csprng(self):
+        codes = {EmailVerificationService.generate_code() for _ in range(200)}
+        assert all(len(c) == 6 and c.isdigit() for c in codes)
+        assert len(codes) > 190
+
+    def test_expiry_is_15_minutes(self):
         assert EmailVerificationService.VERIFICATION_EXPIRY_MINUTES == 15
 
 
