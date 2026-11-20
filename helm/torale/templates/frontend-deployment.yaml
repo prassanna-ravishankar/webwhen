@@ -15,6 +15,9 @@ spec:
   {{- if not .Values.frontend.autoscaling.enabled }}
   replicas: {{ .Values.frontend.replicaCount }}
   {{- end }}
+  # Hold the old pod until the Gateway health check (2 x 5s) has marked the
+  # new one healthy; Kubernetes readiness alone is ahead of the load balancer.
+  minReadySeconds: 15
   selector:
     matchLabels:
       {{- include "torale.frontend.selectorLabels" . | nindent 6 }}

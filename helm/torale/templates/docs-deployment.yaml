@@ -8,6 +8,9 @@ metadata:
     app.kubernetes.io/component: docs
 spec:
   replicas: {{ .Values.docs.replicaCount }}
+  # Hold the old pod until the Gateway health check has marked the new one
+  # healthy (see frontend-deployment.yaml).
+  minReadySeconds: 15
   selector:
     matchLabels:
       {{- include "torale.selectorLabels" . | nindent 6 }}
