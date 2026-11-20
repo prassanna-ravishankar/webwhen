@@ -7,6 +7,7 @@ from ipaddress import ip_address
 from urllib.parse import urlparse
 
 import httpx
+import logfire
 import parallel
 import perplexity
 from pydantic_ai import Agent, RunContext
@@ -36,6 +37,14 @@ def _provider_error(provider: str, e: Exception) -> ToolError:
     """
     status = getattr(e, "status_code", None)
     detail = f"HTTP {status}" if status else type(e).__name__
+    # Stable span name so exhausted credits stay visible in Logfire even though
+    # the run itself now succeeds.
+    logfire.warn(
+        "search provider unavailable: {provider} {detail}",
+        provider=provider,
+        detail=detail,
+        billing="insufficient_quota" in str(e) or status == 402,
+    )
     return ToolError(
         error=f"{provider} search is unavailable ({detail}). Use another search tool."
     )

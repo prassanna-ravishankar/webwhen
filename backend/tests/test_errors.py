@@ -3,7 +3,12 @@
 import asyncpg.exceptions as asyncpg_ex
 import pytest
 
-from webwhen.scheduler.errors import ErrorCategory, classify_error, get_user_friendly_message
+from webwhen.scheduler.errors import (
+    ErrorCategory,
+    classify_error,
+    get_user_friendly_message,
+    should_retry,
+)
 
 
 class TestErrorClassification:
@@ -77,3 +82,35 @@ class TestMessageSanitization:
         assert "internal-api" not in message.lower()
         assert "8080" not in message
         assert "connection" in message.lower() or "retrying" in message.lower()
+
+
+class TestBillingErrors:
+    """Provider credit exhaustion is its own category (messages as seen in prod, Nov 2026)."""
+
+    @pytest.mark.parametrize(
+        "message",
+        [
+            "Agent task 3e67 upstream 402: status_code: 402, model_name: gemini-3.5-flash-lite, "
+            "body: {'error': {'code': 402, 'message': 'Your prepayment credits are depleted.'}}",
+            "Error code: 401 - {'error': {'message': 'You exceeded your current quota, add credits "
+            "at https://console.perplexity.ai/project/billing.', 'type': 'insufficient_quota', "
+            "'code': 401}}",
+        ],
+        ids=["gemini_402", "perplexity_insufficient_quota"],
+    )
+    def test_credit_exhaustion_is_billing_not_rate_limit(self, message):
+        assert classify_error(RuntimeError(message)) == ErrorCategory.BILLING
+
+    def test_free_tier_429_is_still_rate_limit(self):
+        message = (
+            "Agent task b4c4 upstream 429: status_code: 429, body: {'error': {'code': 429, "
+            "'message': 'You exceeded your current quota, please check your plan and billing details.'}}"
+        )
+        assert classify_error(RuntimeError(message)) == ErrorCategory.RATE_LIMIT
+
+    def test_billing_is_not_retried(self):
+        assert should_retry(ErrorCategory.BILLING, 0) is False
+
+    def test_billing_message_does_not_blame_the_user(self):
+        message = get_user_friendly_message(RuntimeError("x"), ErrorCategory.BILLING)
+        assert "next scheduled run" in message

@@ -12,6 +12,7 @@ class ErrorCategory(StrEnum):
     """Categories of execution errors for different handling strategies."""
 
     RATE_LIMIT = "rate_limit"
+    BILLING = "billing"  # Provider credits exhausted; retrying cannot help
     TIMEOUT = "timeout"
     NETWORK = "network"
     AGENT_ERROR = "agent_error"
@@ -22,6 +23,15 @@ class ErrorCategory(StrEnum):
 
 # --- Classification patterns ---
 
+# Checked before rate limits: these bodies also say "quota", but they mean an
+# account is out of credits (Gemini 402, Perplexity insufficient_quota), which
+# no backoff fixes. Seen in prod Oct-Nov 2026.
+_BILLING_PATTERNS = (
+    "insufficient_quota",
+    "credits are depleted",
+    "status_code: 402",
+    "upstream 402",
+)
 _RATE_LIMIT_PATTERNS = ("429", "rate limit", "quota")
 _TIMEOUT_PATTERNS = ("timeout", "timed out")
 _NETWORK_PATTERNS = (
@@ -41,7 +51,9 @@ def classify_error(error: Exception) -> ErrorCategory:
     error_str = str(error).lower()
 
     # Prioritize string-based matching for specific error types that can be
-    # nested in generic exceptions, like rate limits.
+    # nested in generic exceptions, like billing and rate limits.
+    if any(p in error_str for p in _BILLING_PATTERNS):
+        return ErrorCategory.BILLING
     if any(p in error_str for p in _RATE_LIMIT_PATTERNS):
         return ErrorCategory.RATE_LIMIT
 
@@ -113,6 +125,7 @@ def classify_error(error: Exception) -> ErrorCategory:
 
 _USER_MESSAGES: dict[ErrorCategory, str] = {
     ErrorCategory.RATE_LIMIT: "Temporarily unable to process due to high demand. We'll retry automatically.",
+    ErrorCategory.BILLING: "Temporarily unable to run this check. We'll try again at the next scheduled run.",
     ErrorCategory.TIMEOUT: "The search took longer than expected. We'll try again shortly.",
     ErrorCategory.NETWORK: "Temporary connection issue. Retrying automatically.",
     ErrorCategory.AGENT_ERROR: "Unable to complete the search. We'll try again.",
@@ -149,6 +162,7 @@ _DEFAULT_RETRY_DELAY = (300, 3, 3600)  # 5min, 15min, 45min
 
 _MAX_RETRIES: dict[ErrorCategory, int] = {
     ErrorCategory.RATE_LIMIT: 5,
+    ErrorCategory.BILLING: 0,
     ErrorCategory.TIMEOUT: 3,
     ErrorCategory.NETWORK: 3,
     ErrorCategory.AGENT_ERROR: 2,
