@@ -431,7 +431,6 @@ async def _execute(
                 # Don't schedule retry if we can't persist state
                 raise db_err
 
-        # Schedule retry only for transient failures, not permanent failures or user errors
         if will_retry:
             await _schedule_next_run(
                 task_id=task_id,
@@ -441,8 +440,18 @@ async def _execute(
                 execution_id=execution_id,
                 retry_count=next_retry_count,
             )
-        # For permanent failures, the task is marked FAILED and no further retries are scheduled.
-        # The task will not be automatically rescheduled - user needs to fix the issue and manually re-activate if desired.
+        else:
+            # The execution is FAILED, but the watch stays active until a person
+            # changes it. Without a next run it would sit "active" and never run
+            # again; one shared outage would silently stop every watch due then.
+            await _schedule_next_run(
+                task_id=task_id,
+                user_id=user_id,
+                task_name=task_name,
+                next_run_dt=_resolve_next_run(None),
+                execution_id=None,
+                retry_count=0,
+            )
     finally:
         if execution_succeeded:
             # A watch is ongoing unless a person explicitly changes its state.

@@ -36,7 +36,7 @@ from webwhen.core.redis import redis_client
 from webwhen.core.views import flush_views_to_postgres
 from webwhen.lib.posthog import shutdown as shutdown_posthog
 from webwhen.scheduler import get_scheduler
-from webwhen.scheduler.leader import SchedulerLeader
+from webwhen.scheduler.leader import HEARTBEAT_SECONDS, SchedulerLeader, record_heartbeat
 from webwhen.scheduler.migrate import reap_stale_executions, sync_jobs_from_database
 
 logger = logging.getLogger(__name__)
@@ -113,6 +113,21 @@ async def lifespan(app: FastAPI):
         trigger="interval",
         minutes=15,
         id="reap-stale-executions",
+        replace_existing=True,
+    )
+    # Re-run the job sync on the leader so no active watch stays unscheduled.
+    scheduler.add_job(
+        sync_jobs_from_database,
+        trigger="interval",
+        minutes=15,
+        id="sync-task-jobs",
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        record_heartbeat,
+        trigger="interval",
+        seconds=HEARTBEAT_SECONDS,
+        id="scheduler-heartbeat",
         replace_existing=True,
     )
 
@@ -221,12 +236,14 @@ app.mount("/static", StaticFiles(directory=str(PROJECT_ROOT / "static")), name="
 async def health_check():
     scheduler = get_scheduler()
     scheduler_running = scheduler.running
-    if not scheduler_running or not _startup_sync_ok:
+    scheduler_stalled = _scheduler_leader is not None and _scheduler_leader.stalled
+    if not scheduler_running or not _startup_sync_ok or scheduler_stalled:
         return JSONResponse(
             status_code=503,
             content={
                 "status": "degraded",
                 "scheduler_running": scheduler_running,
+                "scheduler_stalled": scheduler_stalled,
                 "startup_sync_ok": _startup_sync_ok,
             },
         )

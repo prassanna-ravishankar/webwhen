@@ -8,6 +8,7 @@ retry until the holder exits or its connection drops.
 
 import asyncio
 import logging
+import time
 
 import asyncpg
 from apscheduler.schedulers.base import BaseScheduler
@@ -29,6 +30,19 @@ _LOCK_SESSION_SETTINGS = {
 }
 
 
+# The leader's scheduler runs record_heartbeat every HEARTBEAT_SECONDS. If it
+# stops (event loop wedged, dispatch loop dead), /health turns unhealthy so
+# Kubernetes restarts the pod instead of it sitting "healthy" and idle.
+HEARTBEAT_SECONDS = 30
+STALL_SECONDS = 120
+_last_heartbeat = 0.0
+
+
+def record_heartbeat() -> None:
+    global _last_heartbeat
+    _last_heartbeat = time.monotonic()
+
+
 class SchedulerLeader:
     def __init__(
         self,
@@ -41,10 +55,18 @@ class SchedulerLeader:
         self.interval_seconds = interval_seconds
         self._conn: asyncpg.Connection | None = None
         self._task: asyncio.Task | None = None
+        self._leading_since = 0.0
 
     @property
     def is_leader(self) -> bool:
         return self._conn is not None
+
+    @property
+    def stalled(self) -> bool:
+        """True when this pod leads but its scheduler has stopped running jobs."""
+        if not self.is_leader:
+            return False
+        return time.monotonic() - max(_last_heartbeat, self._leading_since) > STALL_SECONDS
 
     def start(self) -> None:
         self._task = asyncio.create_task(self._run())
@@ -90,6 +112,7 @@ class SchedulerLeader:
             await conn.close()
             return
         self._conn = conn
+        self._leading_since = time.monotonic()
         self.scheduler.resume()
         logger.info("Acquired scheduler lock; this pod now runs scheduled jobs")
 
