@@ -1,0 +1,24 @@
+# Security updates only (open-pull-requests-limit: 0 turns off version-update
+# PRs). Patch and minor security fixes are grouped per ecosystem; anything that
+# needs a major bump gets its own PR so its title names the major (#277).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directories: ["/frontend", "/docs-site"]
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+    groups:
+      npm-security:
+        applies-to: security-updates
+        update-types: [minor, patch]
+
+  - package-ecosystem: uv
+    directories: ["/backend", "/torale-agent"]
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+    groups:
+      uv-security:
+        applies-to: security-updates
+        update-types: [minor, patch]
