@@ -28,8 +28,3 @@ class APIError(WebwhenError):
         super().__init__(message)
         self.status_code = status_code
         self.response = response
-
-
-# Back-compat alias — kept in this module so `from webwhen.sdk.exceptions import ToraleError`
-# keeps working. The lazy `torale` shim (phase 5) emits the DeprecationWarning.
-ToraleError = WebwhenError

@@ -9,10 +9,6 @@ A webwhen watch runs as a self-scheduling agent: each execution decides whether 
 
 The public-facing explainer lives at [webwhen.ai/concepts/self-scheduling-agents](https://webwhen.ai/concepts/self-scheduling-agents). This doc is the engineering view.
 
-::: tip Naming during the transition
-The codebase still uses `torale-agent` as the service name and the database table is still called `tasks`. The product is now webwhen; the rename of internal modules and endpoints is a later phase.
-:::
-
 ## The loop
 
 ```mermaid
@@ -54,7 +50,7 @@ class MonitoringResponse(BaseModel):
     activity: list[ActivityStep] | None
 ```
 
-This schema is duplicated between `torale-agent/models.py` and `backend/src/torale/scheduler/models.py` (see the note in `CLAUDE.md`). Both must stay in sync.
+This schema is duplicated between `torale-agent/models.py` and `backend/src/webwhen/scheduler/models.py` (see the note in `CLAUDE.md`). Both must stay in sync.
 
 ## Scheduling semantics
 

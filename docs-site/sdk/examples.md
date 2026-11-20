@@ -7,15 +7,15 @@ description: webwhen Python SDK code examples. Real-world watch scenarios with c
 Practical examples using the webwhen Python SDK.
 
 ::: tip Naming during the transition
-The package on PyPI is still `torale` and SDK methods still use `tasks`. The rename to `webwhen` is a later phase — code samples below use the current shipping names.
+SDK methods still use `tasks` for watches. The resource rename is a later phase.
 :::
 
 ## Product release watching
 
 ```python
-from torale import Torale
+from webwhen import Webwhen
 
-client = Torale(api_key="sk_...")
+client = Webwhen(api_key="sk_...")
 
 # Watch the iPhone release
 iphone_task = client.tasks.create(
@@ -57,9 +57,9 @@ ps5_task = client.tasks.create(
 ## Using the fluent builder
 
 ```python
-from torale import Torale
+from webwhen import Webwhen
 
-client = Torale(api_key="sk_...")
+client = Webwhen(api_key="sk_...")
 
 # Readable chaining
 task = (client.monitor("Is PlayStation 5 in stock at Target?")
@@ -106,10 +106,10 @@ print(f"\nTotal watches created: {len(tasks)}")
 
 ```python
 import asyncio
-from torale import ToraleAsync
+from webwhen import WebwhenAsync
 
 async def create_all(configs):
-    async with ToraleAsync(api_key="sk_...") as client:
+    async with WebwhenAsync(api_key="sk_...") as client:
         tasks = await asyncio.gather(*[
             client.tasks.create(**config)
             for config in configs
@@ -130,9 +130,9 @@ for task in tasks:
 ## Watch dashboard
 
 ```python
-from torale import Torale
+from webwhen import Webwhen
 
-client = Torale(api_key="sk_...")
+client = Webwhen(api_key="sk_...")
 
 def display_dashboard():
     tasks = client.tasks.list()
@@ -234,7 +234,7 @@ check_execution_health()
 ```python
 # Configure the default webhook
 config = client.webhooks.update_config(
-    url="https://myapp.com/webhooks/torale",
+    url="https://myapp.com/webhooks/webwhen",
     enabled=True,
 )
 print(f"Webhook URL: {config['url']}")
@@ -242,7 +242,7 @@ print(f"Secret: {config['secret']}")  # Use this to verify webhook signatures
 
 # Test webhook delivery
 result = client.webhooks.test(
-    url="https://myapp.com/webhooks/torale",
+    url="https://myapp.com/webhooks/webwhen",
     secret=config["secret"],
 )
 print(f"Test result: {result['message']}")

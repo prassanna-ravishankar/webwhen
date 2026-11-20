@@ -6,10 +6,6 @@ description: API authentication with API keys and bearer tokens. Generate keys, 
 
 webwhen supports two authentication methods: Clerk OAuth for the web dashboard and API keys for programmatic access.
 
-::: tip Naming during the transition
-Endpoint paths and environment variable names still use `torale`. The rename to `webwhen` is a later phase.
-:::
-
 ## Authentication methods
 
 ### 1. Clerk OAuth (web dashboard)
@@ -240,7 +236,7 @@ Returns `404` if the key isn't found or doesn't belong to the user.
 
 ```bash
 # .env (add to .gitignore)
-TORALE_API_KEY=sk_...
+WEBWHEN_API_KEY=sk_...
 ```
 
 ## Development mode (no auth)
@@ -248,7 +244,7 @@ TORALE_API_KEY=sk_...
 For local development without authentication:
 
 ```bash
-export TORALE_NOAUTH=1
+export WEBWHEN_NOAUTH=1
 ```
 
 Only works against the local development API (`localhost:8000`). The backend uses a test user for every request.

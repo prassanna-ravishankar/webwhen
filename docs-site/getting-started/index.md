@@ -6,10 +6,6 @@ description: Get started with webwhen. Integrate via the Python SDK or REST API.
 
 Choose how you want to integrate with webwhen.
 
-::: tip Naming during the transition
-The Python package and REST API still use the `torale` name today. The rename to `webwhen` is a later phase — code samples below reflect the current shipping name.
-:::
-
 ## Python SDK
 
 Programmatic access through a Python client library.

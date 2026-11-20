@@ -6,10 +6,6 @@ description: Authenticate with the webwhen API using the Python SDK. Initialize 
 
 Authenticate the SDK with your API key.
 
-::: tip Naming during the transition
-Environment variable names and the client class still use `torale` (`TORALE_API_KEY`, `Torale`). The rename to `webwhen` is a later phase.
-:::
-
 ## Get an API key
 
 1. Log in to [webwhen.ai](https://webwhen.ai)
@@ -20,9 +16,9 @@ Environment variable names and the client class still use `torale` (`TORALE_API_
 ## Initialize the client
 
 ```python
-from torale import Torale
+from webwhen import Webwhen
 
-client = Torale(api_key="sk_...")
+client = Webwhen(api_key="sk_...")
 ```
 
 ## API key resolution order
@@ -30,40 +26,40 @@ client = Torale(api_key="sk_...")
 The client resolves the API key in this order:
 
 1. `api_key` parameter passed to the constructor
-2. `TORALE_API_KEY` environment variable
-3. `~/.torale/config.json` file
+2. `WEBWHEN_API_KEY` environment variable
+3. `~/.webwhen/config.json` file
 
-If no key is found and `TORALE_NOAUTH` isn't set, an `AuthenticationError` is raised.
+If no key is found and `WEBWHEN_NOAUTH` isn't set, an `AuthenticationError` is raised.
 
 ## Environment variables
 
 Store your API key in an environment variable:
 
 ```bash
-export TORALE_API_KEY=sk_...
+export WEBWHEN_API_KEY=sk_...
 ```
 
 The client reads it automatically:
 
 ```python
-from torale import Torale
+from webwhen import Webwhen
 
-client = Torale()  # Reads from TORALE_API_KEY
+client = Webwhen()  # Reads from WEBWHEN_API_KEY
 ```
 
 ## Using .env files
 
 ```python
 from dotenv import load_dotenv
-from torale import Torale
+from webwhen import Webwhen
 
 load_dotenv()
-client = Torale()
+client = Webwhen()
 ```
 
 ## Config file
 
-The SDK reads from `~/.torale/config.json` if it exists:
+The SDK reads from `~/.webwhen/config.json` if it exists:
 
 ```json
 {
@@ -78,20 +74,20 @@ For local development without authentication:
 
 ```python
 import os
-os.environ["TORALE_NOAUTH"] = "1"
+os.environ["WEBWHEN_NOAUTH"] = "1"
 
-from torale import Torale
-client = Torale()  # Connects to http://localhost:8000, no API key required
+from webwhen import Webwhen
+client = Webwhen()  # Connects to http://localhost:8000, no API key required
 ```
 
 For local development with authentication:
 
 ```python
 import os
-os.environ["TORALE_DEV"] = "1"
+os.environ["WEBWHEN_DEV"] = "1"
 
-from torale import Torale
-client = Torale(api_key="sk_...")  # Connects to http://localhost:8000
+from webwhen import Webwhen
+client = Webwhen(api_key="sk_...")  # Connects to http://localhost:8000
 ```
 
 ## API URL resolution
@@ -99,19 +95,19 @@ client = Torale(api_key="sk_...")  # Connects to http://localhost:8000
 The base URL is resolved in this order:
 
 1. `api_url` parameter passed to the constructor
-2. `TORALE_API_URL` environment variable
-3. `http://localhost:8000` if `TORALE_DEV=1` or `TORALE_NOAUTH=1`
-4. `api_url` from `~/.torale/config.json`
+2. `WEBWHEN_API_URL` environment variable
+3. `http://localhost:8000` if `WEBWHEN_DEV=1` or `WEBWHEN_NOAUTH=1`
+4. `api_url` from `~/.webwhen/config.json`
 5. `https://api.webwhen.ai` (default)
 
 ## Error handling
 
 ```python
-from torale import Torale
-from torale.sdk.exceptions import AuthenticationError
+from webwhen import Webwhen
+from webwhen.sdk.exceptions import AuthenticationError
 
 try:
-    client = Torale(api_key="sk_invalid")
+    client = Webwhen(api_key="sk_invalid")
     tasks = client.tasks.list()
 except AuthenticationError:
     print("Invalid API key")

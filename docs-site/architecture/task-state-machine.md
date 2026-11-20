@@ -13,7 +13,7 @@ The database table is still called `tasks`, the enum is still `TaskState`, and r
 
 ## States
 
-A watch is always in exactly one of three states (see `TaskState` in `backend/src/torale/tasks/tasks.py`):
+A watch is always in exactly one of three states (see `TaskState` in `backend/src/webwhen/tasks/tasks.py`):
 
 | State | Meaning |
 | --- | --- |
@@ -35,7 +35,7 @@ Anything else is rejected. In particular, `completed → paused` is disallowed: 
 
 ## Where the transitions live
 
-The state machine is enforced at the service layer (`backend/src/torale/tasks/service.py`). Handlers:
+The state machine is enforced at the service layer (`backend/src/webwhen/tasks/service.py`). Handlers:
 
 - Accept the current state and the requested target
 - Validate the transition is in the allowed set

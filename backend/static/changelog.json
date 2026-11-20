@@ -1,5 +1,14 @@
 [
   {
+    "id": "2026-11-20-torale-shims-removed",
+    "date": "2026-11-20",
+    "title": "Torale SDK names retired",
+    "description": "The Python SDK now answers only to its webwhen names. The torale import package, the Torale/ToraleAsync/ToraleError aliases, the TORALE_* environment variables and the ~/.torale/config.json fallback are gone. Use `from webwhen import Webwhen`, set WEBWHEN_API_KEY, and move any config file to ~/.webwhen/config.json. The REST API and webhook payloads are unchanged.",
+    "category": "infra",
+    "requestedBy": [],
+    "pr": 377
+  },
+  {
     "id": "2026-05-05-webhook-headers-renamed",
     "date": "2026-05-05",
     "title": "Webhook headers renamed to X-Webwhen-*",

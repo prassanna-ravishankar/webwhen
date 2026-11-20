@@ -6,14 +6,10 @@ description: Python SDK guide for programmatic webwhen integration. Create watch
 
 Integrate webwhen into your Python applications.
 
-::: tip Naming during the transition
-The package on PyPI is still `torale` and the client class is still `ToraleClient`. The rename to `webwhen` is a later phase — the code samples below use the current shipping names.
-:::
-
 ## Installation
 
 ```bash
-pip install torale
+pip install webwhen
 ```
 
 ## Get an API key
@@ -26,9 +22,9 @@ pip install torale
 ## Create your first watch
 
 ```python
-from torale import ToraleClient
+from webwhen import Webwhen
 
-client = ToraleClient(api_key="sk_...")
+client = Webwhen(api_key="sk_...")
 
 task = client.tasks.create(
     search_query="When is the iPhone 17 being released?",
@@ -57,14 +53,14 @@ for execution in executions:
 Store your API key in an environment variable:
 
 ```bash
-export TORALE_API_KEY=sk_...
+export WEBWHEN_API_KEY=sk_...
 ```
 
 ```python
-from torale import ToraleClient
+from webwhen import Webwhen
 
 # Client reads the key from the environment automatically
-client = ToraleClient()
+client = Webwhen()
 ```
 
 ## Async client
@@ -72,11 +68,11 @@ client = ToraleClient()
 For async applications:
 
 ```python
-from torale import AsyncToraleClient
+from webwhen import WebwhenAsync
 import asyncio
 
 async def main():
-    client = AsyncToraleClient(api_key="sk_...")
+    client = WebwhenAsync(api_key="sk_...")
 
     task = await client.tasks.create(
         search_query="When is the iPhone 17 being released?",

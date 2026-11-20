@@ -55,8 +55,8 @@ class Webwhen(WebwhenClient):
 
         Args:
             api_key: API key for authentication. If not provided, will try to load from:
-                1. WEBWHEN_API_KEY environment variable (TORALE_API_KEY also accepted, deprecated)
-                2. ~/.webwhen/config.json file (~/.torale/config.json also read, deprecated)
+                1. WEBWHEN_API_KEY environment variable
+                2. ~/.webwhen/config.json file
             api_url: Base URL for API. Defaults to http://localhost:8000 or value from config.
             timeout: Request timeout in seconds. Defaults to 60.
 
@@ -145,21 +145,10 @@ class WebwhenAsync(WebwhenAsyncClient):
         self.webhooks = AsyncWebhooksResource(self)
 
 
-# Back-compat aliases. The lazy `torale` shim (phase 5) is what fires the
-# DeprecationWarning. Inside the `webwhen` namespace these are silent — calling
-# code that already imports from `webwhen` is on the new path.
-Torale = Webwhen
-ToraleAsync = WebwhenAsync
-ToraleError = WebwhenError
-
-
 __all__ = [
     "Webwhen",
     "WebwhenAsync",
     "WebwhenError",
-    "Torale",
-    "ToraleAsync",
-    "ToraleError",
     "monitor",
     "MonitorBuilder",
     "TasksResource",

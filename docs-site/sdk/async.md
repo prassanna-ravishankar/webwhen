@@ -6,26 +6,22 @@ description: Use async/await patterns with the webwhen Python SDK. Async watch m
 
 Use the webwhen SDK with asyncio for concurrent operations.
 
-::: tip Naming during the transition
-The async client class is still `ToraleAsync` and the package is still `torale`. The rename to `webwhen` is a later phase.
-:::
-
 ## Installation
 
 Same package — the async client is included:
 
 ```bash
-pip install torale
+pip install webwhen
 ```
 
 ## Basic usage
 
 ```python
 import asyncio
-from torale import ToraleAsync
+from webwhen import WebwhenAsync
 
 async def main():
-    async with ToraleAsync(api_key="sk_...") as client:
+    async with WebwhenAsync(api_key="sk_...") as client:
         task = await client.tasks.create(
             name="iPhone Release Watch",
             search_query="When is the next iPhone release?",
@@ -36,21 +32,21 @@ async def main():
 asyncio.run(main())
 ```
 
-`ToraleAsync` supports the same resources and methods as the sync `Torale` client, with `await` on every call.
+`WebwhenAsync` supports the same resources and methods as the sync `Webwhen` client, with `await` on every call.
 
 ## Context manager
 
 Always use `async with` so the HTTP client is closed properly:
 
 ```python
-async with ToraleAsync(api_key="sk_...") as client:
+async with WebwhenAsync(api_key="sk_...") as client:
     tasks = await client.tasks.list()
 ```
 
 Or close manually:
 
 ```python
-client = ToraleAsync(api_key="sk_...")
+client = WebwhenAsync(api_key="sk_...")
 try:
     tasks = await client.tasks.list()
 finally:
@@ -63,7 +59,7 @@ finally:
 
 ```python
 async def create_tasks():
-    async with ToraleAsync(api_key="sk_...") as client:
+    async with WebwhenAsync(api_key="sk_...") as client:
         tasks = await asyncio.gather(
             client.tasks.create(
                 name="iPhone Watch",
@@ -92,7 +88,7 @@ asyncio.run(create_tasks())
 
 ```python
 async def get_task_details(task_ids):
-    async with ToraleAsync(api_key="sk_...") as client:
+    async with WebwhenAsync(api_key="sk_...") as client:
         tasks = await asyncio.gather(*[
             client.tasks.get(task_id)
             for task_id in task_ids
@@ -108,7 +104,7 @@ for task in tasks:
 
 ## Available methods
 
-`ToraleAsync` has the same interface as the sync client. Every method is async:
+`WebwhenAsync` has the same interface as the sync client. Every method is async:
 
 | Resource | Method | Description |
 |----------|--------|-------------|
@@ -131,12 +127,12 @@ for task in tasks:
 import os
 
 from fastapi import FastAPI, Depends
-from torale import ToraleAsync
+from webwhen import WebwhenAsync
 
 app = FastAPI()
 
-async def get_torale_client():
-    client = ToraleAsync(api_key=os.getenv("TORALE_API_KEY"))
+async def get_webwhen_client():
+    client = WebwhenAsync(api_key=os.getenv("WEBWHEN_API_KEY"))
     try:
         yield client
     finally:
@@ -146,7 +142,7 @@ async def get_torale_client():
 async def create_watch(
     query: str,
     condition: str,
-    client: ToraleAsync = Depends(get_torale_client),
+    client: WebwhenAsync = Depends(get_webwhen_client),
 ):
     task = await client.tasks.create(
         name=f"Watch: {query[:50]}",
@@ -157,7 +153,7 @@ async def create_watch(
 
 @app.get("/watches")
 async def list_watches(
-    client: ToraleAsync = Depends(get_torale_client),
+    client: WebwhenAsync = Depends(get_webwhen_client),
 ):
     tasks = await client.tasks.list()
     return {"tasks": [t.model_dump() for t in tasks]}
@@ -165,7 +161,7 @@ async def list_watches(
 @app.get("/watches/{task_id}/executions")
 async def get_executions(
     task_id: str,
-    client: ToraleAsync = Depends(get_torale_client),
+    client: WebwhenAsync = Depends(get_webwhen_client),
 ):
     executions = await client.tasks.executions(task_id)
     return {"executions": [e.model_dump() for e in executions]}
@@ -177,7 +173,7 @@ async def get_executions(
 from asyncio import Semaphore
 
 async def create_watches_with_limit(task_configs):
-    async with ToraleAsync(api_key="sk_...") as client:
+    async with WebwhenAsync(api_key="sk_...") as client:
         semaphore = Semaphore(5)  # Max 5 concurrent requests
 
         async def create_with_semaphore(config):
@@ -194,8 +190,8 @@ async def create_watches_with_limit(task_configs):
 ## Error handling
 
 ```python
-from torale import ToraleAsync
-from torale.sdk.exceptions import ValidationError, RateLimitError, APIError
+from webwhen import WebwhenAsync
+from webwhen.sdk.exceptions import ValidationError, RateLimitError, APIError
 import asyncio
 
 async def safe_create_task(client, max_retries=3, **kwargs):
@@ -213,7 +209,7 @@ async def safe_create_task(client, max_retries=3, **kwargs):
             await asyncio.sleep(wait)
 
 async def main():
-    async with ToraleAsync(api_key="sk_...") as client:
+    async with WebwhenAsync(api_key="sk_...") as client:
         task = await safe_create_task(
             client,
             name="My Watch",
