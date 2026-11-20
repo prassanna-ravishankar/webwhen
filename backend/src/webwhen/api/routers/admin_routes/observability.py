@@ -49,7 +49,10 @@ async def get_platform_stats(
         """
         SELECT
             COUNT(*) as total_executions,
-            COALESCE(SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END), 0) as failed_executions
+            COALESCE(SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END), 0) as failed_executions,
+            COALESCE(
+                SUM(CASE WHEN status = 'failed' AND error_category = 'billing' THEN 1 ELSE 0 END), 0
+            ) as billing_failed_executions
         FROM task_executions
         WHERE created_at >= $1
         """,
@@ -80,6 +83,7 @@ async def get_platform_stats(
 
     total_executions = exec_row["total_executions"] if exec_row else 0
     failed_executions = exec_row["failed_executions"] if exec_row else 0
+    billing_failed = exec_row["billing_failed_executions"] if exec_row else 0
     success_rate = (
         (total_executions - failed_executions) / total_executions * 100
         if total_executions > 0
@@ -109,6 +113,8 @@ async def get_platform_stats(
         "executions_24h": {
             "total": total_executions,
             "failed": failed_executions,
+            # Provider credits exhausted (see ErrorCategory.BILLING); needs a top-up, not a fix.
+            "billing_failed": billing_failed,
             "success_rate": f"{success_rate:.1f}%",
         },
         "popular_queries": popular_queries,
@@ -322,6 +328,8 @@ async def list_recent_errors(
             te.started_at,
             te.completed_at,
             te.error_message,
+            te.error_category,
+            te.internal_error,
             t.search_query,
             t.name as task_name,
             u.email as user_email
@@ -342,6 +350,8 @@ async def list_recent_errors(
             "started_at": row["started_at"].isoformat() if row["started_at"] else None,
             "completed_at": row["completed_at"].isoformat() if row["completed_at"] else None,
             "error_message": row["error_message"],
+            "error_category": row["error_category"],
+            "internal_error": row["internal_error"],
             "search_query": row["search_query"],
             "task_name": row["task_name"],
             "user_email": row["user_email"],

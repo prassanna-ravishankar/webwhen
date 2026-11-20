@@ -31,6 +31,7 @@ from webwhen.scheduler.connector_resolution import (
     resolve_mcp_servers,
 )
 from webwhen.scheduler.errors import (
+    ErrorCategory,
     classify_error,
     get_retry_delay,
     get_user_friendly_message,
@@ -372,6 +373,15 @@ async def _execute(
             },
             exc_info=True,
         )
+
+        if category == ErrorCategory.BILLING:
+            # Stable message so credit exhaustion is easy to alert on, separate
+            # from ordinary run failures.
+            logger.error(
+                "AI provider credits exhausted: task %s cannot run until the account is topped up",
+                task_id,
+                extra={"task_id": task_id, "error_category": category.value},
+            )
 
         if will_retry:
             status = TaskStatus.RETRYING
