@@ -9,3 +9,4 @@
 - [project_auth_deeplink_race.md](project_auth_deeplink_race.md) - Owner deep links must wait for backend auth readiness before fetching private watches
 - [project_compatibility_retirement.md](project_compatibility_retirement.md) - Torale SDK/env/config shims retired Nov 2026 (#364); infra names left alone
 - [project_search_retrieval.md](project_search_retrieval.md) - Search is independent from the reasoning model; Perplexity/Parallel replaced Gemini native grounding based on evals
+- [project_lb_rollout_503.md](project_lb_rollout_503.md) - Gateway 503s on rollout/keep-alive: drain trio + keep-alive > 600s (#381); api open (#382)
