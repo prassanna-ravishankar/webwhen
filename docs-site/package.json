@@ -1,7 +1,7 @@
 {
   "name": "webwhen-docs",
   "version": "1.0.0",
-  "description": "Developer documentation for webwhen — the agent that watches the open web and tells you when something matters.",
+  "description": "Developer documentation for webwhen \u2014 the agent that watches the open web and tells you when something matters.",
   "type": "module",
   "scripts": {
     "docs:dev": "vitepress dev",
@@ -21,7 +21,8 @@
   "overrides": {
     "esbuild": "^0.25.0",
     "lodash-es": "^4.17.23",
-    "vite": "^6.4.5"
+    "vite": "^6.4.5",
+    "katex": "^0.18.11"
   },
   "keywords": [
     "documentation",
