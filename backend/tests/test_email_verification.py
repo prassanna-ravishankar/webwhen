@@ -35,21 +35,32 @@ class TestCanSendVerification:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
-        "by_user,by_recipient,expected_error",
+        "by_user,by_user_to_recipient,by_others,expected_error",
         [
-            (0, 0, None),
-            (2, 2, None),
-            (3, 0, "Too many verification requests"),
-            (0, 3, "Too many verification emails to this address"),
+            (0, 0, 0, None),
+            (2, 2, 4, None),
+            (3, 0, 0, "Too many verification requests"),
+            (0, 0, 50, None),
+            (1, 1, 5, "Too many verification emails to this address"),
         ],
-        ids=["first_request", "under_limits", "user_at_limit", "recipient_at_limit"],
+        ids=[
+            "first_request",
+            "under_limits",
+            "user_at_limit",
+            "first_send_to_flooded_address_allowed",
+            "repeat_send_to_flooded_address_refused",
+        ],
     )
     async def test_rate_limit_enforcement(
-        self, mock_conn, sample_user, by_user, by_recipient, expected_error
+        self, mock_conn, sample_user, by_user, by_user_to_recipient, by_others, expected_error
     ):
-        """At most 3 sends/hour per user and per recipient address."""
+        """3 sends/hour per user; repeat sends refused once others sent 5 to the address."""
         mock_conn.fetchrow = AsyncMock(
-            return_value={"by_user": by_user, "by_recipient": by_recipient}
+            return_value={
+                "by_user": by_user,
+                "by_user_to_recipient": by_user_to_recipient,
+                "by_others_to_recipient": by_others,
+            }
         )
 
         can_send, error = await EmailVerificationService.can_send_verification(
@@ -65,7 +76,9 @@ class TestCanSendVerification:
     @pytest.mark.asyncio
     async def test_counts_the_append_only_send_log(self, mock_conn, sample_user):
         """Counting replaced pending rows let resends to one address bypass the limit."""
-        mock_conn.fetchrow = AsyncMock(return_value={"by_user": 0, "by_recipient": 0})
+        mock_conn.fetchrow = AsyncMock(
+            return_value={"by_user": 0, "by_user_to_recipient": 0, "by_others_to_recipient": 0}
+        )
 
         await EmailVerificationService.can_send_verification(
             mock_conn, str(sample_user.id), "test@example.com"
@@ -74,6 +87,8 @@ class TestCanSendVerification:
         sql = mock_conn.fetchrow.call_args.args[0]
         assert "FROM notification_sends" in sql
         assert "email_verifications" not in sql
+        # The recipient counts ignore letter case.
+        assert "lower(recipient_email) = lower($2)" in sql
 
 
 class TestCreateVerification:
@@ -81,7 +96,9 @@ class TestCreateVerification:
 
     def _mock_allowed(self, mock_conn):
         mock_conn.transaction = MagicMock(return_value=MockTransaction())
-        mock_conn.fetchrow = AsyncMock(return_value={"by_user": 0, "by_recipient": 0})
+        mock_conn.fetchrow = AsyncMock(
+            return_value={"by_user": 0, "by_user_to_recipient": 0, "by_others_to_recipient": 0}
+        )
         mock_conn.execute = AsyncMock()
 
     @pytest.mark.asyncio
@@ -104,7 +121,9 @@ class TestCreateVerification:
     @pytest.mark.asyncio
     async def test_rejected_send_writes_nothing(self, mock_conn, sample_user):
         self._mock_allowed(mock_conn)
-        mock_conn.fetchrow = AsyncMock(return_value={"by_user": 3, "by_recipient": 0})
+        mock_conn.fetchrow = AsyncMock(
+            return_value={"by_user": 3, "by_user_to_recipient": 0, "by_others_to_recipient": 0}
+        )
 
         success, code, error = await EmailVerificationService.create_verification(
             mock_conn, str(sample_user.id), "test@example.com"

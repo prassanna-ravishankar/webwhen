@@ -1,5 +1,6 @@
 """Tests for email verification API endpoints."""
 
+from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
@@ -95,6 +96,9 @@ class TestSendVerificationEmail:
 
                     assert "Verification code sent" in result["message"]
                     assert result["expires_in_minutes"] == 15
+                    expires_at = datetime.fromisoformat(result["expires_at"])
+                    remaining = expires_at - datetime.now(UTC)
+                    assert timedelta(minutes=14) < remaining <= timedelta(minutes=15)
                     mock_novu.assert_called_once()
 
     @pytest.mark.asyncio

@@ -19,7 +19,10 @@ class EmailVerificationService:
     MAX_VERIFICATION_ATTEMPTS = 5
     RATE_LIMIT_WINDOW_MINUTES = 60
     MAX_VERIFICATIONS_PER_HOUR = 3
-    MAX_VERIFICATIONS_PER_RECIPIENT_PER_HOUR = 3
+    # Repeat sends to one address are refused once other accounts have sent
+    # this many to it. An account's first send to an address is always allowed
+    # (within its own hourly cap), so strangers can't lock an owner out.
+    MAX_VERIFICATIONS_PER_RECIPIENT_PER_HOUR = 5
 
     @staticmethod
     def generate_code() -> str:
@@ -31,8 +34,9 @@ class EmailVerificationService:
         """
         Check if user can request another verification email.
 
-        Limits sends per user and per recipient address, so neither one
-        account nor several accounts can flood an inbox.
+        Limits sends per user, and repeat sends per recipient address
+        (case-insensitive), so neither one account nor several can flood an
+        inbox, and nobody can lock an owner out of verifying their own address.
 
         Returns: (can_send, error_message)
         """
@@ -43,11 +47,16 @@ class EmailVerificationService:
             """
             SELECT
                 COUNT(*) FILTER (WHERE user_id = $1) AS by_user,
-                COUNT(*) FILTER (WHERE recipient_email = $2) AS by_recipient
+                COUNT(*) FILTER (
+                    WHERE user_id = $1 AND lower(recipient_email) = lower($2)
+                ) AS by_user_to_recipient,
+                COUNT(*) FILTER (
+                    WHERE user_id <> $1 AND lower(recipient_email) = lower($2)
+                ) AS by_others_to_recipient
             FROM notification_sends
             WHERE notification_type = $3
               AND created_at > $4
-              AND (user_id = $1 OR recipient_email = $2)
+              AND (user_id = $1 OR lower(recipient_email) = lower($2))
             """,
             UUID(user_id),
             email,
@@ -58,7 +67,8 @@ class EmailVerificationService:
         if counts["by_user"] >= EmailVerificationService.MAX_VERIFICATIONS_PER_HOUR:
             return False, "Too many verification requests. Please try again later."
         if (
-            counts["by_recipient"]
+            counts["by_user_to_recipient"] > 0
+            and counts["by_others_to_recipient"]
             >= EmailVerificationService.MAX_VERIFICATIONS_PER_RECIPIENT_PER_HOUR
         ):
             return False, "Too many verification emails to this address. Please try again later."
@@ -241,10 +251,11 @@ class EmailVerificationService:
         daily_count = await conn.fetchval(
             """
             SELECT COUNT(*) FROM notification_sends
-            WHERE user_id = $1 AND created_at > $2
+            WHERE user_id = $1 AND created_at > $2 AND notification_type <> $3
             """,
             UUID(user_id),
             day_ago,
+            VERIFICATION_NOTIFICATION_TYPE,
         )
 
         if daily_count >= 100:
@@ -255,10 +266,11 @@ class EmailVerificationService:
         hourly_count = await conn.fetchval(
             """
             SELECT COUNT(*) FROM notification_sends
-            WHERE recipient_email = $1 AND created_at > $2
+            WHERE recipient_email = $1 AND created_at > $2 AND notification_type <> $3
             """,
             email,
             hour_ago,
+            VERIFICATION_NOTIFICATION_TYPE,
         )
 
         if hourly_count >= 10:
