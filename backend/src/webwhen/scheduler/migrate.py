@@ -12,22 +12,27 @@ logger = logging.getLogger(__name__)
 
 
 async def reap_stale_executions() -> None:
-    """Mark executions stuck in 'running' state for >30 minutes as failed."""
+    """Mark executions stuck in 'pending' or 'running' for >30 minutes as failed.
+
+    A pending row is orphaned when its pod dies between creating the row and
+    starting the run. Left alone it blocks manual runs and makes the job sync
+    treat the watch as in flight forever.
+    """
     now = datetime.now(UTC)
     cutoff_time = now - timedelta(minutes=30)
     result = await db.fetch_all(
         """UPDATE task_executions
            SET status = 'failed',
-               error_message = 'Reaped: execution stuck in running state',
+               error_message = 'Reaped: execution stuck in ' || status || ' state',
                completed_at = $1
-           WHERE status = 'running'
+           WHERE status IN ('pending', 'running')
              AND started_at < $2
            RETURNING id""",
         now,
         cutoff_time,
     )
     if result:
-        logger.warning(f"Reaped {len(result)} stale executions stuck in running state")
+        logger.warning(f"Reaped {len(result)} stale pending/running executions")
 
 
 async def sync_jobs_from_database() -> None:

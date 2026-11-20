@@ -276,8 +276,9 @@ class TestReapStaleExecutions:
         await reap_stale_executions()
 
         mock_db.fetch_all.assert_awaited_once()
-        call_args = mock_db.fetch_all.call_args
-        assert "failed" in call_args[0][0]
+        sql = mock_db.fetch_all.call_args[0][0]
+        assert "failed" in sql
+        assert "status IN ('pending', 'running')" in sql
 
     @pytest.mark.asyncio
     @patch(f"{MODULE}.db")
