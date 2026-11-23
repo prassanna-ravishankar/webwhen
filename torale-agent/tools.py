@@ -65,6 +65,9 @@ FETCH_TIMEOUT = 15.0
 
 TWITTER_SEARCH_MAX_RESULTS = 10
 
+# mem0 search hits also carry ids, scores and categories the model never uses.
+MEMORY_FIELDS = ("memory", "created_at", "updated_at")
+
 _TOOL_INPUT_KEYS: dict[str, str] = {
     "perplexity_search": "query",
     "parallel_search": "query",
@@ -176,7 +179,9 @@ def register_tools(agent: Agent[MonitoringDeps, MonitoringResponse]) -> None:
             },
             top_k=10,
         )
-        return json.dumps(results, default=str)
+        hits = results.get("results", []) if isinstance(results, dict) else results
+        memories = [{k: hit.get(k) for k in MEMORY_FIELDS} for hit in hits]
+        return json.dumps(memories, default=str)
 
     @agent.tool
     async def add_memory(ctx: RunContext[MonitoringDeps], text: str) -> str:
