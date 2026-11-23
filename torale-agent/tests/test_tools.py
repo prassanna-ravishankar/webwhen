@@ -1,5 +1,6 @@
 """Search tools report provider failures to the model instead of failing the run."""
 
+import json
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
@@ -86,3 +87,30 @@ def test_provider_failure_becomes_tool_error(tool_name, error, expected):
     (tool_return,) = run_tool_once(tool_name, clients)
 
     assert expected in str(tool_return.content)
+
+
+def test_search_memories_returns_only_memory_text_and_timestamps():
+    hit = {
+        "id": "m1",
+        "memory": "Release notes appear on the GitHub releases page first.",
+        "user_id": "u",
+        "app_id": "t",
+        "score": 0.9,
+        "score_breakdown": {"semantic": 0.9},
+        "categories": ["sources"],
+        "created_at": "2026-11-01T00:00:00Z",
+        "updated_at": "2026-11-02T00:00:00Z",
+    }
+    clients = SimpleNamespace(
+        mem0=SimpleNamespace(search=AsyncMock(return_value={"results": [hit]}))
+    )
+
+    (tool_return,) = run_tool_once("search_memories", clients)
+
+    assert json.loads(tool_return.model_response_str()) == [
+        {
+            "memory": hit["memory"],
+            "created_at": "2026-11-01T00:00:00Z",
+            "updated_at": "2026-11-02T00:00:00Z",
+        }
+    ]
