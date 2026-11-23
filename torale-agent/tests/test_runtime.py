@@ -37,7 +37,7 @@ def test_six_request_research_run_completes():
 
 def test_oversized_request_is_stopped():
     with pytest.raises(UsageLimitExceeded, match="per_request_input_tokens_limit"):
-        run_with_input_tokens([5_000, 70_000, 5_000])
+        run_with_input_tokens([5_000, 130_000, 5_000])
 
 
 def test_runaway_run_is_stopped_by_cost_backstop():

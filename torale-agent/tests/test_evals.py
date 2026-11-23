@@ -194,7 +194,7 @@ def test_evidence_tools_expose_typed_return_schemas():
 def test_monitoring_usage_policy_bounds_runaway_agent_loops():
     assert MONITORING_USAGE_LIMITS.request_limit == 20
     assert MONITORING_USAGE_LIMITS.tool_calls_limit == 40
-    assert MONITORING_USAGE_LIMITS.per_request_input_tokens_limit == 64_000
+    assert MONITORING_USAGE_LIMITS.per_request_input_tokens_limit == 128_000
     assert MONITORING_USAGE_LIMITS.total_tokens_limit == 400_000
 
 
