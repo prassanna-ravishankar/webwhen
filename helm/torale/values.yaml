@@ -200,6 +200,9 @@ docs:
 agents:
   - name: free
     secretKey: GEMINI_API_KEY_FREE
+    # Retries a single request on this key when the free tier returns 429/503.
+    # Remove to switch the in-agent fallback off.
+    fallbackSecretKey: GEMINI_API_KEY_PAID
     replicaCount: 1
   - name: paid
     secretKey: GEMINI_API_KEY_PAID

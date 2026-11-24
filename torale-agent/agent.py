@@ -4,9 +4,13 @@ import os
 from typing import Literal, cast
 
 from pydantic_ai import Agent, NativeOutput, ToolOutput
-from pydantic_ai.models.google import GoogleModelSettings
+from pydantic_ai.exceptions import ModelHTTPError
+from pydantic_ai.models import Model
+from pydantic_ai.models.fallback import FallbackModel
+from pydantic_ai.models.google import GoogleModel, GoogleModelSettings
 from pydantic_ai.profiles.google import google_model_profile
 from pydantic_ai.profiles.openai import openai_model_profile
+from pydantic_ai.providers.google import GoogleProvider
 from pydantic_ai.settings import ThinkingLevel
 
 from models import DEFAULT_MODEL, MonitoringDeps, MonitoringResponse
@@ -14,6 +18,18 @@ from prompts import instructions
 from tools import register_tools
 
 OutputMode = Literal["tool", "native"]
+
+# Free-tier Gemini is out of capacity: rate limited or "high demand".
+CAPACITY_STATUS_CODES = frozenset({429, 503})
+
+
+def is_capacity_error(exc: Exception) -> bool:
+    return isinstance(exc, ModelHTTPError) and exc.status_code in CAPACITY_STATUS_CODES
+
+
+def with_fallback(primary: Model | str, fallback: Model) -> FallbackModel:
+    """Retry only the failed request on `fallback`, so the run keeps its progress."""
+    return FallbackModel(primary, fallback, fallback_on=is_capacity_error)
 
 
 def create_monitoring_agent(
@@ -64,8 +80,18 @@ def create_monitoring_agent(
         else ToolOutput(MonitoringResponse)
     )
 
+    model: Model | str = model_id
+    # The paid Gemini key answers any request the free key has no capacity for.
+    fallback_api_key = os.getenv("GEMINI_FALLBACK_API_KEY")
+    if fallback_api_key and model_lower.startswith("google:"):
+        fallback_model = GoogleModel(
+            model_id.partition(":")[2],
+            provider=GoogleProvider(api_key=fallback_api_key),
+        )
+        model = with_fallback(model_id, fallback_model)
+
     agent = Agent[MonitoringDeps, MonitoringResponse](
-        model_id,
+        model,
         deps_type=MonitoringDeps,
         output_type=output_type,
         instructions=instructions,

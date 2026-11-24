@@ -42,6 +42,13 @@ spec:
             secretKeyRef:
               name: {{ $.Values.secrets.name }}
               key: {{ .secretKey }}
+        {{- with .fallbackSecretKey }}
+        - name: GEMINI_FALLBACK_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ $.Values.secrets.name }}
+              key: {{ . }}
+        {{- end }}
         - name: MODEL_THINKING_LEVEL
           value: {{ $.Values.agent.thinkingLevel | quote }}
         - name: MEM0_API_KEY

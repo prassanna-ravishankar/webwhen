@@ -28,7 +28,7 @@ from a2a.types import (
 )
 from dotenv import load_dotenv
 from pydantic_ai import Agent
-from pydantic_ai.exceptions import ModelHTTPError
+from pydantic_ai.exceptions import FallbackExceptionGroup, ModelHTTPError
 from pydantic_ai.mcp import MCPToolset
 from starlette.applications import Starlette
 from starlette.requests import Request
@@ -202,12 +202,17 @@ class ToraleAgentExecutor(AgentExecutor):
         )
 
         try:
-            result = await self.agent.run(
-                user_input,
-                deps=deps,
-                toolsets=mcp_toolsets or None,
-                usage_limits=MONITORING_USAGE_LIMITS,
-            )
+            try:
+                result = await self.agent.run(
+                    user_input,
+                    deps=deps,
+                    toolsets=mcp_toolsets or None,
+                    usage_limits=MONITORING_USAGE_LIMITS,
+                )
+            except FallbackExceptionGroup as group:
+                # Both Gemini keys were out of capacity: report the paid key's
+                # error, as the backend's whole-run fallback expects.
+                raise group.exceptions[-1] from group
             record_run_usage(
                 result,
                 operation="a2a",
