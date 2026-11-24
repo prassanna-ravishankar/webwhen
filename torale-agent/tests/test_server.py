@@ -19,7 +19,7 @@ from a2a.types import (
     TaskState,
     TaskStatusUpdateEvent,
 )
-from pydantic_ai.exceptions import ModelHTTPError
+from pydantic_ai.exceptions import FallbackExceptionGroup, ModelHTTPError
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.models.test import TestModel
 from pydantic_ai.toolsets import AbstractToolset, ToolsetTool
@@ -128,6 +128,28 @@ async def test_model_http_error_preserves_fallback_details(status_code):
     assert details["error_type"] == "ModelHTTPError"
     assert details["status_code"] == status_code
     assert details["model_name"] == "gemini"
+
+
+@pytest.mark.asyncio
+async def test_both_gemini_keys_out_of_capacity_reports_paid_error():
+    queue = RecordingQueue()
+    agent = MagicMock()
+    agent.run = AsyncMock(
+        side_effect=FallbackExceptionGroup(
+            "All models from FallbackModel failed",
+            [
+                ModelHTTPError(429, "gemini", "free quota"),
+                ModelHTTPError(503, "gemini", "high demand"),
+            ],
+        )
+    )
+    executor = ToraleAgentExecutor(agent)
+
+    await executor.execute(make_context(), queue)
+
+    details = json.loads(get_message_text(queue.events[-1].status.message))
+    assert details["error_type"] == "ModelHTTPError"
+    assert details["status_code"] == 503
 
 
 @pytest.mark.asyncio
