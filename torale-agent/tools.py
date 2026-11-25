@@ -10,6 +10,7 @@ import httpx
 import logfire
 import parallel
 import perplexity
+from mem0.exceptions import MemoryError as Mem0Error
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.messages import ModelResponse, ToolCallPart
 
@@ -29,25 +30,31 @@ _NO_CLIENTS = json.dumps({"error": "No context available"})
 _NO_CLIENTS_ERROR = ToolError(error="No context available")
 
 
-def _provider_error(provider: str, e: Exception) -> ToolError:
-    """Report a search provider failure to the model instead of failing the run.
+SEARCH_FALLBACK_HINT = "Use another search tool."
+MEMORY_FALLBACK_HINT = "Carry on without memory."
+
+
+def _provider_error(
+    provider: str, e: Exception, hint: str = SEARCH_FALLBACK_HINT
+) -> ToolError:
+    """Report an external provider failure to the model instead of failing the run.
 
     A provider outage or exhausted quota should cost one tool call, not the
-    whole watch execution; the model can still use the other search tools.
+    whole watch execution; the model carries on with what is still available.
     """
-    status = getattr(e, "status_code", None)
+    response = getattr(e, "response", None)
+    status = getattr(e, "status_code", None) or getattr(response, "status_code", None)
     detail = f"HTTP {status}" if status else type(e).__name__
     # Stable span name so exhausted credits stay visible in Logfire even though
     # the run itself now succeeds.
     logfire.warn(
-        "search provider unavailable: {provider} {detail}",
+        "provider unavailable: {provider} {detail}",
         provider=provider,
         detail=detail,
-        billing="insufficient_quota" in str(e) or status == 402,
+        # Perplexity says insufficient_quota, mem0's plan limit reports quota_limit.
+        billing="quota" in str(e) or status == 402,
     )
-    return ToolError(
-        error=f"{provider} search is unavailable ({detail}). Use another search tool."
-    )
+    return ToolError(error=f"{provider} is unavailable ({detail}). {hint}")
 
 
 def _get_clients(ctx: RunContext[MonitoringDeps]) -> Clients | None:
@@ -168,31 +175,42 @@ def register_tools(agent: Agent[MonitoringDeps, MonitoringResponse]) -> None:
     """Attach monitoring tools (search_memories, add_memory, perplexity_search, parallel_search, fetch_url) to an agent."""
 
     @agent.tool
-    async def search_memories(ctx: RunContext[MonitoringDeps], query: str) -> str:
+    async def search_memories(
+        ctx: RunContext[MonitoringDeps], query: str
+    ) -> str | ToolError:
         """Search previous monitoring memories for this task. Use to recall what was found in earlier runs."""
         if (clients := _get_clients(ctx)) is None:
             return _NO_CLIENTS
-        results = await clients.mem0.search(
-            query,
-            filters={
-                "AND": [{"user_id": ctx.deps.user_id}, {"app_id": ctx.deps.task_id}]
-            },
-            top_k=10,
-        )
+        try:
+            results = await clients.mem0.search(
+                query,
+                filters={
+                    "AND": [
+                        {"user_id": ctx.deps.user_id},
+                        {"app_id": ctx.deps.task_id},
+                    ]
+                },
+                top_k=10,
+            )
+        except Mem0Error as e:
+            return _provider_error("Memory search", e, MEMORY_FALLBACK_HINT)
         hits = results.get("results", []) if isinstance(results, dict) else results
         memories = [{k: hit.get(k) for k in MEMORY_FIELDS} for hit in hits]
         return json.dumps(memories, default=str)
 
     @agent.tool
-    async def add_memory(ctx: RunContext[MonitoringDeps], text: str) -> str:
+    async def add_memory(ctx: RunContext[MonitoringDeps], text: str) -> str | ToolError:
         """Store a new meta-knowledge memory for this task. Only store patterns and source insights, not individual check results."""
         if (clients := _get_clients(ctx)) is None:
             return _NO_CLIENTS
-        result = await clients.mem0.add(
-            [{"role": "user", "content": text}],
-            user_id=ctx.deps.user_id,
-            app_id=ctx.deps.task_id,
-        )
+        try:
+            result = await clients.mem0.add(
+                [{"role": "user", "content": text}],
+                user_id=ctx.deps.user_id,
+                app_id=ctx.deps.task_id,
+            )
+        except Mem0Error as e:
+            return _provider_error("Memory storage", e, MEMORY_FALLBACK_HINT)
         return json.dumps(result, default=str)
 
     @agent.tool(include_return_schema=True)
@@ -205,7 +223,7 @@ def register_tools(agent: Agent[MonitoringDeps, MonitoringResponse]) -> None:
         try:
             response = await clients.perplexity.search.create(query=query)
         except perplexity.APIError as e:
-            return _provider_error("Perplexity", e)
+            return _provider_error("Perplexity search", e)
         return [
             PerplexitySearchResult(
                 title=r.title,
@@ -233,7 +251,7 @@ def register_tools(agent: Agent[MonitoringDeps, MonitoringResponse]) -> None:
                 betas=PARALLEL_SEARCH_BETAS,
             )
         except parallel.APIError as e:
-            return _provider_error("Parallel", e)
+            return _provider_error("Parallel search", e)
         return [
             ParallelSearchResult(
                 title=r.title or r.url,
@@ -259,8 +277,8 @@ def register_tools(agent: Agent[MonitoringDeps, MonitoringResponse]) -> None:
             )
             resp.raise_for_status()
             tweets = resp.json().get("tweets", [])
-        except httpx.HTTPStatusError as e:
-            return ToolError(error=f"Twitter API error: {e.response.status_code}")
+        except httpx.HTTPError as e:
+            return _provider_error("Twitter search", e)
         except json.JSONDecodeError:
             return ToolError(error="Failed to decode response from Twitter API")
         return [
