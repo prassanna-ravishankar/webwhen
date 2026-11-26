@@ -60,7 +60,7 @@ The mem0 memory text is one sentence built from the fields by a template, not by
   - The system search filters on `agent_id="webwhen-flow-map"`. Per-watch records from the inferred path carry `agent_id=null`, so they never match.
 - **`infer=False`** stores the text exactly as written. mem0 runs no model of its own, so the record cannot be rewritten into something we didn't validate. Identical text in the same scope is deduplicated by hash.
   - Direct import skips semantic dedup, so the job updates records instead of adding new ones. It looks up the existing record by `metadata.event_type` + `metadata.domain`, then calls `update(memory_id, text, metadata)`. It calls `add` only for a new pair.
-  - Side benefit to confirm: direct import needs no model on mem0's side. If so, the free plan's "needs your own LLM key" limit (the 2026-11-25 incident) may not apply to it. Billing is Prass's call.
+  - Direct import runs no model on mem0's side. The docs do not say it is exempt from the free plan's post-30-day add block, so the design assumes it is not. See [mem0 plan facts](#mem0-plan-facts).
 - **Expiry.** Every write sets `expiration_date = last_observed + 180 days`, so stale patterns age out unless new moments refresh them.
 - **Alternative considered: a separate mem0 project for the system scope.** It would split billing and make the blast radius obvious, at the cost of a second key. The design starts with the same project and entity scoping, and the split stays open.
 
@@ -86,7 +86,7 @@ Each concern sits with the layer that already owns it:
 - mem0: billed per add. The job is capped at **20 writes per day** (`FLOW_MAX_WRITES_PER_DAY`).
   - Before writing, it skips records where nothing material changed: same sources, lag within 10%, same cadence.
   - Over the cap, it defers the oldest pairs to the next day and logs `flow distill capped`.
-  - Whether `update` counts against the add quota is unconfirmed. Until it is, the cap counts both adds and updates.
+  - mem0's plan limits count only adds and retrievals, and its docs never say how `update` is metered. Until the dashboard Usage page shows otherwise, the cap counts updates as adds. The existing-record lookup is a retrieval, so the job does one lookup per pair per day at most.
 
 ## Privacy guard
 
@@ -101,7 +101,7 @@ Defence in depth. Each layer would be enough on its own for most cases.
 
 ## How runs consume it
 
-- **Agent (phase 1).** `search_memories` also searches the system scope (`agent_id="webwhen-flow-map"`, top 3) and returns both, labelled `watch` and `system`. There is no new tool and no new prompt step. The prompt gains two lines: use system records to choose sources and to place `next_run` near the publish window and lag, and prefer this watch's own memories when the two conflict. That costs one extra mem0 search per run, and no extra adds.
+- **Agent (phase 1).** `search_memories` also searches the system scope (`agent_id="webwhen-flow-map"`, top 3) and returns both, labelled `watch` and `system`. There is no new tool and no new prompt step. The prompt gains two lines: use system records to choose sources and to place `next_run` near the publish window and lag, and prefer this watch's own memories when the two conflict. It is one search, not two: a single `search` call with filter `{"OR": [{"AND": [{"user_id": u}, {"app_id": w}]}, {"agent_id": "webwhen-flow-map"}]}`, with results split by scope afterwards. Retrievals are metered (see below), and runs already use about 900 a month, so a second search per run would double that.
 - **Scheduler (phase 3, optional).** If the run's `MonitoringResponse` reports the record it used (a new optional `flow_key` field, mirrored in both `models.py` files), the scheduler can sanity-check `next_run`. It only moves the time later, and only when it lands outside a well-supported publish window (`observations >= 5`). It never moves a run earlier. The agent stays the primary scheduler.
 
 ## Measuring benefit
@@ -125,8 +125,23 @@ At about 16 runs a day the sample is small. The results will be directional rath
 2. **Measure for 4 weeks,** then keep the feature, change it, or drop it.
 3. **Optional scheduler hint,** once records with `observations >= 5` exist.
 
+## mem0 plan facts
+
+Answers from mem0's docs, read 2026-11-26.
+
+| Question | Answer | Source |
+|---|---|---|
+| Does `infer=False` skip mem0's LLM? | Yes. Direct import stores the text verbatim and skips extraction and semantic dedup. Exact repeats in the same scope are deduplicated by hash. | [Direct import](https://docs.mem0.ai/platform/features/direct-import), [Add memories API](https://docs.mem0.ai/api-reference/memory/add-memories) |
+| Does `infer=False` avoid the free plan's LLM-key block? | Not documented, so assume no. The FAQ says that after 30 days without a key, "New adds return an error until you connect a key", with no exception for direct import. Our prod error reports `quota_limit: 0`, which reads as an add quota of zero rather than an extraction failure. | [Pricing FAQ](https://docs.mem0.ai/platform/pricing) |
+| Does `update` count as an add? | Not documented. The plan limits name only adds and retrievals. The update docs say nothing about metering. | [Pricing FAQ](https://docs.mem0.ai/platform/pricing), [Update memory API](https://docs.mem0.ai/api-reference/memory/update-memory) |
+| What are the limits? | Free plan, first 30 days: 10,000 adds and 1,000 retrievals a month. Afterwards, without a key: adds blocked, 1,000 searches a month. With a connected key (BYOK): 50,000 adds and 10,000 retrievals a month at no charge from mem0, with extraction billed by the provider (about $3.55 to $5.34 per 1,000 adds on the recommended models). Accounts that signed up before 2026-10-26 had until 2026-11-25. | [Pricing FAQ](https://docs.mem0.ai/platform/pricing), [BYOK](https://docs.mem0.ai/platform/features/byok) |
+
+Consequences for this design:
+
+- Retrievals bind before adds. Prod made 905 `search_memories` calls in the last 30 days (Logfire, 2026-11-26), against a 1,000-a-month limit without a key. Hence the single combined search above.
+- A two-minute test settles both undocumented answers: one `add(..., infer=False)` into a throwaway scope on the prod mem0 project, then an `update` and a `delete`, then a look at the dashboard Usage page. It needs the prod mem0 key, so it is left to Prass.
+
 ## Open questions for Prass
 
-- **mem0 plan.** Does direct import (`infer=False`) avoid the free plan's LLM-key limit, and does `update` count as an add?
 - **Eligibility.** Public watches only for v1, or also private watches with an opt-in?
 - **mem0 project.** Same project or a separate one for the system scope?
