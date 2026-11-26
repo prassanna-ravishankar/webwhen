@@ -25,8 +25,8 @@ Status: design only. Nothing ships without Prass's sign-off.
 
 - **One code path.** The endpoint and the cron both call the same `run_research(date)` job function. `date` defaults to yesterday (UTC), so backfilling a given day costs nothing extra.
 - **No overlap.** `run_research` takes a Postgres advisory lock (`pg_try_advisory_lock`) on its own key, the same mechanism the scheduler leader lock uses. It cannot reuse the leader lock itself, because an admin request can land on any pod. If the lock is held, the endpoint returns `409 already running`, and the cron skips that night with a log line.
-- **Same budget.** Each run gets the same `UsageLimits` cap. A daily cap of 3 runs per UTC day, counting cron and manual runs together, returns `429` beyond that.
-- **Status.** Each run writes one row to a small `research_runs(id, date, started_at, finished_at, status, usage)` table. The endpoint returns `202 {run_id, status: "running"}` and runs the job in the background. `GET /api/v1/admin/research/runs/{run_id}` returns its status. Results land in mem0 as usual.
+- **Same budget.** Each run gets the same `UsageLimits` cap. The endpoint is admin-only, so the per-run cap and the lock together bound spend and overlap.
+- **Status.** The endpoint returns `202 {status: "started"}` or `409`, and the job runs in the background. Run status and usage go to Logfire as one span per run, like every other agent run, and the trial reads them there. Results land in mem0 as usual. There is no new persistence.
 - **For the trial.** Night one can be run on demand.
 
 ## Input from the backend
