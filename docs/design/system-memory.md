@@ -1,7 +1,6 @@
 ---
 status: draft
 date: 2026-11-26
-revised: 2026-11-26 (nightly research agent populates shared memory; monitoring agent consumes it)
 ---
 
 # System memory: a research agent for how information moves
@@ -10,83 +9,47 @@ Status: design only. Nothing ships without Prass's sign-off.
 
 **Problem.** Each watch learns on its own where news breaks first, how long confirmation takes and when sources publish. A new watch on a similar event starts from zero.
 
-**Idea.** A nightly research agent does that learning for all watches and writes general findings to shared memory. Monitoring runs read those findings through the memory search they already make.
+**Idea.** A nightly research agent learns this across all watches and writes general findings to shared memory. Monitoring runs read those findings through the memory search they already make.
 
 ## Research agent
 
-- **Same runtime.** It is a second agent definition in `torale-agent`. It uses the same pydantic-ai framework, the same Gemini model with free-then-paid fallback (#392), and the same tools: `perplexity_search`, `parallel_search`, `fetch_url`, `search_memories` and `add_memory`. Only the prompt and goal are new, so there is no new infrastructure.
-- **Memory scope.** Its memory tools use the system scope: `agent_id="webwhen-flow-map"`, `app_id="webwhen-system"`, no `user_id`. Writes keep `infer=True` (BYOK is connected), so mem0 merges and deduplicates. The deps carry the scope, so the tools themselves stay the same.
-- **Goal prompt, in substance:** "You maintain webwhen's shared knowledge of how information moves. Starting from today's watch runs, research where news like this breaks first, how long confirmation takes, and when sources publish. Check and refine what's already in shared memory, and write durable, general findings." The agent can search and fetch to verify, for example to look up who actually broke a story first.
-- **Trigger.** A cron job on the backend's existing APScheduler runs at about 04:20 UTC on the scheduler leader. It makes one A2A call to the research agent.
+- **Definition.** A second agent definition in `torale-agent`, on the same framework, model and tools: `perplexity_search`, `parallel_search`, `fetch_url`, `search_memories` and `add_memory`. Only the prompt is new.
+- **Memory scope.** Its memory tools use the system scope (`agent_id="webwhen-flow-map"`, `app_id="webwhen-system"`). mem0 merges and dedupes, with `infer=True`.
+- **Prompt, in substance.** "You maintain webwhen's shared knowledge of how information moves. Starting from today's watch runs, research where news like this breaks first, how long confirmation takes, and when sources publish. Check and refine what's already in shared memory, and write durable, general findings."
+- **Limits.** `RESEARCH_USAGE_LIMITS` in `runtime.py`, the same pattern as `MONITORING_USAGE_LIMITS`, set higher for a longer run: about 40 requests and 600k total tokens.
+- **Runs.** Nightly from the backend's existing APScheduler at about 04:20 UTC. Both the scheduler and the admin endpoint call `run_research()`.
+- **Admin trigger.** `POST /api/v1/admin/research/run` sits in the existing admin routes, behind `require_admin`. It starts `run_research()` in the background and returns `202`. Runs show up in Logfire like any other agent run.
 
-## On-demand trigger (admin)
+## Input
 
-`POST /api/v1/admin/research/run?date=YYYY-MM-DD` lives in the existing admin router (`api/routers/admin_routes/`). It is guarded by `require_admin`, like `POST /admin/tasks/{task_id}/execute`, so there is no new auth.
+The backend builds the input from the day's runs:
 
-- **One code path.** The endpoint and the cron both call the same `run_research(date)` job function. `date` defaults to yesterday (UTC), so backfilling a given day costs nothing extra.
-- **No overlap.** `run_research` takes a Postgres advisory lock (`pg_try_advisory_lock`) on its own key, the same mechanism the scheduler leader lock uses. It cannot reuse the leader lock itself, because an admin request can land on any pod. If the lock is held, the endpoint returns `409 already running`, and the cron skips that night with a log line.
-- **Same budget.** Each run gets the same `UsageLimits` cap. The endpoint is admin-only, so the per-run cap and the lock together bound spend and overlap.
-- **Status.** The endpoint returns `202 {status: "started"}` or `409`, and the job runs in the background. Run status and usage go to Logfire as one span per run, like every other agent run, and the trial reads them there. Results land in mem0 as usual. There is no new persistence.
-- **For the trial.** Night one can be run on demand.
-
-## Input from the backend
-
-The backend builds the input. That layer owns the data, so it is where stripping happens.
-
-**Sent for each of the day's runs:**
 - the watch's topic and condition;
 - public source hostnames from `grounding_sources`;
 - the run time;
 - the outcome: triggered or not, with confidence.
 
-**Never sent:**
-- user, watch, execution or webhook ids;
-- evidence or notification text;
-- connector content. A run whose `activity` includes a connector step contributes no sources.
-
-Condition text is user-written, so it is the one path by which something personal could reach shared memory. The prompt asks for general findings, not specifics, and the trial review checks for this.
+It leaves out ids, evidence and notification text, and the sources of runs that used a connector.
 
 ## Consumption
 
-The monitoring agent changes in two small ways:
+The monitoring agent's single `search_memories` call widens its filter to cover both scopes: `OR[AND(user_id, app_id=watch), agent_id="webwhen-flow-map"]`. The prompt gains one line: "Shared memories describe how information moves. Use them to pick sources and timing." Runs average 0.74 memory searches today and never more than one, so this adds no searches.
 
-- Its single `search_memories` call widens the filter to `OR[AND(user_id, app_id=watch), agent_id="webwhen-flow-map"]`. Over the last 30 days, runs averaged 0.74 searches each and never more than 1, so this adds no searches.
-- One prompt line: "Shared memories describe how information moves. Use them to pick sources and timing."
+## Cost
 
-Both sit behind a flag, which stays off during the trial.
+A monitoring run today averages 4.2 model calls, 1.5 searches and $0.017 of model cost.
 
-## Guardrails
+- **Typical night:** about $0.13 (model $0.05, about 10 searches at a list price of about $0.005 each, a few mem0 adds).
+- **At the usage limit:** about $0.37.
 
-- **Per-night cap.** pydantic-ai `UsageLimits` caps the run at about 40 model requests, about 25 tool calls and about 600k total tokens. Hitting the cap ends the night's run. It does not retry.
-- **Leader only.** It runs only on the scheduler leader, once a night.
-
-## Cost per night
-
-A monitoring run today (14 days, successful runs) averages 4.2 model calls and 1.5 searches, costing $0.017 for the model on the paid key.
-
-| Item | Typical night | At the cap |
-|---|---|---|
-| Model (flash-lite, about $0.31 per million input tokens, measured) | $0.05 | about $0.19 |
-| Searches (Perplexity and Parallel, list price about $0.005 per call, to confirm) | 10 searches: $0.05 | 25 searches: about $0.13 |
-| mem0 adds (BYOK extraction, about $0.005 each) | 5 adds: $0.03 | 10 adds: $0.05 |
-| **Total** | **about $0.13** | **about $0.37** |
-
-That is about $4 a month typical and $11 at most. The free Gemini key answers model calls first, so the model line is usually lower.
+That comes to about $4 a month.
 
 ## Trial
 
-1. Run night one on demand from the admin endpoint, then nightly for a week, with consumption off.
-2. Prass and the orchestrator read the `webwhen-flow-map` memories in the mem0 dashboard. They check whether the memories are useful and accurate, and whether any are personal.
+1. Run night one from the admin endpoint, then nightly for a week, with consumption off.
+2. Prass and the orchestrator read the `webwhen-flow-map` memories.
 3. Keep or kill:
    - **Keep:** turn consumption on.
-   - **Kill:** run `delete_all(agent_id="webwhen-flow-map")` and remove the job.
+   - **Kill:** `delete_all(agent_id="webwhen-flow-map")`.
 
-**Check on night one.** With `infer=True`, mem0 attributes facts by message role. Confirm that the records land on `agent_id`, not `user_id`.
-
-## Decided and not doing
-
-- **Decided.** All watches contribute, with no opt-in. Shared memory lives in the same mem0 project as per-watch memory.
-- **Not doing.**
-  - No custom tables, sync machinery, k-thresholds, backtest harness or prompt-injected summaries.
-  - No `published_at` capture: it would change the contract in both `models.py` copies.
-  - Any of these can come back if the trial shows a need.
+**Decided:** all watches contribute, and the system scope lives in the same mem0 project.
