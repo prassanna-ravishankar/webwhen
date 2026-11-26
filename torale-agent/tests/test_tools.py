@@ -18,7 +18,14 @@ from pydantic_ai.messages import (
 )
 from pydantic_ai.models.function import AgentInfo, FunctionModel
 
-from models import MonitoringDeps, MonitoringResponse
+from agent import create_research_agent
+from models import (
+    SYSTEM_MEMORY_AGENT_ID,
+    SYSTEM_MEMORY_APP_ID,
+    MonitoringDeps,
+    MonitoringResponse,
+)
+from prompts import SHARED_MEMORY_LINE, instructions
 from tools import register_tools
 
 FINAL = {
@@ -45,7 +52,7 @@ MEM0_PLAN_LIMIT = Mem0RateLimitError(
 
 
 def run_tool_once(
-    tool_name: str, clients, args: dict | None = None
+    tool_name: str, clients, args: dict | None = None, scope: str = "watch"
 ) -> list[ToolReturnPart]:
     def model(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
         if len(messages) == 1:
@@ -59,7 +66,9 @@ def run_tool_once(
     register_tools(agent)
     result = agent.run_sync(
         "watch",
-        deps=MonitoringDeps.model_construct(user_id="u", task_id="t", clients=clients),
+        deps=MonitoringDeps.model_construct(
+            user_id="u", task_id="t", scope=scope, clients=clients
+        ),
     )
     assert result.output.evidence == FINAL["evidence"]
     return [
@@ -145,3 +154,90 @@ def test_search_memories_returns_only_memory_text_and_timestamps():
             "updated_at": "2026-11-02T00:00:00Z",
         }
     ]
+
+
+# Watch runs and the research agent read and write different mem0 scopes.
+
+WATCH_FILTER = {"AND": [{"user_id": "u"}, {"app_id": "t"}]}
+SYSTEM_FILTER = {"agent_id": SYSTEM_MEMORY_AGENT_ID}
+
+
+def mem0_clients(hits=None):
+    return SimpleNamespace(
+        mem0=SimpleNamespace(
+            search=AsyncMock(return_value={"results": hits or []}),
+            add=AsyncMock(return_value={"status": "PENDING"}),
+        )
+    )
+
+
+def test_watch_search_stays_in_watch_scope_while_recall_is_off(monkeypatch):
+    monkeypatch.delenv("SHARED_MEMORY_RECALL", raising=False)
+    clients = mem0_clients()
+
+    run_tool_once("search_memories", clients)
+
+    clients.mem0.search.assert_awaited_once_with("test", filters=WATCH_FILTER, top_k=10)
+
+
+def test_watch_search_covers_both_scopes_in_one_call_when_recall_is_on(monkeypatch):
+    monkeypatch.setenv("SHARED_MEMORY_RECALL", "true")
+    shared = {
+        "memory": "Leaks break on macrumors.com.",
+        "agent_id": SYSTEM_MEMORY_AGENT_ID,
+    }
+    own = {"memory": "This watch's source.", "user_id": "u", "app_id": "t"}
+    clients = mem0_clients([own, shared])
+
+    (tool_return,) = run_tool_once("search_memories", clients)
+
+    clients.mem0.search.assert_awaited_once_with(
+        "test", filters={"OR": [WATCH_FILTER, SYSTEM_FILTER]}, top_k=13
+    )
+    memories = json.loads(tool_return.model_response_str())
+    assert [m.get("shared", False) for m in memories] == [False, True]
+
+
+def test_research_search_reads_only_shared_memory():
+    clients = mem0_clients()
+
+    run_tool_once("search_memories", clients, scope="system")
+
+    clients.mem0.search.assert_awaited_once_with(
+        "test", filters=SYSTEM_FILTER, top_k=10
+    )
+
+
+def test_research_writes_shared_memory_as_the_agent_without_a_user():
+    clients = mem0_clients()
+
+    run_tool_once("add_memory", clients, {"text": "Finding."}, scope="system")
+
+    clients.mem0.add.assert_awaited_once_with(
+        [{"role": "assistant", "content": "Finding."}],
+        agent_id=SYSTEM_MEMORY_AGENT_ID,
+        app_id=SYSTEM_MEMORY_APP_ID,
+    )
+
+
+def test_watch_writes_stay_in_watch_scope():
+    clients = mem0_clients()
+
+    run_tool_once("add_memory", clients, {"text": "Note."})
+
+    clients.mem0.add.assert_awaited_once_with(
+        [{"role": "user", "content": "Note."}], user_id="u", app_id="t"
+    )
+
+
+@pytest.mark.parametrize(("flag", "included"), [("true", True), ("", False)])
+def test_shared_memory_prompt_line_follows_the_flag(monkeypatch, flag, included):
+    monkeypatch.setenv("SHARED_MEMORY_RECALL", flag)
+    assert (SHARED_MEMORY_LINE in instructions()) is included
+
+
+def test_research_agent_has_the_monitoring_tools_and_returns_text():
+    agent = create_research_agent()
+    tools = set(agent._function_toolset.tools)
+    assert {"search_memories", "add_memory", "perplexity_search", "fetch_url"} <= tools
+    assert agent.output_type is str

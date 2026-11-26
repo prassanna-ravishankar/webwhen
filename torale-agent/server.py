@@ -35,9 +35,9 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Route
 
-from agent import create_monitoring_agent
+from agent import create_monitoring_agent, create_research_agent
 from models import Clients, MonitoringDeps, MonitoringResponse, create_clients
-from runtime import MONITORING_USAGE_LIMITS, record_run_usage
+from runtime import MONITORING_USAGE_LIMITS, RESEARCH_USAGE_LIMITS, record_run_usage
 from tools import extract_activity
 
 load_dotenv()
@@ -50,6 +50,9 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
+
+# A2A metadata mode for the nightly research run, which has no user or watch.
+RESEARCH_MODE = "research"
 
 
 def _build_mcp_toolsets(
@@ -94,8 +97,13 @@ def _build_mcp_toolsets(
 class ToraleAgentExecutor(AgentExecutor):
     """A2A executor that runs the Torale monitoring agent."""
 
-    def __init__(self, agent: Agent[MonitoringDeps, MonitoringResponse]) -> None:
+    def __init__(
+        self,
+        agent: Agent[MonitoringDeps, MonitoringResponse],
+        research_agent: Agent[MonitoringDeps, str] | None = None,
+    ) -> None:
         self.agent = agent
+        self.research_agent = research_agent
         self.clients: Clients | None = None
 
     async def _emit_failure(
@@ -156,6 +164,10 @@ class ToraleAgentExecutor(AgentExecutor):
         # and ensures user_id/task_id match the authenticated user before calling this endpoint.
         # External spoofing is mitigated by network isolation.
         metadata = context.metadata
+        if metadata.get("mode") == RESEARCH_MODE and self.research_agent is not None:
+            await self._run_research(user_input, event_queue, task_id, context_id)
+            return
+
         user_id = metadata.get("user_id", "")
         monitoring_task_id = metadata.get("task_id", "")
 
@@ -294,6 +306,54 @@ class ToraleAgentExecutor(AgentExecutor):
                 },
             )
 
+    async def _run_research(
+        self, user_input: str, event_queue: EventQueue, task_id: str, context_id: str
+    ) -> None:
+        """Run the research agent in the shared memory scope and report its summary."""
+        assert self.research_agent is not None
+        await event_queue.enqueue_event(
+            TaskStatusUpdateEvent(
+                task_id=task_id,
+                context_id=context_id,
+                status=TaskStatus(state=TaskState.TASK_STATE_WORKING),
+            )
+        )
+        deps = MonitoringDeps(scope="system", clients=self.clients)
+        try:
+            try:
+                result = await self.research_agent.run(
+                    user_input, deps=deps, usage_limits=RESEARCH_USAGE_LIMITS
+                )
+            except FallbackExceptionGroup as group:
+                raise group.exceptions[-1] from group
+        except (ModelHTTPError, ValueError, RuntimeError) as e:
+            logger.exception("Research run failed: %s", type(e).__name__)
+            await self._emit_failure(
+                event_queue,
+                task_id,
+                context_id,
+                {"error_type": type(e).__name__, "message": str(e)},
+            )
+            return
+        record_run_usage(result, operation=RESEARCH_MODE)
+        await event_queue.enqueue_event(
+            new_data_artifact_update_event(
+                task_id=task_id,
+                context_id=context_id,
+                name="research-summary",
+                data={"summary": result.output},
+                media_type="application/json",
+                last_chunk=True,
+            )
+        )
+        await event_queue.enqueue_event(
+            TaskStatusUpdateEvent(
+                task_id=task_id,
+                context_id=context_id,
+                status=TaskStatus(state=TaskState.TASK_STATE_COMPLETED),
+            )
+        )
+
     async def cancel(self, context: RequestContext, event_queue: EventQueue) -> None:
         await event_queue.enqueue_event(
             TaskStatusUpdateEvent(
@@ -323,7 +383,7 @@ agent_card = AgentCard(
 
 
 monitoring_agent = create_monitoring_agent()
-executor = ToraleAgentExecutor(monitoring_agent)
+executor = ToraleAgentExecutor(monitoring_agent, create_research_agent())
 task_store = InMemoryTaskStore()
 request_handler = DefaultRequestHandler(
     agent_executor=executor,

@@ -4,6 +4,7 @@ import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
+from typing import Literal
 
 import httpx
 from mem0 import AsyncMemoryClient
@@ -12,6 +13,15 @@ from perplexity import AsyncPerplexity
 from pydantic import BaseModel, ConfigDict, Field
 
 DEFAULT_MODEL = "google:gemini-3.5-flash-lite"
+
+# Shared knowledge of how information moves, written nightly by the research
+# agent and readable by every watch once SHARED_MEMORY_RECALL is on.
+SYSTEM_MEMORY_AGENT_ID = "webwhen-flow-map"
+SYSTEM_MEMORY_APP_ID = "webwhen-system"
+
+
+def shared_memory_recall() -> bool:
+    return os.getenv("SHARED_MEMORY_RECALL", "").lower() == "true"
 
 
 class ToolAnnotations(BaseModel):
@@ -148,10 +158,15 @@ async def create_clients() -> AsyncIterator[Clients]:
 
 
 class MonitoringDeps(BaseModel):
-    """Dependencies for monitoring agent containing user and task identifiers."""
+    """Dependencies for an agent run: whose memory it reads and writes, and clients.
+
+    A watch run uses its user and watch scope; the research agent uses the
+    shared system scope and has no user or watch.
+    """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    user_id: str
-    task_id: str
+    user_id: str = ""
+    task_id: str = ""
+    scope: Literal["watch", "system"] = "watch"
     clients: Clients | None = None
