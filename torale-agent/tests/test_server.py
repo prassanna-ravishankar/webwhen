@@ -272,3 +272,52 @@ async def test_real_client_and_server_stream_structured_result():
     finally:
         server.executor.agent = original_agent
         await http_client.aclose()
+
+
+def research_agent(output="Added 2 shared memories."):
+    result = SimpleNamespace(
+        output=output,
+        usage=RunUsage(requests=5, tool_calls=4, input_tokens=900, output_tokens=60),
+    )
+    agent = MagicMock()
+    agent.run = AsyncMock(return_value=result)
+    return agent
+
+
+@pytest.mark.asyncio
+async def test_research_mode_runs_in_the_shared_scope_without_user_or_watch():
+    queue = RecordingQueue()
+    research = research_agent()
+    monitoring = successful_agent()
+    executor = ToraleAgentExecutor(monitoring, research)
+
+    await executor.execute(make_context({"mode": "research"}), queue)
+
+    monitoring.run.assert_not_awaited()
+    deps = research.run.await_args.kwargs["deps"]
+    assert (deps.scope, deps.user_id, deps.task_id) == ("system", "", "")
+    assert (
+        research.run.await_args.kwargs["usage_limits"] is server.RESEARCH_USAGE_LIMITS
+    )
+    artifact = next(e for e in queue.events if isinstance(e, TaskArtifactUpdateEvent))
+    assert get_data_parts(artifact.artifact.parts) == [
+        {"summary": "Added 2 shared memories."}
+    ]
+    assert queue.events[-1].status.state == TaskState.TASK_STATE_COMPLETED
+
+
+@pytest.mark.asyncio
+async def test_research_failure_is_reported_as_failed_task():
+    queue = RecordingQueue()
+    research = research_agent()
+    research.run = AsyncMock(side_effect=RuntimeError("usage limit"))
+    executor = ToraleAgentExecutor(successful_agent(), research)
+
+    await executor.execute(make_context({"mode": "research"}), queue)
+
+    final = queue.events[-1]
+    assert final.status.state == TaskState.TASK_STATE_FAILED
+    assert json.loads(get_message_text(final.status.message)) == {
+        "error_type": "RuntimeError",
+        "message": "usage limit",
+    }

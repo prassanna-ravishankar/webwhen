@@ -4,6 +4,7 @@ import asyncio
 import json
 import socket
 from ipaddress import ip_address
+from typing import Any
 from urllib.parse import urlparse
 
 import httpx
@@ -15,15 +16,17 @@ from pydantic_ai import Agent, RunContext
 from pydantic_ai.messages import ModelResponse, ToolCallPart
 
 from models import (
+    SYSTEM_MEMORY_AGENT_ID,
+    SYSTEM_MEMORY_APP_ID,
     ActivityStep,
     Clients,
     FetchResult,
     MonitoringDeps,
-    MonitoringResponse,
     ParallelSearchResult,
     PerplexitySearchResult,
     ToolError,
     TwitterSearchResult,
+    shared_memory_recall,
 )
 
 _NO_CLIENTS = json.dumps({"error": "No context available"})
@@ -74,6 +77,36 @@ TWITTER_SEARCH_MAX_RESULTS = 10
 
 # mem0 search hits also carry ids, scores and categories the model never uses.
 MEMORY_FIELDS = ("memory", "created_at", "updated_at")
+MEMORY_TOP_K = 10
+# Room for a few shared memories without crowding out the watch's own.
+SHARED_MEMORY_TOP_K = 3
+
+_SYSTEM_SCOPE = {"agent_id": SYSTEM_MEMORY_AGENT_ID}
+
+
+def _memory_search_scope(deps: MonitoringDeps) -> tuple[dict, int]:
+    """mem0 filters and top_k for a memory search in this run's scope."""
+    if deps.scope == "system":
+        return _SYSTEM_SCOPE, MEMORY_TOP_K
+    watch = {"AND": [{"user_id": deps.user_id}, {"app_id": deps.task_id}]}
+    if shared_memory_recall():
+        return {"OR": [watch, _SYSTEM_SCOPE]}, MEMORY_TOP_K + SHARED_MEMORY_TOP_K
+    return watch, MEMORY_TOP_K
+
+
+def _memory_add_scope(deps: MonitoringDeps) -> tuple[str, dict]:
+    """Message role and mem0 entity ids for a memory written in this run's scope.
+
+    mem0 attributes inferred facts by speaker, so shared memories are written
+    as the assistant to land on agent_id rather than a user.
+    """
+    if deps.scope == "system":
+        return "assistant", {
+            "agent_id": SYSTEM_MEMORY_AGENT_ID,
+            "app_id": SYSTEM_MEMORY_APP_ID,
+        }
+    return "user", {"user_id": deps.user_id, "app_id": deps.task_id}
+
 
 _TOOL_INPUT_KEYS: dict[str, str] = {
     "perplexity_search": "query",
@@ -171,44 +204,41 @@ async def _fetch_and_extract(url: str) -> FetchResult:
     )
 
 
-def register_tools(agent: Agent[MonitoringDeps, MonitoringResponse]) -> None:
+def register_tools(agent: Agent[MonitoringDeps, Any]) -> None:
     """Attach monitoring tools (search_memories, add_memory, perplexity_search, parallel_search, fetch_url) to an agent."""
 
     @agent.tool
     async def search_memories(
         ctx: RunContext[MonitoringDeps], query: str
     ) -> str | ToolError:
-        """Search previous monitoring memories for this task. Use to recall what was found in earlier runs."""
+        """Search memories from earlier runs: source insights, timing patterns and domain knowledge."""
         if (clients := _get_clients(ctx)) is None:
             return _NO_CLIENTS
+        filters, top_k = _memory_search_scope(ctx.deps)
         try:
-            results = await clients.mem0.search(
-                query,
-                filters={
-                    "AND": [
-                        {"user_id": ctx.deps.user_id},
-                        {"app_id": ctx.deps.task_id},
-                    ]
-                },
-                top_k=10,
-            )
+            results = await clients.mem0.search(query, filters=filters, top_k=top_k)
         except Mem0Error as e:
             return _provider_error("Memory search", e, MEMORY_FALLBACK_HINT)
         hits = results.get("results", []) if isinstance(results, dict) else results
-        memories = [{k: hit.get(k) for k in MEMORY_FIELDS} for hit in hits]
+        memories = [
+            {k: hit.get(k) for k in MEMORY_FIELDS}
+            | (
+                {"shared": True}
+                if hit.get("agent_id") == SYSTEM_MEMORY_AGENT_ID
+                else {}
+            )
+            for hit in hits
+        ]
         return json.dumps(memories, default=str)
 
     @agent.tool
     async def add_memory(ctx: RunContext[MonitoringDeps], text: str) -> str | ToolError:
-        """Store a new meta-knowledge memory for this task. Only store patterns and source insights, not individual check results."""
+        """Store a durable insight: a source pattern, timing pattern or search strategy, not an individual check result."""
         if (clients := _get_clients(ctx)) is None:
             return _NO_CLIENTS
+        role, entity = _memory_add_scope(ctx.deps)
         try:
-            result = await clients.mem0.add(
-                [{"role": "user", "content": text}],
-                user_id=ctx.deps.user_id,
-                app_id=ctx.deps.task_id,
-            )
+            result = await clients.mem0.add([{"role": role, "content": text}], **entity)
         except Mem0Error as e:
             return _provider_error("Memory storage", e, MEMORY_FALLBACK_HINT)
         return json.dumps(result, default=str)

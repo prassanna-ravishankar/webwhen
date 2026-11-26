@@ -23,6 +23,16 @@ cost backstop (prod p99 was 119k per run).
 """
 
 
+RESEARCH_USAGE_LIMITS = UsageLimits(
+    request_limit=40,
+    tool_calls_limit=60,
+    per_request_input_tokens_limit=128_000,
+    total_tokens_limit=600_000,
+)
+"""The nightly research run works across many watches, so it gets more room
+than a single watch run, with the same per-request context guard."""
+
+
 def record_run_usage(
     result: AgentRunResult[Any], *, operation: str, **context: str
 ) -> None:
