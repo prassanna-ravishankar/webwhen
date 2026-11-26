@@ -19,19 +19,23 @@ logger = logging.getLogger(__name__)
 RESEARCH_WINDOW = timedelta(hours=24)
 
 
-def format_run(row: dict) -> str:
-    """One watch run as research input: no ids, no run text, no connector content."""
+def used_connector(row: dict) -> bool:
     result = parse_jsonb(row.get("result"), "result", dict, {})
-    activity = result.get("activity") or []
-    used_connector = any(isinstance(s, dict) and s.get("connector_slug") for s in activity)
+    return any(
+        isinstance(s, dict) and s.get("connector_slug") for s in result.get("activity") or []
+    )
+
+
+def format_run(row: dict) -> str:
+    """One watch run as research input: no ids and no run text."""
+    result = parse_jsonb(row.get("result"), "result", dict, {})
     hosts: list[str] = []
-    if not used_connector:
-        sources = parse_jsonb(row.get("grounding_sources"), "grounding_sources", list, [])
-        for source in sources:
-            url = source.get("url") if isinstance(source, dict) else source
-            host = urlparse(url).hostname if isinstance(url, str) else None
-            if host and host not in hosts:
-                hosts.append(host)
+    sources = parse_jsonb(row.get("grounding_sources"), "grounding_sources", list, [])
+    for source in sources:
+        url = source.get("url") if isinstance(source, dict) else source
+        host = urlparse(url).hostname if isinstance(url, str) else None
+        if host and host not in hosts:
+            hosts.append(host)
 
     triggered = "yes" if row.get("notification") else "no"
     lines = [
@@ -45,7 +49,12 @@ def format_run(row: dict) -> str:
 
 
 async def build_research_input(since: datetime) -> str | None:
-    """The successful watch runs since `since`, formatted for the research agent."""
+    """The successful watch runs since `since`, formatted for the research agent.
+
+    Connector watches are left out entirely: their topic and condition can
+    describe private data, and the research agent searches the public web
+    and writes shared memory.
+    """
     rows = await db.fetch_all(
         """
         SELECT t.name, t.search_query, t.condition_description,
@@ -53,13 +62,14 @@ async def build_research_input(since: datetime) -> str | None:
         FROM task_executions e
         JOIN tasks t ON t.id = e.task_id
         WHERE e.status = 'success' AND e.completed_at >= $1
+          AND cardinality(t.attached_connector_slugs) = 0
         ORDER BY t.id, e.completed_at
         """,
         since,
     )
-    if not rows:
+    runs = "\n".join(format_run(row) for row in map(dict, rows) if not used_connector(row))
+    if not runs:
         return None
-    runs = "\n".join(format_run(dict(row)) for row in rows)
     return PromptSanitizer.wrap("watch-runs", runs)
 
 

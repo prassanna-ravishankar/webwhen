@@ -54,17 +54,31 @@ def test_run_lists_topic_condition_timing_outcome_and_hosts_only():
         assert secret not in text
 
 
-def test_run_that_used_a_connector_contributes_no_sources():
+@pytest.mark.asyncio
+async def test_runs_that_used_a_connector_are_left_out():
     connector_step = {"tool": "NOTION_FETCH_DATA", "detail": "", "connector_slug": "notion"}
-    result = {"confidence": 80, "activity": [connector_step]}
-    sources = [{"url": "https://www.notion.so/private-page", "title": "notes"}]
-
-    text = research.format_run(
-        run_row(result=json.dumps(result), grounding_sources=json.dumps(sources))
+    private = run_row(
+        name="Acquisition of Contoso",
+        result=json.dumps({"confidence": 80, "activity": [connector_step]}),
     )
+    with patch.object(research, "db") as db:
+        db.fetch_all = AsyncMock(return_value=[private, run_row()])
+        prompt = await research.build_research_input(RAN_AT)
+        query = db.fetch_all.await_args.args[0]
 
-    assert "source sites: none" in text
-    assert "notion" not in text
+    assert prompt is not None
+    assert "Contoso" not in prompt
+    assert "iPhone 18" in prompt
+    assert "cardinality(t.attached_connector_slugs) = 0" in query
+
+
+@pytest.mark.asyncio
+async def test_only_connector_runs_means_no_input():
+    connector_step = {"tool": "NOTION_FETCH_DATA", "connector_slug": "notion"}
+    private = run_row(result=json.dumps({"activity": [connector_step]}))
+    with patch.object(research, "db") as db:
+        db.fetch_all = AsyncMock(return_value=[private])
+        assert await research.build_research_input(RAN_AT) is None
 
 
 @pytest.mark.asyncio
