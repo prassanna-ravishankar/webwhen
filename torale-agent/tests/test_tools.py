@@ -52,12 +52,19 @@ MEM0_PLAN_LIMIT = Mem0RateLimitError(
 
 
 def run_tool_once(
-    tool_name: str, clients, args: dict | None = None, scope: str = "watch"
+    tool_name: str,
+    clients,
+    args: dict | None = None,
+    scope: str = "watch",
+    after: str | None = None,
 ) -> list[ToolReturnPart]:
+    """Run one tool call, optionally in the same model response as an earlier `after` call."""
+
     def model(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
         if len(messages) == 1:
-            call = ToolCallPart(tool_name, args or {"query": "test"})
-            return ModelResponse(parts=[call])
+            calls = [ToolCallPart(after, {"query": "q"})] if after else []
+            calls.append(ToolCallPart(tool_name, args or {"query": "test"}))
+            return ModelResponse(parts=calls)
         return ModelResponse(parts=[ToolCallPart(info.output_tools[0].name, FINAL)])
 
     agent = Agent[MonitoringDeps, MonitoringResponse](
@@ -167,7 +174,12 @@ def mem0_clients(hits=None):
         mem0=SimpleNamespace(
             search=AsyncMock(return_value={"results": hits or []}),
             add=AsyncMock(return_value={"status": "PENDING"}),
-        )
+        ),
+        perplexity=SimpleNamespace(
+            search=SimpleNamespace(
+                create=AsyncMock(return_value=SimpleNamespace(results=[]))
+            )
+        ),
     )
 
 
@@ -211,13 +223,30 @@ def test_research_search_reads_only_shared_memory():
 def test_research_writes_shared_memory_as_the_agent_without_a_user():
     clients = mem0_clients()
 
-    run_tool_once("add_memory", clients, {"text": "Finding."}, scope="system")
+    run_tool_once(
+        "add_memory",
+        clients,
+        {"text": "Finding."},
+        scope="system",
+        after="perplexity_search",
+    )
 
     clients.mem0.add.assert_awaited_once_with(
         [{"role": "assistant", "content": "Finding."}],
         agent_id=SYSTEM_MEMORY_AGENT_ID,
         app_id=SYSTEM_MEMORY_APP_ID,
     )
+
+
+def test_research_cannot_write_shared_memory_before_searching():
+    clients = mem0_clients()
+
+    [tool_return] = run_tool_once(
+        "add_memory", clients, {"text": "Hunch."}, scope="system"
+    )
+
+    clients.mem0.add.assert_not_awaited()
+    assert "Search or fetch first" in tool_return.model_response_str()
 
 
 def test_watch_writes_stay_in_watch_scope():
