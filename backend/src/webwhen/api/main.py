@@ -38,6 +38,7 @@ from webwhen.lib.posthog import shutdown as shutdown_posthog
 from webwhen.scheduler import get_scheduler
 from webwhen.scheduler.leader import HEARTBEAT_SECONDS, SchedulerLeader, record_heartbeat
 from webwhen.scheduler.migrate import reap_stale_executions, sync_jobs_from_database
+from webwhen.scheduler.research import run_research
 
 logger = logging.getLogger(__name__)
 
@@ -121,6 +122,16 @@ async def lifespan(app: FastAPI):
         trigger="interval",
         minutes=15,
         id="sync-task-jobs",
+        replace_existing=True,
+    )
+    # Nightly research run that grows the shared memory of how information moves.
+    scheduler.add_job(
+        run_research,
+        trigger="cron",
+        hour=4,
+        minute=20,
+        timezone="UTC",
+        id="research-shared-memory",
         replace_existing=True,
     )
     scheduler.add_job(

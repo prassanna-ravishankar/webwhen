@@ -43,6 +43,7 @@ def test_admin_router_preserves_routes():
         ("PATCH", "/admin/tasks/{task_id}/state"),
         ("DELETE", "/admin/tasks/{task_id}/reset"),
         ("POST", "/admin/connectors/reset"),
+        ("POST", "/admin/research/run"),
     }
 
 
