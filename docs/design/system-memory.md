@@ -1,63 +1,82 @@
 ---
 status: draft
 date: 2026-11-26
-revised: 2026-11-26 (simplified: one nightly agent call, mem0 does the merging)
+revised: 2026-11-26 (nightly research agent populates shared memory; monitoring agent consumes it)
 ---
 
-# System memory: what watches learn about how information moves
+# System memory: a research agent for how information moves
 
 Status: design only. Nothing ships without Prass's sign-off.
 
-**Problem.** Each watch learns alone where news breaks first, how long confirmation takes and when sources publish. A new watch on a similar event starts from zero.
+**Problem.** Each watch learns on its own where news breaks first, how long confirmation takes and when sources publish. A new watch on a similar event starts from zero.
 
-**Idea.** Once a night, one agent call reads the day's watch runs and writes what it learned to a shared mem0 scope. Every run recalls it through the memory search it already makes.
+**Idea.** A nightly research agent does that learning for all watches and writes general findings to shared memory. Monitoring runs read those findings through the memory search they already make.
 
-## Nightly job
+## Research agent
 
-- **Where.** A cron job on the backend's existing APScheduler (leader only), at about 04:20 UTC. It sends one A2A call to the agent service in a `dream` mode.
-- **Prompt (plain).** "Here are today's watch runs. What did you learn about how information moves: first sources, lag, cadence, reliability? Update the shared memories."
-- **Tools.** The existing `search_memories` and `add_memory`, scoped to the system: `agent_id="webwhen-flow-map"`, `app_id="webwhen-system"`, no `user_id`. `add_memory` keeps `infer=True` (BYOK is connected), so mem0 merges and deduplicates. There are no new tables and no consolidation code.
-- **Decided.** All watches contribute (Prass, Q3). Memories live in the same mem0 project as per-watch memory (Q4).
+- **Same runtime.** It is a second agent definition in `torale-agent`. It uses the same pydantic-ai framework, the same Gemini model with free-then-paid fallback (#392), and the same tools: `perplexity_search`, `parallel_search`, `fetch_url`, `search_memories` and `add_memory`. Only the prompt and goal are new, so there is no new infrastructure.
+- **Memory scope.** Its memory tools use the system scope: `agent_id="webwhen-flow-map"`, `app_id="webwhen-system"`, no `user_id`. Writes keep `infer=True` (BYOK is connected), so mem0 merges and deduplicates. The deps carry the scope, so the tools themselves stay the same.
+- **Goal prompt, in substance:** "You maintain webwhen's shared knowledge of how information moves. Starting from today's watch runs, research where news like this breaks first, how long confirmation takes, and when sources publish. Check and refine what's already in shared memory, and write durable, general findings." The agent can search and fetch to verify, for example to look up who actually broke a story first.
+- **Trigger.** A cron job on the backend's existing APScheduler runs at about 04:20 UTC on the scheduler leader. It makes one A2A call to the research agent.
 
-## Input: the one hard guard
+## Input from the backend
 
-The backend builds the input. That layer owns the data, so it is where stripping happens. For each run of the day, it sends:
+The backend builds the input. That layer owns the data, so it is where stripping happens.
 
+**Sent for each of the day's runs:**
 - the watch's topic and condition;
-- the hostnames from `grounding_sources`;
+- public source hostnames from `grounding_sources`;
 - the run time;
-- the outcome: triggered or not, and confidence.
+- the outcome: triggered or not, with confidence.
 
-It never sends:
-
+**Never sent:**
 - user, watch, execution or webhook ids;
-- connector-derived content: for a run whose `activity` includes a connector step, its sources are left out;
-- evidence or notification text.
+- evidence or notification text;
+- connector content. A run whose `activity` includes a connector step contributes no sources.
 
-Condition text is user-written, so it is the one path by which something personal could reach shared memory. The prompt asks for patterns rather than specifics, and the review week checks for exactly this.
+Condition text is user-written, so it is the one path by which something personal could reach shared memory. The prompt asks for general findings, not specifics, and the trial review checks for this.
 
-## Recall
+## Consumption
 
-Recall is unchanged. `search_memories` stays one call and widens its filter to `OR[AND(user_id, app_id=watch), agent_id="webwhen-flow-map"]`. Over the last 30 days, runs averaged 0.74 searches each and never more than 1, so recall adds no searches. It sits behind a flag and is off during the trial week.
+The monitoring agent changes in two small ways:
 
-## Cost
+- Its single `search_memories` call widens the filter to `OR[AND(user_id, app_id=watch), agent_id="webwhen-flow-map"]`. Over the last 30 days, runs averaged 0.74 searches each and never more than 1, so this adds no searches.
+- One prompt line: "Shared memories describe how information moves. Use them to pick sources and timing."
 
-- **Nightly call.** One flash-lite call over roughly 16 runs' worth of input, plus a few tool calls. That is about $0.01 to $0.02 a night on the paid key, and usually $0 on the free key.
-- **mem0.** A few adds a night, with extraction billed to the BYOK provider at about $0.005 per add. Searches are unchanged at about 900 a month.
+Both sit behind a flag, which stays off during the trial.
+
+## Guardrails
+
+- **Per-night cap.** pydantic-ai `UsageLimits` caps the run at about 40 model requests, about 25 tool calls and about 600k total tokens. Hitting the cap ends the night's run. It does not retry.
+- **Leader only.** It runs only on the scheduler leader, once a night.
+
+## Cost per night
+
+A monitoring run today (14 days, successful runs) averages 4.2 model calls and 1.5 searches, costing $0.017 for the model on the paid key.
+
+| Item | Typical night | At the cap |
+|---|---|---|
+| Model (flash-lite, about $0.31 per million input tokens, measured) | $0.05 | about $0.19 |
+| Searches (Perplexity and Parallel, list price about $0.005 per call, to confirm) | 10 searches: $0.05 | 25 searches: about $0.13 |
+| mem0 adds (BYOK extraction, about $0.005 each) | 5 adds: $0.03 | 10 adds: $0.05 |
+| **Total** | **about $0.13** | **about $0.37** |
+
+That is about $4 a month typical and $11 at most. The free Gemini key answers model calls first, so the model line is usually lower.
 
 ## Trial
 
-1. Run the nightly job for a week with recall off.
-2. Prass and the orchestrator read the `webwhen-flow-map` memories in the mem0 dashboard. They check whether the memories are useful and whether any are personal.
+1. Run the research agent nightly for a week with consumption off.
+2. Prass and the orchestrator read the `webwhen-flow-map` memories in the mem0 dashboard. They check whether the memories are useful and accurate, and whether any are personal.
 3. Keep or kill:
-   - **Keep:** turn recall on.
+   - **Keep:** turn consumption on.
    - **Kill:** run `delete_all(agent_id="webwhen-flow-map")` and remove the job.
 
-## To check on day one
+**Check on night one.** With `infer=True`, mem0 attributes facts by message role. Confirm that the records land on `agent_id`, not `user_id`.
 
-- **mem0 attribution with `infer=True`.** mem0 attributes facts by message role, so the job writes as the assistant role. That way records land on `agent_id`, not `user_id`. Confirm in the dashboard after the first night.
+## Decided and not doing
 
-## Not doing
-
-- Per-moment observation and pattern tables, sync triggers, k-thresholds, a separate extraction skill, a backtest harness, or a backend summary injected into the prompt. Any of these can come back if the trial says the simple version isn't enough.
-- **Source publish dates (`published_at`).** Dropped. Capturing them would change the agent-backend contract in both `models.py` copies, which is not trivial enough for this version.
+- **Decided.** All watches contribute, with no opt-in. Shared memory lives in the same mem0 project as per-watch memory.
+- **Not doing.**
+  - No custom tables, sync machinery, k-thresholds, backtest harness or prompt-injected summaries.
+  - No `published_at` capture: it would change the contract in both `models.py` copies.
+  - Any of these can come back if the trial shows a need.
