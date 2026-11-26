@@ -35,21 +35,6 @@ _NO_CLIENTS_ERROR = ToolError(error="No context available")
 
 SEARCH_FALLBACK_HINT = "Use another search tool."
 MEMORY_FALLBACK_HINT = "Carry on without memory."
-RESEARCH_TOOLS = frozenset(
-    {"perplexity_search", "parallel_search", "twitter_search", "fetch_url"}
-)
-_RESEARCH_FIRST = json.dumps(
-    {"error": "Shared memory takes researched findings only. Search or fetch first."}
-)
-
-
-def _has_researched(ctx: RunContext[MonitoringDeps]) -> bool:
-    return any(
-        isinstance(part, ToolCallPart) and part.tool_name in RESEARCH_TOOLS
-        for message in ctx.messages
-        if isinstance(message, ModelResponse)
-        for part in message.parts
-    )
 
 
 def _provider_error(
@@ -251,8 +236,6 @@ def register_tools(agent: Agent[MonitoringDeps, Any]) -> None:
         """Store a durable insight: a source pattern, timing pattern or search strategy, not an individual check result."""
         if (clients := _get_clients(ctx)) is None:
             return _NO_CLIENTS
-        if ctx.deps.scope == "system" and not _has_researched(ctx):
-            return _RESEARCH_FIRST
         role, entity = _memory_add_scope(ctx.deps)
         try:
             result = await clients.mem0.add([{"role": role, "content": text}], **entity)
