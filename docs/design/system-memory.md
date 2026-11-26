@@ -1,7 +1,7 @@
 ---
 status: draft
 date: 2026-11-26
-revised: 2026-11-26 (after review 6068164533)
+revised: 2026-11-26 (after review 6068164533; serving via mem0 per Prass)
 ---
 
 # System memory: an information-flow map
@@ -104,30 +104,81 @@ The key comes from the watch, not from semantic matching.
   - the observed publish window, when at least 3 samples agree;
   - the observation and user counts.
 
-## Serving: two options
+## Ownership: Postgres owns the facts, mem0 owns recall
 
-| | (A) mem0 as retrieval index over Postgres | (B) Backend injects the summary into the run payload |
-|---|---|---|
-| How | A sync job writes one mem0 memory per servable key (`agent_id="webwhen-flow-map"`, `infer=False`, templated text, metadata). `search_memories` reads both scopes in one OR-filtered search. | The backend computes the per-key aggregate in SQL and adds it to the run prompt next to the execution history, inside `PromptSanitizer` tags. |
-| Source of truth | Postgres. mem0 holds a derived copy. | Postgres. |
-| Deletes and unpublish | The sync job must delete or rewrite the mem0 memory whenever a key drops below k or loses rows. Stale data stays served until the next sync. | Correct on the next read, by construction. |
-| Lookup | Semantic. It can surface records for similar keys when a watch has no exact key. | Exact key only. A watch without a key, or whose key is below the threshold, gets nothing. |
-| mem0 plan | Uses mem0 adds and retrievals. With a connected key (BYOK): 50k adds and 10k retrievals a month, and adds billed by the provider. Prod already makes about 900 searches a month. Whether direct import or `update` count as adds is not documented. | None. |
-| New parts | Sync job, mem0 record format, combined-filter search, dependency on the mem0 plan. | One SQL query, one prompt block. |
-| Later scheduler hint | Needs the key echoed back, or a second lookup. | The backend already has both the key and the aggregate. |
+Each layer owns one thing:
 
-**Recommendation: B for v1.**
-- At this volume, tens of observations, an exact-key SQL lookup does the whole job.
-- Every failure mode in A comes from keeping a second copy of the data: sync lag on delete or unpublish, plan limits, and a neighbouring key's record surfacing.
-- B keeps A open. If keys turn out too narrow and semantic lookup across keys proves worth having, A can be added as an index built from the same table, with no change to the source of truth.
+- **Postgres owns the facts and the privacy invariants:**
+  - observations;
+  - k ≥ 3 distinct users;
+  - read-time eligibility;
+  - cascade deletes;
+  - the grounding check (every host comes from stored `grounding_sources`);
+  - reliability computed from outcomes.
+- **mem0 owns agent recall.** It holds exactly the keys that currently pass those invariants, as a derived index. The agent reaches all memory, per-watch and system, through one tool. Memory stays in the memory system.
 
-**The honest case for A.**
-- It reuses the store the agent already queries.
-- It handles fuzzy matches that B cannot.
-- It builds toward a single mem0-centred memory if per-watch memory grows that way.
-- Its cost is the sync job and the plan dependency above.
+### Event-driven sync
 
-Prass's call.
+The mem0 copy changes in the same flow as the facts it derives from. There is no periodic job, so there is no staleness window.
+
+1. **Capture changes in the database.** Triggers write a row to `flow_sync_outbox(event_type, domain, reason, created_at)` in the same transaction as the change. Because they are database triggers, they also fire on cascaded deletes, so every path is covered. They fire on:
+   - an insert or delete in `flow_observations`;
+   - a deleted user or watch (via the cascade);
+   - an update to `tasks.is_public`, attached connectors, `flow_event_type` or `flow_domain`.
+2. **Drain right after commit.** The backend handler that committed the change drains the outbox for the affected keys. For each key it:
+   - recomputes the aggregate with the read-time eligibility filter;
+   - if the key is servable (k ≥ 3, host thresholds met), upserts its mem0 record;
+   - if not, deletes it from mem0 immediately. A key that falls below k, for example after an unpublish, a deleted watch or a cascaded user deletion, disappears from recall right away.
+3. **Make failure visible and retried.** If mem0 is unreachable, the outbox row stays.
+   - The next drain retries it, and so does a short-interval sweeper on the scheduler leader. The sweeper is only a backstop; changes still drive the sync.
+   - Rows older than 15 minutes raise a `flow sync lagging` warning in Logfire.
+   - A pending delete must never be silently lost, which is why it goes through the outbox and not a best-effort call.
+
+**mem0 record:**
+- Scope: `agent_id="webwhen-flow-map"`, `app_id="webwhen-system"`, no `user_id`.
+- Written with `infer=False`, so it is stored verbatim with no mem0-side model.
+- Text: one templated sentence built from the aggregate.
+- Metadata: `{"kind": "flow", "event_type", "domain", "schema_version": 1}`.
+- Upsert: look up the record by metadata key, then `update`. Use `add` only for a new key.
+- The writer is the backend, which owns the events. It gets its own mem0 client. Wiring that key is part of implementation, with no key change now.
+
+### One search covers both scopes
+
+`search_memories` keeps one call per invocation and widens its filter to both scopes:
+
+```python
+filters = {"OR": [
+    {"AND": [{"user_id": user_id}, {"app_id": task_id}]},   # this watch
+    {"agent_id": "webwhen-flow-map"},                        # system scope
+]}
+```
+
+- Results are split by scope and labelled `watch` and `system` in the tool output.
+- `top_k` goes from 10 to 13, so up to 3 system records cannot crowd out watch memories. That costs nothing in retrievals.
+- The isolation argument from the earlier draft still holds. mem0 filters only check the fields you name. System records have no `user_id`, and per-watch records carry `agent_id=null`.
+
+**Measured baseline: no extra searches.** Over the last 30 days (Logfire, 2026-11-26):
+- 1,216 runs made 901 `search_memories` calls, an average of 0.74 per run;
+- no run made more than one call;
+- 315 runs made none, mostly first runs, which skip memory by prompt.
+
+The combined filter keeps one call per invocation, so calls per run and monthly retrievals stay where they are: about 900 a month, against the 10,000 a month mem0 allows with a connected LLM key. The same query, run after launch, verifies it (`max_per_run` must stay 1 and `per_run` must not rise):
+
+```sql
+WITH r AS (
+  SELECT trace_id,
+         sum(CASE WHEN span_name = 'execute_tool search_memories' THEN 1 ELSE 0 END) AS s,
+         max(CASE WHEN span_name = 'invoke_agent monitoring_agent' THEN 1 ELSE 0 END) AS is_run
+  FROM records WHERE start_timestamp > now() - interval '30 days' GROUP BY 1)
+SELECT count(*) AS runs, sum(s) AS searches, round(avg(s), 2) AS per_run, max(s) AS max_per_run
+FROM r WHERE is_run = 1;
+```
+
+Adds are bounded by servable-key changes, at most a few a day, against 50,000 a month. Whether `update` counts as an add is undocumented (see below). At this volume it does not matter.
+
+### Rejected alternative: backend summary in the run payload
+
+The backend could compute the per-key aggregate and add it to the run prompt with no mem0. That is simpler to build. It was rejected because it creates a second memory path outside the memory system: the agent would get some memory through `search_memories` and some through the payload, with two retrieval paths to keep consistent and reason about. The staleness argument that favoured it is closed by the event-driven sync above.
 
 ## Measuring benefit: backtest, then shadow review
 
@@ -158,7 +209,7 @@ So there is no A/B test.
 
 ## mem0 plan facts
 
-These apply to option A and to the per-watch memory incident. They come from mem0's docs, read 2026-11-26.
+These apply to the system index and to the per-watch memory incident. They come from mem0's docs, read 2026-11-26.
 
 | Question | Answer | Source |
 |---|---|---|
@@ -174,11 +225,10 @@ The prod incident fits these facts. Adds started failing on 2026-11-25, the free
 1. **Build.** Migration plus the extraction skill, then backfill observations from history. Nothing is served yet.
 2. **Backtest** against the gate.
 3. **Shadow mode** with manual review for two weeks.
-4. **Serve** with option B, or with A if Prass chooses it.
+4. **Serve** through `search_memories`, with the event-driven sync live.
 5. **Optional, later:** a scheduler sanity check that only ever moves `next_run` later, and only on keys with at least 5 users behind them.
 
 ## Open questions for Prass
 
-- **Serving.** Option A (mem0 index) or option B (backend summary)? B is recommended for v1.
 - **Q3, eligibility.** Public watches only for v1, or private watches too with an opt-in?
-- **Q4, mem0 project (A only).** Same project as per-watch memory, or a separate one for the system index?
+- **Q4, mem0 project.** Same project as per-watch memory, or a separate one for the system index? Same project keeps one key and one client. A separate project isolates billing and makes the blast radius obvious, at the cost of a second key and two clients in `search_memories`, which would break the one-search property above. The recommendation is the same project.
