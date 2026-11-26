@@ -53,7 +53,9 @@ def _get_httpx_client() -> httpx.AsyncClient:
     """Get or create a shared httpx client for connection reuse."""
     global _httpx_client
     if _httpx_client is None:
-        _httpx_client = httpx.AsyncClient(timeout=httpx.Timeout(timeout=AGENT_TIMEOUT))
+        # Each call bounds itself with asyncio.timeout; the transport must not
+        # cut a quiet research stream before that deadline.
+        _httpx_client = httpx.AsyncClient(timeout=httpx.Timeout(timeout=RESEARCH_TIMEOUT))
     return _httpx_client
 
 

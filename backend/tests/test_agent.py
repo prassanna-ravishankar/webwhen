@@ -295,3 +295,11 @@ class TestCallResearchAgent:
             summary = await call_research_agent("<watch-runs>...</watch-runs>")
         assert summary == "Added 2 shared memories."
         assert MessageToDict(client.request.metadata) == {"mode": "research"}
+
+    def test_transport_waits_as_long_as_a_research_run(self):
+        from webwhen.scheduler import agent
+
+        agent._httpx_client = None
+        client = agent._get_httpx_client()
+        assert client.timeout.read == agent.RESEARCH_TIMEOUT
+        agent._httpx_client = None
