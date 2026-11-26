@@ -14,7 +14,7 @@ from pydantic_ai.profiles.openai import openai_model_profile
 from pydantic_ai.providers.google import GoogleProvider
 from pydantic_ai.settings import ThinkingLevel
 
-from models import DEFAULT_MODEL, MonitoringDeps, MonitoringResponse
+from models import DEFAULT_MODEL, RESEARCH_MODEL, MonitoringDeps, MonitoringResponse
 from prompts import instructions, research_instructions
 from tools import register_tools
 
@@ -120,9 +120,9 @@ def create_monitoring_agent(
 
 
 def create_research_agent(
-    model_id: str = DEFAULT_MODEL, thinking_level: str | None = "high"
+    model_id: str = RESEARCH_MODEL, thinking_level: str | None = "high"
 ) -> Agent[MonitoringDeps, str]:
-    """Create the nightly research agent: same model and tools, a different goal.
+    """Create the nightly research agent: same tools, a different goal.
 
     It thinks harder than a watch run: it runs once a night and has to judge
     what is worth learning, so minimal thinking writes shallow memories.

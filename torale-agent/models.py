@@ -13,6 +13,8 @@ from perplexity import AsyncPerplexity
 from pydantic import BaseModel, ConfigDict, Field
 
 DEFAULT_MODEL = "google:gemini-3.5-flash-lite"
+# The nightly research run is one call a day and has to judge what is worth learning.
+RESEARCH_MODEL = "google:gemini-3.5-flash"
 
 # Shared knowledge of how information moves, written nightly by the research
 # agent and readable by every watch once SHARED_MEMORY_RECALL is on.
