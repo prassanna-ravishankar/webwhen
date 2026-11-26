@@ -30,7 +30,6 @@ _BILLING_PATTERNS = (
     "insufficient_quota",
     "credits are depleted",
     "status_code: 402",
-    "upstream 402",
 )
 _RATE_LIMIT_PATTERNS = ("429", "rate limit", "quota")
 _TIMEOUT_PATTERNS = ("timeout", "timed out")
