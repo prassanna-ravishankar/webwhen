@@ -19,6 +19,16 @@ Status: design only. Nothing ships without Prass's sign-off.
 - **Goal prompt, in substance:** "You maintain webwhen's shared knowledge of how information moves. Starting from today's watch runs, research where news like this breaks first, how long confirmation takes, and when sources publish. Check and refine what's already in shared memory, and write durable, general findings." The agent can search and fetch to verify, for example to look up who actually broke a story first.
 - **Trigger.** A cron job on the backend's existing APScheduler runs at about 04:20 UTC on the scheduler leader. It makes one A2A call to the research agent.
 
+## On-demand trigger (admin)
+
+`POST /api/v1/admin/research/run?date=YYYY-MM-DD` lives in the existing admin router (`api/routers/admin_routes/`). It is guarded by `require_admin`, like `POST /admin/tasks/{task_id}/execute`, so there is no new auth.
+
+- **One code path.** The endpoint and the cron both call the same `run_research(date)` job function. `date` defaults to yesterday (UTC), so backfilling a given day costs nothing extra.
+- **No overlap.** `run_research` takes a Postgres advisory lock (`pg_try_advisory_lock`) on its own key, the same mechanism the scheduler leader lock uses. It cannot reuse the leader lock itself, because an admin request can land on any pod. If the lock is held, the endpoint returns `409 already running`, and the cron skips that night with a log line.
+- **Same budget.** Each run gets the same `UsageLimits` cap. A daily cap of 3 runs per UTC day, counting cron and manual runs together, returns `429` beyond that.
+- **Status.** Each run writes one row to a small `research_runs(id, date, started_at, finished_at, status, usage)` table. The endpoint returns `202 {run_id, status: "running"}` and runs the job in the background. `GET /api/v1/admin/research/runs/{run_id}` returns its status. Results land in mem0 as usual.
+- **For the trial.** Night one can be run on demand.
+
 ## Input from the backend
 
 The backend builds the input. That layer owns the data, so it is where stripping happens.
@@ -65,7 +75,7 @@ That is about $4 a month typical and $11 at most. The free Gemini key answers mo
 
 ## Trial
 
-1. Run the research agent nightly for a week with consumption off.
+1. Run night one on demand from the admin endpoint, then nightly for a week, with consumption off.
 2. Prass and the orchestrator read the `webwhen-flow-map` memories in the mem0 dashboard. They check whether the memories are useful and accurate, and whether any are personal.
 3. Keep or kill:
    - **Keep:** turn consumption on.
