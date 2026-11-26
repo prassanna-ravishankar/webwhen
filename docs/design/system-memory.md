@@ -18,7 +18,7 @@ Status: design only. Nothing ships without Prass's sign-off.
 - **Prompt, in substance.** "You maintain webwhen's shared knowledge of how information moves. Starting from today's watch runs, research where news like this breaks first, how long confirmation takes, and when sources publish. Check and refine what's already in shared memory, and write durable, general findings."
 - **Limits.** `RESEARCH_USAGE_LIMITS` in `runtime.py`, the same pattern as `MONITORING_USAGE_LIMITS`, set higher for a longer run: about 40 requests and 600k total tokens.
 - **Runs.** Nightly from the backend's existing APScheduler at about 04:20 UTC. Both the scheduler and the admin endpoint call `run_research()`.
-- **Admin trigger.** `POST /api/v1/admin/research/run` sits in the existing admin routes, behind `require_admin`. It starts `run_research()` in the background and returns `202`. Runs show up in Logfire like any other agent run.
+- **Admin trigger.** `POST /admin/research/run` sits in the existing admin routes, behind `require_admin`. It starts `run_research()` in the background and returns `202`. Runs show up in Logfire like any other agent run.
 
 ## Input
 
