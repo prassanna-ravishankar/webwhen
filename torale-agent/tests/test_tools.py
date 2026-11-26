@@ -241,3 +241,4 @@ def test_research_agent_has_the_monitoring_tools_and_returns_text():
     tools = set(agent._function_toolset.tools)
     assert {"search_memories", "add_memory", "perplexity_search", "fetch_url"} <= tools
     assert agent.output_type is str
+    assert agent.model_settings == {"thinking": "high"}
