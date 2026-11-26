@@ -24,6 +24,9 @@ from webwhen.api.routers.admin_routes.observability import (
 from webwhen.api.routers.admin_routes.observability import (
     router as observability_router,
 )
+from webwhen.api.routers.admin_routes.research import (
+    router as research_router,
+)
 from webwhen.api.routers.admin_routes.tasks import (
     AdminTaskStateUpdateRequest,
     admin_execute_task,
@@ -61,6 +64,7 @@ router.include_router(users_router)
 router.include_router(waitlist_router)
 router.include_router(tasks_router)
 router.include_router(connectors_router)
+router.include_router(research_router)
 
 __all__ = [
     "AdminTaskStateUpdateRequest",

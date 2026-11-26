@@ -23,6 +23,7 @@ from webwhen.scheduler.agent import (
     _handle_failed_task,
     _parse_agent_response,
     call_agent,
+    call_research_agent,
 )
 from webwhen.scheduler.models import MonitoringResponse
 
@@ -284,3 +285,13 @@ class TestCallAgent:
             with pytest.raises(AgentUpstreamHTTPError) as exc:
                 await call_agent("test")
         assert exc.value.status_code == 503
+
+
+class TestCallResearchAgent:
+    @pytest.mark.asyncio
+    async def test_sends_research_mode_and_returns_summary(self):
+        client = FakeClient(success_events({"summary": "Added 2 shared memories."}))
+        with patch("webwhen.scheduler.agent.create_client", AsyncMock(return_value=client)):
+            summary = await call_research_agent("<watch-runs>...</watch-runs>")
+        assert summary == "Added 2 shared memories."
+        assert MessageToDict(client.request.metadata) == {"mode": "research"}

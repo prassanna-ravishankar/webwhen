@@ -5,7 +5,9 @@ import json
 import logging
 import time
 import uuid
+from collections.abc import Callable
 from http import HTTPStatus
+from typing import TypeVar
 
 import httpx
 from a2a.client import ClientConfig, create_client
@@ -26,7 +28,11 @@ from webwhen.scheduler.models import MonitoringResponse
 
 logger = logging.getLogger(__name__)
 
+T = TypeVar("T")
+
 AGENT_TIMEOUT = 120  # seconds
+# The nightly research run works across all watches, under its own usage limits.
+RESEARCH_TIMEOUT = 900  # seconds
 # Upstream model failures worth retrying on the paid tier.
 FALLBACK_STATUS_CODES = frozenset({HTTPStatus.TOO_MANY_REQUESTS, HTTPStatus.SERVICE_UNAVAILABLE})
 
@@ -130,9 +136,12 @@ async def call_agent(
     so the agent can wire per-run MCP tools. Omit or empty for the common
     no-connectors path.
     """
+    metadata: dict = {"user_id": user_id, "task_id": task_id}
+    if mcp_servers:
+        metadata["mcp_servers"] = mcp_servers
     try:
         result = await _call_agent_internal(
-            settings.agent_url_free, prompt, user_id, task_id, mcp_servers
+            settings.agent_url_free, prompt, metadata, MonitoringResponse.model_validate
         )
         tier, fallback = "free", False
     except AgentUpstreamHTTPError as e:
@@ -144,7 +153,7 @@ async def call_agent(
             extra={"status_code": e.status_code},
         )
         result = await _call_agent_internal(
-            settings.agent_url_paid, prompt, user_id, task_id, mcp_servers
+            settings.agent_url_paid, prompt, metadata, MonitoringResponse.model_validate
         )
         tier, fallback = "paid", True
 
@@ -160,14 +169,31 @@ async def call_agent(
     return result
 
 
+async def call_research_agent(prompt: str) -> str:
+    """Run the research agent over the given watch runs and return its summary.
+
+    The agent falls back from the free to the paid Gemini key per request, so
+    there is no whole-run tier fallback here.
+    """
+    return await _call_agent_internal(
+        settings.agent_url_free,
+        prompt,
+        {"mode": "research"},
+        lambda data: str(data.get("summary", "")),
+        timeout=RESEARCH_TIMEOUT,
+    )
+
+
 async def _call_agent_internal(
     base_url: str,
     prompt: str,
-    user_id: str | None = None,
-    task_id: str | None = None,
-    mcp_servers: list[dict] | None = None,
-) -> MonitoringResponse:
-    """Stream one monitoring task from torale-agent over A2A."""
+    metadata: dict,
+    parse: Callable[[dict], T],
+    timeout: float | None = None,
+) -> T:
+    """Stream one task from torale-agent over A2A and parse its structured result."""
+    timeout = timeout or AGENT_TIMEOUT
+    user_id = metadata.get("user_id")
     message_id = f"msg-{uuid.uuid4().hex[:12]}"
 
     httpx_client = _get_httpx_client()
@@ -181,10 +207,6 @@ async def _call_agent_internal(
 
     configuration = SendMessageConfiguration(accepted_output_modes=["application/json"])
 
-    metadata: dict = {"user_id": user_id, "task_id": task_id}
-    if mcp_servers:
-        metadata["mcp_servers"] = mcp_servers
-
     request = SendMessageRequest(
         message=message,
         configuration=configuration,
@@ -192,7 +214,7 @@ async def _call_agent_internal(
     )
 
     try:
-        async with asyncio.timeout(AGENT_TIMEOUT):
+        async with asyncio.timeout(timeout):
             client = await create_client(
                 base_url,
                 ClientConfig(
@@ -229,7 +251,7 @@ async def _call_agent_internal(
                                 "terminal_state": TaskState.Name(state),
                             },
                         )
-                    return MonitoringResponse.model_validate(parsed)
+                    return parse(parsed)
                 if state == TaskState.TASK_STATE_FAILED:
                     _handle_failed_task(task)
                 if state in {
@@ -240,7 +262,7 @@ async def _call_agent_internal(
 
             raise RuntimeError("Agent stream ended without a terminal task response")
     except TimeoutError as e:
-        raise TimeoutError(f"Agent did not complete within {AGENT_TIMEOUT}s") from e
+        raise TimeoutError(f"Agent did not complete within {timeout}s") from e
     except AgentUpstreamHTTPError:
         raise
     except (A2AClientError, httpx.HTTPError, ValueError) as e:
