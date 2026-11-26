@@ -164,7 +164,6 @@ jobs:
           kubectl rollout status deployment/torale-api -n torale-staging --timeout=5m
           kubectl rollout status deployment/torale-frontend -n torale-staging --timeout=5m
           kubectl rollout status deployment/torale-agent-free -n torale-staging --timeout=5m
-          kubectl rollout status deployment/torale-agent-paid -n torale-staging --timeout=5m
 
       # Smoke from edge mirrors production.yml. Catches DNS-not-yet-propagated
       # cases earlier than waiting for the PR comment to fire. Both new and

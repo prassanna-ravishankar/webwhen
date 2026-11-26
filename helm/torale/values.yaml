@@ -196,16 +196,14 @@ docs:
     maxReplicas: 5
     targetCPUUtilizationPercentage: 70
 
-# Agent deployments (dual-tier for paid fallback)
+# Agent deployment. The k8s name stays "free" so the service the API calls
+# does not change.
 agents:
   - name: free
     secretKey: GEMINI_API_KEY_FREE
-    # Retries a single request on this key when the free tier returns 429/503.
+    # Retries a single request on this key when the free key returns 429/503.
     # Remove to switch the in-agent fallback off.
     fallbackSecretKey: GEMINI_API_KEY_PAID
-    replicaCount: 1
-  - name: paid
-    secretKey: GEMINI_API_KEY_PAID
     replicaCount: 1
 
 # Shared agent configuration

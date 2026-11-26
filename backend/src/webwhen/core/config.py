@@ -21,9 +21,7 @@ class Settings(BaseSettings):
     clerk_secret_key: str = ""
     clerk_publishable_key: str = ""
 
-    agent_url: str = "http://localhost:8001"  # Keep for backward compatibility
-    agent_url_free: str = "http://localhost:8001"
-    agent_url_paid: str = "http://localhost:8002"
+    agent_url: str = "http://localhost:8001"
 
     openai_api_key: str | None = None
     anthropic_api_key: str | None = None

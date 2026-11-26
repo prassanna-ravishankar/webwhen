@@ -90,7 +90,7 @@ class TestBillingErrors:
     @pytest.mark.parametrize(
         "message",
         [
-            "Agent task 3e67 upstream 402: status_code: 402, model_name: gemini-3.5-flash-lite, "
+            "Agent task 3e67 HTTP error 402: status_code: 402, model_name: gemini-3.5-flash-lite, "
             "body: {'error': {'code': 402, 'message': 'Your prepayment credits are depleted.'}}",
             "Error code: 401 - {'error': {'message': 'You exceeded your current quota, add credits "
             "at https://console.perplexity.ai/project/billing.', 'type': 'insufficient_quota', "
@@ -101,9 +101,9 @@ class TestBillingErrors:
     def test_credit_exhaustion_is_billing_not_rate_limit(self, message):
         assert classify_error(RuntimeError(message)) == ErrorCategory.BILLING
 
-    def test_free_tier_429_is_still_rate_limit(self):
+    def test_quota_429_is_still_rate_limit(self):
         message = (
-            "Agent task b4c4 upstream 429: status_code: 429, body: {'error': {'code': 429, "
+            "Agent task b4c4 HTTP error 429: status_code: 429, body: {'error': {'code': 429, "
             "'message': 'You exceeded your current quota, please check your plan and billing details.'}}"
         )
         assert classify_error(RuntimeError(message)) == ErrorCategory.RATE_LIMIT

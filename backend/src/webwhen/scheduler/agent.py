@@ -6,7 +6,6 @@ import logging
 import time
 import uuid
 from collections.abc import Callable
-from http import HTTPStatus
 from typing import TypeVar
 
 import httpx
@@ -33,20 +32,9 @@ T = TypeVar("T")
 AGENT_TIMEOUT = 120  # seconds
 # The nightly research run works across all watches, under its own usage limits.
 RESEARCH_TIMEOUT = 900  # seconds
-# Upstream model failures worth retrying on the paid tier.
-FALLBACK_STATUS_CODES = frozenset({HTTPStatus.TOO_MANY_REQUESTS, HTTPStatus.SERVICE_UNAVAILABLE})
 
 # Reuse httpx client for connection pooling
 _httpx_client: httpx.AsyncClient | None = None
-
-
-class AgentUpstreamHTTPError(RuntimeError):
-    """Structured model-provider failure eligible for tier fallback."""
-
-    def __init__(self, status_code: int, message: str) -> None:
-        self.status_code = status_code
-        self.message = message
-        super().__init__(message)
 
 
 def _get_httpx_client() -> httpx.AsyncClient:
@@ -95,10 +83,8 @@ def _extract_error_details(task: Task) -> dict | None:
 def _handle_failed_task(task: Task) -> None:
     """Process failed task and raise appropriate error.
 
-    Extracts error details from task status and raises:
-    - AgentUpstreamHTTPError for failures eligible for paid tier fallback
-      (see FALLBACK_STATUS_CODES)
-    - RuntimeError for other errors
+    Raises RuntimeError with the provider status code in the message, which
+    classify_error uses to pick a retry strategy.
     """
     task_id = task.id
     error_details = _extract_error_details(task)
@@ -117,10 +103,6 @@ def _handle_failed_task(task: Task) -> None:
 
     if error_type == "ModelHTTPError":
         status_code = error_details.get("status_code")
-        if status_code in FALLBACK_STATUS_CODES:
-            raise AgentUpstreamHTTPError(
-                status_code, f"Agent task {task_id} upstream {status_code}: {message}"
-            )
         raise RuntimeError(f"Agent task {task_id} HTTP error {status_code}: {message}")
 
     raise RuntimeError(f"Agent task {task_id} {error_type}: {message}")
@@ -132,8 +114,9 @@ async def call_agent(
     task_id: str | None = None,
     mcp_servers: list[dict] | None = None,
 ) -> MonitoringResponse:
-    """Send task to agent with automatic paid tier fallback on upstream failures.
+    """Send a watch run to the agent and return its structured response.
 
+    The agent retries a failed model request on the paid Gemini key itself.
     mcp_servers is a list of `{toolkit, url}` dicts; forwarded in A2A metadata
     so the agent can wire per-run MCP tools. Omit or empty for the common
     no-connectors path.
@@ -141,44 +124,15 @@ async def call_agent(
     metadata: dict = {"user_id": user_id, "task_id": task_id}
     if mcp_servers:
         metadata["mcp_servers"] = mcp_servers
-    try:
-        result = await _call_agent_internal(
-            settings.agent_url_free, prompt, metadata, MonitoringResponse.model_validate
-        )
-        tier, fallback = "free", False
-    except AgentUpstreamHTTPError as e:
-        if e.status_code not in FALLBACK_STATUS_CODES:
-            raise
-        logger.info(
-            "Free tier upstream failure (%s), falling back to paid tier",
-            e.status_code,
-            extra={"status_code": e.status_code},
-        )
-        result = await _call_agent_internal(
-            settings.agent_url_paid, prompt, metadata, MonitoringResponse.model_validate
-        )
-        tier, fallback = "paid", True
-
-    if user_id:
-        posthog_capture(
-            distinct_id=user_id,
-            event="agent_tier_used",
-            properties={
-                "tier": tier,
-                "fallback_triggered": fallback,
-            },
-        )
-    return result
+    return await _call_agent_internal(
+        settings.agent_url, prompt, metadata, MonitoringResponse.model_validate
+    )
 
 
 async def call_research_agent(prompt: str) -> str:
-    """Run the research agent over the given watch runs and return its summary.
-
-    The agent falls back from the free to the paid Gemini key per request, so
-    there is no whole-run tier fallback here.
-    """
+    """Run the research agent over the given watch runs and return its summary."""
     return await _call_agent_internal(
-        settings.agent_url_free,
+        settings.agent_url,
         prompt,
         {"mode": "research"},
         lambda data: str(data.get("summary", "")),
@@ -265,8 +219,6 @@ async def _call_agent_internal(
             raise RuntimeError("Agent stream ended without a terminal task response")
     except TimeoutError as e:
         raise TimeoutError(f"Agent did not complete within {timeout}s") from e
-    except AgentUpstreamHTTPError:
-        raise
     except (A2AClientError, httpx.HTTPError, ValueError) as e:
         raise RuntimeError(f"Failed to stream task from agent at {base_url}: {e}") from e
 

@@ -17,7 +17,6 @@ from pydantic import ValidationError
 
 from tests.conftest import data_artifact, make_a2a_task, task_stream_event
 from webwhen.scheduler.agent import (
-    AgentUpstreamHTTPError,
     _apply_stream_event,
     _extract_error_details,
     _handle_failed_task,
@@ -167,8 +166,8 @@ class TestErrorHandling:
         task.status.message.CopyFrom(new_text_message("{'bad': json", task_id=task.id))
         assert _extract_error_details(task)["error_type"] == "JSONParseError"
 
-    @pytest.mark.parametrize("status_code", [429, 503])
-    def test_fallback_status_raises_typed_error(self, status_code):
+    @pytest.mark.parametrize("status_code", [429, 500, 503])
+    def test_provider_status_is_in_the_error_message(self, status_code):
         task = make_a2a_task(status_state=TaskState.TASK_STATE_FAILED)
         task.status.message.CopyFrom(
             new_text_message(
@@ -182,25 +181,7 @@ class TestErrorHandling:
                 task_id=task.id,
             )
         )
-        with pytest.raises(AgentUpstreamHTTPError) as exc:
-            _handle_failed_task(task)
-        assert exc.value.status_code == status_code
-
-    def test_non_fallback_status_is_runtime_error(self):
-        task = make_a2a_task(status_state=TaskState.TASK_STATE_FAILED)
-        task.status.message.CopyFrom(
-            new_text_message(
-                json.dumps(
-                    {
-                        "error_type": "ModelHTTPError",
-                        "status_code": 500,
-                        "message": "provider failed",
-                    }
-                ),
-                task_id=task.id,
-            )
-        )
-        with pytest.raises(RuntimeError, match="HTTP error 500"):
+        with pytest.raises(RuntimeError, match=f"HTTP error {status_code}"):
             _handle_failed_task(task)
 
 
@@ -250,41 +231,12 @@ class TestCallAgent:
                 await call_agent("test")
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("status_code", [429, 503])
-    async def test_free_tier_falls_back_to_paid(self, status_code):
-        free = FakeClient(failure_events(status_code=status_code))
-        paid = FakeClient(success_events())
-        create = AsyncMock(side_effect=[free, paid])
-        with (
-            patch("webwhen.scheduler.agent.create_client", create),
-            patch("webwhen.scheduler.agent.settings") as settings,
-        ):
-            settings.agent_url_free = "http://free"
-            settings.agent_url_paid = "http://paid"
-            result = await call_agent("test")
-        assert result.confidence == 95
-        assert [call.args[0] for call in create.await_args_list] == ["http://free", "http://paid"]
-
-    @pytest.mark.asyncio
-    async def test_non_fallback_error_does_not_switch_tiers(self):
-        create = AsyncMock(return_value=FakeClient(failure_events(status_code=500)))
+    async def test_provider_failure_is_one_call_to_the_agent(self):
+        create = AsyncMock(return_value=FakeClient(failure_events(status_code=429)))
         with patch("webwhen.scheduler.agent.create_client", create):
-            with pytest.raises(RuntimeError, match="HTTP error 500"):
+            with pytest.raises(RuntimeError, match="HTTP error 429"):
                 await call_agent("test")
         assert create.await_count == 1
-
-    @pytest.mark.asyncio
-    async def test_both_tiers_failing_propagates(self):
-        create = AsyncMock(
-            side_effect=[
-                FakeClient(failure_events(status_code=429)),
-                FakeClient(failure_events(status_code=503)),
-            ]
-        )
-        with patch("webwhen.scheduler.agent.create_client", create):
-            with pytest.raises(AgentUpstreamHTTPError) as exc:
-                await call_agent("test")
-        assert exc.value.status_code == 503
 
 
 class TestCallResearchAgent:
