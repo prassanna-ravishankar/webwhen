@@ -120,9 +120,12 @@ def create_monitoring_agent(
 
 
 def create_research_agent(
-    model_id: str = DEFAULT_MODEL, thinking_level: str | None = None
+    model_id: str = DEFAULT_MODEL, thinking_level: str | None = "high"
 ) -> Agent[MonitoringDeps, str]:
     """Create the nightly research agent: same model and tools, a different goal.
+
+    It thinks harder than a watch run: it runs once a night and has to judge
+    what is worth learning, so minimal thinking writes shallow memories.
 
     It reads the day's watch runs and writes general findings about how
     information moves to the shared memory scope.
